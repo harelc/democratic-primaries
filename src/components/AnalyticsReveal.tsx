@@ -745,6 +745,9 @@ export default function AnalyticsReveal({
                       <SortTh col="pagerank" label={<Tooltip term="PageRank">הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם למי מצביעים ביחד איתו.</Tooltip>} className="w-36" />
                       <SortTh col="degree" label="Degree" className="w-32" />
                       <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
+                      <th className="px-4 py-2 text-right font-semibold">
+                        <Tooltip term="דומים (CF)">מועמדים עם פרופיל הצבעה דומה — מצביעים שבחרו את מועמד זה בחרו גם את אלה. חישוב: cosine similarity בין וקטורי ה-co-occurrence (item-item collaborative filtering).</Tooltip>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -779,6 +782,19 @@ export default function AnalyticsReveal({
                               <div className="flex items-center gap-1.5">
                                 <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
                                 <span className="text-xs text-slate-500">{communityId >= 0 ? communityId + 1 : '—'}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="flex items-center gap-1">
+                                {(snaData.cosineSimTop3[candidate.id] ?? []).map(simId => {
+                                  const simC = allCandidates.find(c => c.id === simId)
+                                  if (!simC) return null
+                                  return (
+                                    <img key={simId} src={simC.photoUrl} alt={simC.name}
+                                      title={simC.name}
+                                      className="w-6 h-6 rounded-full object-cover border border-white shadow-sm" />
+                                  )
+                                })}
                               </div>
                             </td>
                           </tr>
