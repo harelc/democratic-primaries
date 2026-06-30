@@ -53,16 +53,16 @@ export default function CandidateGrid({
 
             {/* Info icon - top right corner */}
             {candidate.bio && (
-              <button
+              <div
                 onClick={(e) => {
                   e.stopPropagation()
                   onViewBio(candidate.id)
                 }}
-                className="absolute top-1 right-1 bg-white/90 hover:bg-white text-slate-700 hover:text-blue-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-md transition-colors"
+                className="absolute top-1 right-1 bg-white/90 hover:bg-white text-slate-700 hover:text-blue-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-md transition-colors cursor-pointer"
                 title="View full bio"
               >
                 ℹ
-              </button>
+              </div>
             )}
           </button>
 
