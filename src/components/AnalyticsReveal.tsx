@@ -621,32 +621,6 @@ export default function AnalyticsReveal({
                       </div>
                       <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
                     </div>
-                    {/* דומים: top-3 cosine similar candidates */}
-                    {snaData && allCandidates && (
-                      <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-                        <span className="text-xs text-slate-400">
-                          <Tooltip term="דומים">מועמדים עם פרופיל co-occurrence דומה — נבחרים יחד עם אותם מועמדים אחרים (cosine similarity בין וקטורי co-occurrence).</Tooltip>
-                        </span>
-                        <div className="flex items-center gap-1">
-                        {(snaData.cosineSimTop3[candidate.id] ?? []).slice(0, 3).map(simId => {
-                          const simC = allCandidates.find(x => x.id === simId)
-                          if (!simC) return null
-                          return (
-                            <div key={simId} className="relative group/sim">
-                              <img
-                                src={simC.photoUrl}
-                                alt={simC.name}
-                                className="w-6 h-6 rounded-full object-cover border border-slate-200 cursor-help"
-                              />
-                              <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-800 text-white text-xs rounded px-2 py-0.5 opacity-0 group-hover/sim:opacity-100 pointer-events-none z-50 transition-opacity">
-                                {simC.name}
-                              </span>
-                            </div>
-                          )
-                        })}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )
               })}
