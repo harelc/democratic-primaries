@@ -74,7 +74,7 @@ export default function AnalyticsReveal({
       )}
 
       <div>
-        <h2 className="text-2xl font-bold mb-4">ניתוח הצעתך</h2>
+        <h2 className="text-2xl font-bold mb-4">ניתוח הצבעתך</h2>
 
         <div className="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto">
           <button
@@ -275,7 +275,7 @@ export default function AnalyticsReveal({
                 </div>
                 <div>
                   <span className="font-semibold block">✓ סימון</span>
-                  <span className="text-blue-700">מועמד שבחרת בהצעה שלך</span>
+                  <span className="text-blue-700">מועמד שבחרת בהצבעה שלך</span>
                 </div>
                 <div className="text-xs text-blue-700 bg-blue-100 p-2 rounded mt-3">
                   💡 גרור, הקטן/הגדל בעכבר, קליק לבחור
@@ -403,13 +403,13 @@ export default function AnalyticsReveal({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-bold text-lg mb-2">סה"כ הגשות</h3>
+          <h3 className="font-bold text-lg mb-2">סה"כ הצבעות</h3>
           <p className="text-2xl font-bold text-blue-600">
             {analytics.totalSubmissions}
           </p>
         </div>
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-          <h3 className="font-bold text-lg mb-2">ייחודיות הצעתך</h3>
+          <h3 className="font-bold text-lg mb-2">ייחודיות הצבעתך</h3>
           <p className="text-2xl font-bold text-purple-600">
             {Math.round(Math.random() * 100)}%
           </p>

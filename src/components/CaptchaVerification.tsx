@@ -63,7 +63,7 @@ export default function CaptchaVerification({
       <div className="bg-white rounded-lg p-6 max-w-md w-full text-center">
         <h2 className="text-xl font-bold mb-4">אימות אדם</h2>
         <p className="text-slate-600 mb-6">
-          לחצו על הכפתור כדי לאמת ולהגיש את הצעתך
+          לחצו על הכפתור כדי לאמת ולהגיש את הצבעתך
         </p>
 
         <button

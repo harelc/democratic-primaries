@@ -43,7 +43,7 @@ export default function BallotSidebar({
       <div className="flex-1 overflow-y-auto mb-4 pr-2">
         {selected.length === 0 ? (
           <p className="text-sm text-slate-500 text-center py-8">
-            בחר מועמדים כדי לראות את ההצעה שלך כאן 👈
+            בחר מועמדים כדי לראות את הצבעתך כאן 👈
           </p>
         ) : (
           <ul className="space-y-2">

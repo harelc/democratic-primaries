@@ -181,7 +181,7 @@ export default function App() {
       setPhase('analytics')
     } catch (error) {
       console.error('Submission failed:', error)
-      alert('אירעה שגיאה בהגשת ההצעה. נא לנסות שוב.')
+      alert('אירעה שגיאה בהגשת ההצבעה. נא לנסות שוב.')
       setPhase('building')
     } finally {
       setLoading(false)
@@ -276,7 +276,7 @@ export default function App() {
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
               >
-                הגש הצעה
+                הצבע
               </button>
             </div>
           </>
