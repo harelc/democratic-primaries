@@ -293,10 +293,35 @@ export default function ForceDirectedGraph({
   // Update opacity on hover without reinitializing
   useEffect(() => {
     if (!svgRef.current) return
-    d3.select(svgRef.current).selectAll('circle')
-      .attr('opacity', (d: any) => hoveredId === null || hoveredId === d.id ? 1 : 0.4)
-    d3.select(svgRef.current).selectAll('.node-label')
+    const svg = d3.select(svgRef.current)
+
+    svg.selectAll('circle')
+      .attr('opacity', (d: any) => hoveredId === null || hoveredId === d.id ? 1 : 0.25)
+
+    svg.selectAll('.node-label')
       .attr('opacity', (d: any) => hoveredId !== null && hoveredId === d.id ? 1 : 0)
+
+    svg.selectAll('line')
+      .attr('opacity', (d: any) => {
+        if (hoveredId === null) return 0.6
+        const src = typeof d.source === 'object' ? d.source.id : d.source
+        const tgt = typeof d.target === 'object' ? d.target.id : d.target
+        return src === hoveredId || tgt === hoveredId ? 1 : 0.05
+      })
+      .attr('stroke-width', (d: any) => {
+        if (hoveredId === null) return 1 + Math.sqrt(d.value) * 6
+        const src = typeof d.source === 'object' ? d.source.id : d.source
+        const tgt = typeof d.target === 'object' ? d.target.id : d.target
+        return src === hoveredId || tgt === hoveredId
+          ? Math.max(2, 1 + Math.sqrt(d.value) * 6) * 1.8
+          : 1 + Math.sqrt(d.value) * 6
+      })
+      .attr('stroke', (d: any) => {
+        if (hoveredId === null) return '#64748b'
+        const src = typeof d.source === 'object' ? d.source.id : d.source
+        const tgt = typeof d.target === 'object' ? d.target.id : d.target
+        return src === hoveredId || tgt === hoveredId ? '#2563eb' : '#64748b'
+      })
   }, [hoveredId])
 
   if (!analytics) {
