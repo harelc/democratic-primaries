@@ -266,24 +266,16 @@ export default function AnalyticsReveal({
               <p className="text-xs text-slate-600 mb-2 font-semibold">מפתח הצבעים:</p>
               <div className="flex gap-4 flex-wrap text-xs">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-600 rounded" />
+                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#2563eb' }} />
                   <span>100% (עצמי)</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-red-500 rounded" />
-                  <span>70%+</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-orange-400 rounded" />
-                  <span>50-70%</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-yellow-300 rounded" />
-                  <span>30-50%</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-200 rounded" />
-                  <span>&lt;30%</span>
+                <div className="flex items-center gap-3">
+                  <div className="flex gap-0.5">
+                    {[0.2, 0.4, 0.6, 0.8, 1.0].map(v => (
+                      <div key={v} className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(210, 100%, ${100 - v * 80}%)` }} />
+                    ))}
+                  </div>
+                  <span>נמוך → גבוה</span>
                 </div>
               </div>
             </div>

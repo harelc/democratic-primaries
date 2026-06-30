@@ -139,6 +139,18 @@ export default function ForceDirectedGraph({
       .style('pointer-events', 'none')
       .style('clip-path', (d: any) => `circle(${d.size}px)`)
 
+    // Vote % label below node
+    nodeGroups.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('dy', (d: any) => d.size + 10)
+      .attr('font-size', '9px')
+      .attr('fill', '#475569')
+      .attr('pointer-events', 'none')
+      .text((d: any) => {
+        const freq = analytics.candidatePickFrequency[d.id]
+        return freq ? `${Math.round(freq * 100)}%` : ''
+      })
+
     // Checkmark for selected (only shown when selected)
     nodeGroups.filter((d: any) => selectedIds.has(d.id))
       .append('text')
@@ -151,9 +163,13 @@ export default function ForceDirectedGraph({
       .style('text-shadow', '0 0 2px #2563eb')
       .text('✓')
 
-    // Tooltip
+    // Tooltip with vote count
     nodeGroups.append('title')
-      .text((d: any) => d.candidate.name)
+      .text((d: any) => {
+        const freq = analytics.candidatePickFrequency[d.id] || 0
+        const pct = Math.round(freq * 100)
+        return `${d.candidate.name}\nנבחר ב-${pct}% מהרשימות`
+      })
 
     // Drag
     nodeGroups.call(
