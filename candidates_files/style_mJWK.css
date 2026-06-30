@@ -1,0 +1,127 @@
+/* 
+Theme Name: Hello Elementor Child
+Theme URI: https://github.com/elementor/hello-theme/
+Description: Hello Elementor Child is a child theme of Hello Elementor, created by Elementor team
+Author: Elementor Team
+Author URI: https://elementor.com/
+Template: hello-elementor
+Version: 1.0.1
+Text Domain: hello-elementor-child
+License: GNU General Public License v3 or later.
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Tags: flexible-header, custom-colors, custom-menu, custom-logo, editor-style, featured-images, rtl-language-support, threaded-comments, translation-ready
+*/
+
+/*
+    Add your custom styles here
+*/
+*:focus-visible {
+    outline: 3px solid #000;
+    outline-offset: 4px;
+    }
+ main *:focus {
+      scroll-margin-top: 7rem; /* for sticky header */
+      scroll-margin-bottom: 7rem; /* for sticky footer */
+    }
+
+.fadeInLeft2{
+	animation-name: fadeInLeft2;
+}
+@keyframes fadeInLeft2 {
+    0% {
+    opacity: 0;
+    transform: translate3d(-50px,0,0);
+}
+
+100% {
+    opacity: 1;
+    transform: none;
+}
+}
+
+.fadeInRight2{
+	animation-name: fadeInRight2;
+}
+@keyframes fadeInRight2 {
+    0% {
+    opacity: 0;
+    transform: translate3d(50px,0,0);
+}
+
+100% {
+    opacity: 1;
+    transform: none;
+}
+}
+
+
+.fadeInUp2 {
+   animation-name: fadeInUp2; 
+}
+@keyframes fadeInUp2 {
+    0% {
+    opacity: 0;
+    transform: translate3d(0,50px,0);
+}
+100% {
+    opacity: 1;
+    transform: none;
+}
+}
+
+.fadeInDown2 {
+   animation-name: fadeInDown2; 
+}
+@keyframes fadeInDown2 {
+    0% {
+    opacity: 0;
+    transform: translate3d(0,-50px,0);
+}
+100% {
+    opacity: 1;
+    transform: none;
+}
+}
+*:focus-visible {
+    outline: 3px dashed black;
+    outline-offset: 4px;
+    }
+
+    main *:focus {
+        scroll-margin-top: 5rem; /* for sticky header */
+        scroll-margin-bottom: 5rem; /* for sticky footer */
+      }
+      .Top-Left-Clip-Path {
+        clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%);
+        animation: reveal-top-left 1s;
+        animation-fill-mode: forwards;
+    }
+    
+    @keyframes reveal-top-left {
+        0% {
+            clip-path: polygon(0% 0%, 0% 0%, 0% 0%, 0% 0%);
+        }
+        100% {
+            clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
+    }
+
+details summary {
+	--n-accordion-border-style: none;
+}
+details div[role="region"] {
+	border: none;
+}
+
+/*
+SWIPER WIDGET:
+*/
+body[data-elementor-device-mode="mobile"] .swiper-pagination-bullets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+body[data-elementor-device-mode="mobile"] .swiper-pagination-bullets span.swiper-pagination-bullet {
+	margin: 0;
+}

@@ -1,0 +1,696 @@
+[
+  {
+    "id": "candidate_001",
+    "name": "ענבל וורטמן שהם",
+    "bio": "תושבת כחל, אם לשלושה, אחד לוחם והשני תיכף. בגיל 29 ייסדתי את עמותת אבני דרך לחיים למען עצמאות ואוטונומיה לאנשים עם מוגבלות. העמותה קמה בקריית שמונה, צ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/34991950_%D7%A2%D7%A0%D7%91%D7%9C_%D7%95%D7%95%D7%A8%D7%98%D7%9E%D7%9F_%D7%A9%D7%94%D7%9D_candidatePhoto_20260622_232811_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%9C%D7%90%D7%AA%D7%A8.jpg",
+    "socialLinks": {
+      "website": "https://inbals.co.il/",
+      "facebook": "https://www.facebook.com/share/18gPTbAQNS/",
+      "instagram": "https://www.instagram.com/inbal_shoham",
+      "twitter": "https://x.com/inbalshohamv"
+    }
+  },
+  {
+    "id": "candidate_002",
+    "name": "יואב אגמי",
+    "bio": "שלום, קוראים לי יואב אגמי. סטודנט לתואר שני באוניברסיטה העברית, עובד בארגון חברתי שפועל למען ניקיון כפיים במגזר הציבורי ופעיל פוליטי אקטיבי של מפלגת ה...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/304975311_%D7%99%D7%95%D7%90%D7%91_%D7%90%D7%92%D7%9E%D7%99_candidatePhoto_20260622_124929_%D7%AA%D7%9E%D7%95%D7%A0%D7%AA_%D7%A4%D7%A8%D7%99%D7%99%D7%9E%D7%A8%D7%99%D7%A1_2.png",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/yoav.agami1"
+    }
+  },
+  {
+    "id": "candidate_003",
+    "name": "ערן עציון",
+    "bio": "ערן עציון – מדינאי, דיפלומט, יזם מדיני ופוליטי. נשוי ואב לשלושה. \nשירתתי כסגן ראש המועצה לביטחון לאומי, כראש החטיבה לתכנון מדיני במשרד החוץ וכקונסול ב...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/22796957_%D7%A2%D7%A8%D7%9F_%D7%A2%D7%A6%D7%99%D7%95%D7%9F_candidatePhoto_20260622_225300_507772.jpg",
+    "socialLinks": {
+      "website": "https://eranetzion.co.il/",
+      "facebook": "https://www.facebook.com/share/1CtD9uzL54/",
+      "instagram": "https://www.instagram.com/eran.etzion",
+      "twitter": "https://x.com/eranetzion",
+      "linkedin": "https://www.linkedin.com/in/eran-ערן-etzion-עציון-2843a822"
+    }
+  },
+  {
+    "id": "candidate_004",
+    "name": "איתי לשם",
+    "bio": "עו\"ד איתי לשם, בן 54, נשוי ואב ל-2 מת\"א. בעבר עו\"ד ושותף בשבלת ושות' וב-8 השנים האחרונות אני פועל בתמיכת הציבור וללא כל עיסוק אחר לחשיפת הטיית בחירות ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/29295490_%D7%90%D7%99%D7%AA%D7%99_%D7%9C%D7%A9%D7%9D_candidatePhoto_20260623_232041_QJuPa3dz_400x400.jpg",
+    "socialLinks": {
+      "website": "https://beactive.co.il/project/85272",
+      "facebook": "https://www.facebook.com/itai.leshem.1",
+      "twitter": "https://x.com/Itai_Leshem",
+      "linkedin": "https://il.linkedin.com/in/ileshem"
+    }
+  },
+  {
+    "id": "candidate_005",
+    "name": "רתם סיון",
+    "bio": "ממקימות ומובילות תנועת אמא ערה, מצנתרת מוח רופאה ומנהלת בכירה במערכת הבריאות, יזמית, יו\"ר פורום ישראל בריאה ואמא לשלושה. בת 50, תושבת כפר ביאליק. \nמובילה את תנועת אמא ערה הקוראת לאחריות ואסטרטגיה מדינית תוך שאיפה להסכמים שיביאו ביטחון. \nשותפה מייסדת ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/37679602_%D7%A8%D7%AA%D7%9D_%D7%A1%D7%99%D7%95%D7%9F_candidatePhoto_20260622_234833_WhatsApp_Image_2026-06-22_at_23.47.45.jpeg",
+    "socialLinks": {
+      "website": "https://rotemsivan.co.il/",
+      "facebook": "https://www.facebook.com/profile.php?id=61565019155720&sk=about",
+      "instagram": "https://www.instagram.com/rotemsivanhoffmann",
+      "twitter": "https://x.com/DrRotemSivan",
+      "linkedin": "https://www.linkedin.com/in/rotem-sivan-hoffmann-43937639"
+    }
+  },
+  {
+    "id": "candidate_006",
+    "name": "עמרי רונן",
+    "bio": "בן 34 נשוי לתמר ואבא לעברי ואורי\nנלחמתי בשירות הציבורי כשהייתי בפרקליטות, נלחמתי ברחובות כשהייתי ממובילי אחים לנשק, ועשיתי זאת שוב, בכל חזיתות המלחמה ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/203166731_%D7%A2%D7%9E%D7%A8%D7%99_%D7%A8%D7%95%D7%A0%D7%9F_candidatePhoto_20260623_155144_WhatsApp_Image_2026-06-23_at_09.57.15.jpeg",
+    "socialLinks": {
+      "website": "http://omri-ronen.com/",
+      "facebook": "https://www.facebook.com/share/1TKMHd3f57",
+      "instagram": "https://www.instagram.com/omrironenn",
+      "twitter": "https://x.com/omrironen24"
+    }
+  },
+  {
+    "id": "candidate_007",
+    "name": "חן אריאלי",
+    "bio": "אני חן אריאלי, סגנית ראש עיריית תל אביב-יפו ומחזיקת תיק התרבות, המכהנת בקדנציה השנייה שלי. כבר יותר מ־20 שנה אני פועלת לקידום שוויון, דמוקרטיה וזכויות...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/33065285_%D7%97%D7%9F_%D7%90%D7%A8%D7%99%D7%90%D7%9C%D7%99_candidatePhoto_20260623_073538_Screenshot_20260623_073509_Gallery.jpg",
+    "socialLinks": {
+      "website": "https://chenarieli.co.il/",
+      "facebook": "https://www.facebook.com/share/1H7uKkUrTp/",
+      "instagram": "https://www.instagram.com/chenarieli?utm_source=qr&igsh=MWNhMGZyY3plc2Zkbg==",
+      "twitter": "https://x.com/ArieliChen"
+    }
+  },
+  {
+    "id": "candidate_008",
+    "name": "אמיר ח'ניפס",
+    "bio": "אני אקטיביסט חברתי ואיש אקדמיה, הפועל מתוך תחושת שליחות ציבורית. את דרכי התחלתי כיועץ פרלמנטרי, ולאחר לימודים מתקדמים ב־LSE ופוסט־דוקטורט ב־Georgetown הקמתי את המרכז הישראלי־הדרוזי. לאורך השנים הובלתי יוזמות חברתיות וחינוכיות, ומאבקים ציבוריים למען ה...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/25974965_%D7%90%D7%9E%D7%99%D7%A8_%D7%97%D7%A0%D7%99%D7%A4%D7%A1_candidatePhoto_20260623_023810_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%90%D7%9E%D7%99%D7%A8_%D7%97%D7%A0%D7%99%D7%A4%D7%A1_.jpeg",
+    "socialLinks": {
+      "website": "https://www.amirkhnifess.co.il/"
+    }
+  },
+  {
+    "id": "candidate_009",
+    "name": "נמרוד שפר",
+    "bio": "נשוי לחיה, אב לארבעה וסב לשניים.\nנולדתי וגדלתי בקיבוץ אלונים שבעמק יזרעאל ובשני העשורים האחרונים אני מתגורר בנטף שבהרי ירושלים.\nאחרי 40 שנים במערכת הבטחון וניהול התעשייה האווירית, המשכתי לעשייה אזרחית בין היתר בטיפוח מנהיגות ציבורית, ובחברה הבדואית.\n...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/56539208_%D7%A0%D7%9E%D7%A8%D7%95%D7%93_%D7%A9%D7%A4%D7%A8_candidatePhoto_20260624_210933_Nimrod_Sheffer_-_credit_Noy_Einav_222.jpg",
+    "socialLinks": {
+      "website": "https://nimrodsheffer.com/",
+      "facebook": "https://www.facebook.com/share/1FsDXBcCPk/?mibextid=wwXIfr",
+      "instagram": "https://www.instagram.com/nimrodsheffer_?igsh=MTdqMjg5eDQ1N29sOQ==",
+      "twitter": "https://x.com/nimrodsheffer?s=21"
+    }
+  },
+  {
+    "id": "candidate_010",
+    "name": "אוליביה עמנואל דה לם",
+    "bio": "אוליביה עמנואל דה לם, שונא שנאה\n\nקחו בחשבון: יש הרבה מועמדים/ות טובים/ות; ובטוח יותר ממני. אתם מוזמנים להצביע להם. \nכשאני מתבונן בראי העתיד, איני רואה...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/311892749_%D7%90%D7%95%D7%9C%D7%99%D7%91%D7%99%D7%94_%D7%A2%D7%9E%D7%A0%D7%95%D7%90%D7%9C_%D7%93%D7%94_%D7%9C%D7%9D_candidatePhoto_20260624_142532_ViolonPerroquet.jpg",
+    "socialLinks": {}
+  },
+  {
+    "id": "candidate_011",
+    "name": "יריב אופנהיימר",
+    "bio": "מראשי מחנה השלום בישראל. אקטיביסט, פובליציסט, איש תקשורת, לשעבר מזכ״ל שלום עכשיו. הקול שלך בדמוקרטים למאבק באלימות המתנחלים, קידום פתרון מדיני, עצירת ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/33343492_%D7%99%D7%A8%D7%99%D7%91_%D7%90%D7%95%D7%A4%D7%A0%D7%94%D7%99%D7%99%D7%9E%D7%A8_candidatePhoto_20260624_080248_720086537_1648091299742632_11.jpeg",
+    "socialLinks": {
+      "website": "https://yariv.oppenheimer.co.il/",
+      "facebook": "https://www.facebook.com/yarivyariv",
+      "instagram": "https://www.instagram.com/yarivop/",
+      "twitter": "https://x.com/yarivop",
+      "linkedin": "https://il.linkedin.com/in/yariv-oppenheimer-26569167"
+    }
+  },
+  {
+    "id": "candidate_012",
+    "name": "דני אלגרט",
+    "bio": "אני דני אלגרט, נשוי לליזי, אב לארבעה וסב לארבעה. סגן ניצב בדימוס, מורה ומחנך, משפטן ומזרחן. במשך כ־30 שנה שירתי במשטרת ישראל, פיקדתי על תחנת אשדוד, וב...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/55744395_%D7%93%D7%A0%D7%99%D7%90%D7%9C__%D7%90%D7%9C%D7%92%D7%A8%D7%98_candidatePhoto_20260622_114731_e72eefaa-f3d4-4d84-8069-d14ab9371c7a.jpeg",
+    "socialLinks": {
+      "website": "https://www.elgarat.com/",
+      "facebook": "https://www.facebook.com/share/1EQUSba2cB/",
+      "instagram": "https://www.instagram.com/dany_elgarat",
+      "twitter": "https://x.com/elgarat_dani"
+    }
+  },
+  {
+    "id": "candidate_013",
+    "name": "לי הופמן אגיב",
+    "bio": "אני לי הופמן אגיב, בת 38 מהוד״ש, נשואה ואמא לשתיים. בעבר יזמית בתחום היין, ובשנים האחרונות עזבתי קריירה יציבה והקדשתי את חיי למאבקים ציבוריים, להובלת ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/300949492_%D7%9C%D7%99_%D7%94%D7%95%D7%A4%D7%9E%D7%9F_%D7%90%D7%92%D7%99%D7%91_candidatePhoto_20260622_194753_%D7%A2%D7%99%D7%A6%D7%95%D7%91_%D7%9C%D7%9C%D7%90_%D7%A9%D7%9D.png",
+    "socialLinks": {
+      "website": "https://www.leehoffmannagiv.com/",
+      "facebook": "https://www.facebook.com/share/1Eavo9uFJW/",
+      "instagram": "https://www.instagram.com/leehoffmann_agiv",
+      "twitter": "https://x.com/leehoffmannagiv",
+      "linkedin": "https://www.linkedin.com/in/lee-hoffmann-agiv-8b046b195"
+    }
+  },
+  {
+    "id": "candidate_014",
+    "name": "אחסאן חלאילה",
+    "bio": "נשוי למונא אבא גאה של אחמד, מוחמד ,אבראהים ונור.\nיליד סחנין גר בעיר כרמיאל , מנהל מכללת משגב לחינוך וספורט.\nהשכלה:\n*תואר ראשון: מנהל חינוכי- המכללה האקדמית הערבית בחיפה.\n*תואר שני: מדעי המדינה ומנהל ציבורי-אוניברסיטת חיפה.\n*תואר שלישי: מינהל חינוכי-א...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/33618976_%D7%90%D7%97%D7%A1%D7%90%D7%9F_%D7%97%D7%9C%D7%90%D7%99%D7%9C%D7%94_candidatePhoto_20260623_103608_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%93%D7%A8_%D7%90%D7%97%D7%A1%D7%9F_%D7%97%D7%9C%D7%90%D7%99%D7%9C%D7%94.jpeg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/share/1EgQ2ieqiq/?mibextid=wwXIfr",
+      "instagram": "https://www.instagram.com/ehsankhlaily?igsh=aGxnbGt6dXI1aHRk"
+    }
+  },
+  {
+    "id": "candidate_015",
+    "name": "גבי לסקי",
+    "bio": "עו\"ד לזכויות אדם ואזרח, ממקימות מערך עוטף העצורים שנותן גב משפטי לכל מי שיצא להפגין למען הדמוקרטיה והחזרת החטופים הביתה וסיום המלחמה. חכ\"לית מטעם מרצ, לשעבר חברת מועצת העיר ת\"א. הייתי מזכלית שלום עכשיו. עולה וותיקה ממקסיקו. בזוגיות שלא ברבנות אמא לתא...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/17904095_%D7%92%D7%91%D7%99_%D7%9C%D7%A1%D7%A7%D7%99_candidatePhoto_20260624_094712_IMG-20220803-WA0052.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/gaby.lasky",
+      "instagram": "https://www.instagram.com/gabylasky/",
+      "twitter": "https://x.com/gaby_lasky"
+    }
+  },
+  {
+    "id": "candidate_016",
+    "name": "אבי דבוש",
+    "bio": "נולדתי וגדלתי באשקלון במשפחה דתית, מזרחית וימנית. לאורך השנים ייסדתי והובלתי שורה של ארגונים ותנועות, בהם התנועה לעתיד הנגב המערבי, מועצת הנגב ותנועת ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/38377008_%D7%90%D7%91%D7%99_%D7%93%D7%91%D7%95%D7%A9_candidatePhoto_20260624_123813_%D7%90%D7%91%D7%99_%D7%9E%D7%9B%D7%95%D7%95%D7%A5.jpg",
+    "socialLinks": {
+      "website": "https://www.avidabush.com/",
+      "facebook": "https://www.facebook.com/DabushMeretz/?locale=he_IL",
+      "instagram": "https://www.instagram.com/dabushavi?igsh=N3d4eXNxY3J4aHBw&utm_source=qr",
+      "twitter": "https://x.com/avidabush"
+    }
+  },
+  {
+    "id": "candidate_017",
+    "name": "אמילי מואטי",
+    "bio": "סגנית יו\"ר הכנסת ויו\"ר ועדת חוץ לשעבר. \nילידת 1980, נשואה לדניאל שק, דיפלומט בדימוס, אמא לשתי בנות חיילות. \nחברת כנסת ה-24, פמיניסטית ואשת שלום. חברה ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/40285132_%D7%90%D7%9E%D7%99%D7%9C%D7%99_%D7%9E%D7%95%D7%90%D7%98%D7%99_candidatePhoto_20260624_092237_1001073062.jpg",
+    "socialLinks": {
+      "website": "https://emiliemoatti.co.il/#join",
+      "facebook": "https://www.facebook.com/share/18hYap6P3u/",
+      "instagram": "https://www.instagram.com/emiliemoatti?igsh=NDZhMDVzNW83MmM5",
+      "twitter": "https://x.com/EmilieMoatti"
+    }
+  },
+  {
+    "id": "candidate_018",
+    "name": "עאיד בדיר",
+    "bio": "שמי עאיד בדיר תושב כפר קאסם נשוי ואב ל3 ילדים בעל תואר שני במדעי המדינה .\nאני פעיל ציבורי הפועל למען שוויון שותפות ערבית יהודית אמתית ודמוקרטיה ושלום ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/37147303_%D7%A2%D7%90%D7%99%D7%93__%D7%91%D7%93%D7%99%D7%A8__candidatePhoto_20260623_002522_PHOTO-2026-06-22-10-52-31_1.jpg",
+    "socialLinks": {
+      "website": "https://linktr.ee/AaedBader"
+    }
+  },
+  {
+    "id": "candidate_019",
+    "name": "נעמה לזימי",
+    "bio": "נלחמנו יחד על המדינה ברחובות ובכנסת: העברנו חוקים היסטוריים – מחוק האיזוק האלקטרוני ועד חוק המכת\"זיות. נאבקנו במשטרה הפוליטית ברחובות ובלמנו בבג\"ץ שוח...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/34763862_%D7%A0%D7%A2%D7%9E%D7%94_%D7%9C%D7%96%D7%99%D7%9E%D7%99_candidatePhoto_20260625_072427_IMG_7521.jpeg",
+    "socialLinks": {
+      "website": "https://www.nlazimi.org/",
+      "facebook": "https://www.facebook.com/share/192VuUoTC1/",
+      "instagram": "https://www.instagram.com/naamalazimi",
+      "twitter": "https://x.com/naamalazimi?s=20"
+    }
+  },
+  {
+    "id": "candidate_020",
+    "name": "אפרת רייטן",
+    "bio": "בכנסת ה-25 אני מכהנת כיו\"ר סיעת 'הדמוקרטים' וכחברה קבועה בוועדות הכלכלה, העבודה והרווחה והתקשורת, וכן בוועדה המיוחדת לתיקונים לחוק יסוד הממשלה. במקביל, אני משמשת ממלאת מקום קבועה בוועדת חוקה ומשפט ובוועדת החוץ והביטחון.\nבמשך הקדנציה אני מובילה ושותפה...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/%D7%90%D7%A4%D7%A8%D7%AA-%D7%A8%D7%99%D7%99%D7%98%D7%9F-%D7%9C%D7%90%D7%AA%D7%A8.png",
+    "socialLinks": {
+      "website": "https://www.efratrayten.com/",
+      "facebook": "https://www.facebook.com/share/1TtRRTHaQG/?mibextid=wwXIfr",
+      "instagram": "https://www.instagram.com/efratrayten?utm_source=qr",
+      "twitter": "https://x.com/efratrayten1?s=11"
+    }
+  },
+  {
+    "id": "candidate_021",
+    "name": "גאלב סלאמנה",
+    "bio": "גאלב סלאמנה, בן 32 מכעביה, עו\"ד, אבא לארבעה, ישראלי גאה, ערבי, מוסלמי ובדואי בכעביה שבגליל. התנדבתי לצה\"ל מתוך אמונה בשותפות ובאחריות משותפת, והתנדבתי במערך \"עוטף עצורים\" כדי להגן על זכויות אדם ועל הדמוקרטיה. אני מאמין בשינוי דרך השפעה מבפנים, בשותפו...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/312312440_%D7%92%D7%90%D7%9C%D7%91_%D7%A1%D7%9C%D7%90%D7%9E%D7%A0%D7%94_candidatePhoto_20260623_001001_%D7%92%D7%90%D7%9C%D7%91_%D7%A1%D7%9C%D7%90%D7%9E%D7%A0%D7%94_%D7%AA%D7%9E%D7%95%D7%A0%D7%94.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/share/1BHqvwQPiz/",
+      "instagram": "https://www.instagram.com/slamna_ghaleb_adv",
+      "twitter": "https://x.com/Ghaleb_salamna"
+    }
+  },
+  {
+    "id": "candidate_022",
+    "name": "סומיה בשיר",
+    "bio": "בת 51 אמא לחמישה מטפלת רגשית ואשת חינוך 27 שנים  ופעילה חברתית מייסדת אין לנו ארץ אחרת ממובילות המאבק בפשיעה ובקידום שותפות יהודית־ערבית מאמינה בשוויו...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/26444687_%D7%A1%D7%95%D7%9E%D7%99%D7%94_%D7%91%D7%A9%D7%99%D7%A8_candidatePhoto_20260622_083450_1000575283.jpg",
+    "socialLinks": {
+      "website": "https://he.wikipedia.org/wiki/%D7%A1%D7%95%D7%9E%D7%99%D7%94_%D7%91%D7%A9%D7%99%D7%A8",
+      "facebook": "https://www.facebook.com/share/1DAfjkL9gP/",
+      "instagram": "https://www.instagram.com/bashirsomaya?igsh=cW5wbjhqazV5NTYx",
+      "twitter": "https://x.com/bashsomaya"
+    }
+  },
+  {
+    "id": "candidate_023",
+    "name": "מאלכ בדר",
+    "bio": "ראש מועצת חורפיש ויו\"ר פורם הרשויות הדרוזיות בעבר .\nפעיל חברתי מזה שנים רבות\nמאמין שמדינת ישראל חייבת להתחיל במסע שיקום לאחר ההרס שהותירה ממשלת ההסתה , ולייצב את מדינת ישראל  , כפי שהכרנו אותה .",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/56302227_%D7%9E%D7%90%D7%9C%D7%9B_%D7%91%D7%93%D7%A8_candidatePhoto_20260622_202606_260326.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/share/1H96TWaH4e/"
+    }
+  },
+  {
+    "id": "candidate_024",
+    "name": "ערן ניסן",
+    "bio": "בן 35, גר ביפו, נשוי לשיר ואבא של אלה. יותר מ-10 שנים שאני עושה פוליטיקה בלי להיות פוליטיקאי. אני מגיע לכנסת עם ניסיון מוכח בבניית כוח פוליטי אפקטיבי ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/305639338_%D7%A2%D7%A8%D7%9F_%D7%A0%D7%99%D7%A1%D7%9F_candidatePhoto_20260622_120612_1000634600.jpg",
+    "socialLinks": {
+      "website": "https://www.erannissan.co.il/",
+      "facebook": "https://www.facebook.com/eran.nissan.35/",
+      "instagram": "https://www.instagram.com/eran.nissan/",
+      "twitter": "https://x.com/eran_nissan",
+      "linkedin": "https://il.linkedin.com/in/eran-nissan-39b863188"
+    }
+  },
+  {
+    "id": "candidate_025",
+    "name": "נדאל מסאלחה",
+    "bio": "נדאל מסאלחה הוא עו״ד וכלכלן מכפר קרע, בעל יותר מ-20 שנות ניסיון בשלטון המקומי ובשירות הציבורי. הוא בעל תואר ראשון ושני בכלכלה ומנהל עסקים מאוניברסיטת פיליפס במרבורג, גרמניה, ותואר במשפטים. במשך 13 שנים כיהן כגזבר מועצת כפר קרע, זכה בפרס ניהול תקין, ו...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/27528884_%D7%A0%D7%93%D7%90%D7%9C_%D7%9E%D7%A1%D7%90%D7%9C%D7%97%D7%94_candidatePhoto_20260623_072029_4661a1bf-71ee-47d2-a508-ca267a42ac51.jpeg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/share/1Gj1oQXsL8/",
+      "instagram": "https://www.instagram.com/nedal_massalha",
+      "twitter": "https://x.com/nmassalha70106"
+    }
+  },
+  {
+    "id": "candidate_026",
+    "name": "יאיא פינק",
+    "bio": "נשוי לאוריה ואבא לבארי, נגב ועברי. \nרס״ן במיל׳, דתי וממובילי המאבק נגד ההפיכה המשטרית וחוקי ההשתמטות. מונה על ידי יאיר גולן לראש המטה לפירוק הטרור היה...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/37814399_%D7%99%D7%90%D7%99%D7%A8_%D7%A4%D7%99%D7%A0%D7%A7_candidatePhoto_20260622_220331_72cf547d-896d-42a1-a04c-15d9ab946b29.jpg",
+    "socialLinks": {
+      "website": "https://yayafink.co.il",
+      "facebook": "https://www.facebook.com/share/17mrvqG6BT/?mibextid=wwXIfr",
+      "instagram": "https://www.instagram.com/yayafink/?hl=en",
+      "twitter": "https://x.com/yayafink"
+    }
+  },
+  {
+    "id": "candidate_027",
+    "name": "משה רדמן",
+    "bio": "משה רדמן אבוטבול (41) אב לשלושה נולד וגדל בלוד, יזם היי-טק, מנהיג חברתי ומרצה. \n\nקצין מחקר באמ\"ן, עם ניסיון נרחב בניהול ובהוראה, מחזיק בתואר ראשון דו ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/66625690_%D7%9E%D7%A9%D7%94_%D7%A8%D7%93%D7%9E%D7%9F_candidatePhoto_20260624_223940_Screenshot_2026-05-31_at_11.07.51.png",
+    "socialLinks": {
+      "website": "https://radmandemocrats.com",
+      "facebook": "https://www.facebook.com/mosheradman/",
+      "instagram": "https://www.instagram.com/radmanmoshe/",
+      "twitter": "https://x.com/RadmanMoshe",
+      "linkedin": "https://www.linkedin.com/in/moshe-radman-abutbul-משה-רדמן-אבוטבול-🇮🇱-8a628260/"
+    }
+  },
+  {
+    "id": "candidate_028",
+    "name": "אביתר באר",
+    "bio": "איש מדבר ועבודה: צעיר מהנגב, לוחם ביהל״ם במילואים, אחד שמבין עשייה בשטח. \nתמיד לובש מכנס עובדה, תמיד מוכן להכניס את הידים לבוץ.\nבעבר הובלתי את בית‑ספר...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/302831243_%D7%90%D7%91%D7%99%D7%AA%D7%A8_%D7%91%D7%90%D7%A8_candidatePhoto_20260625_003850_%D7%90%D7%91%D7%99%D7%AA%D7%A8_%D7%91%D7%90%D7%A8_%D7%9C%D7%A4%D7%A8%D7%99%D7%99%D7%9E%D7%A8%D7%99%D7%96.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/evyatar.najimov/",
+      "instagram": "https://www.instagram.com/evyatarbeer"
+    }
+  },
+  {
+    "id": "candidate_029",
+    "name": "ברוך רון",
+    "bio": "לשעבר סגנית רה״ע ת״א-יפו, מחזיקת תיק מנהל השירותים החברתיים, מ״מ בתיק תרבות. מילדת פנימיות, הפכתי לנבחרת ציבור ולאשה הראשונה שנבחרה למועצת עיריית ת״א-...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/15916208_%D7%9E%D7%94%D7%A8%D7%98%D7%94_%D7%91%D7%A8%D7%95%D7%9A_%D7%A8%D7%95%D7%9F_candidatePhoto_20260623_123319_IMG_0545.jpg",
+    "socialLinks": {
+      "website": "https://www.mehereta.com/",
+      "facebook": "https://www.facebook.com/mehereta1/",
+      "instagram": "https://www.instagram.com/mehereta.baruch.ron/",
+      "linkedin": "https://www.linkedin.com/in/mehereta-baruch-ron-71bb4525a/"
+    }
+  },
+  {
+    "id": "candidate_030",
+    "name": "יאיר רובינשטיין",
+    "bio": "בין סבא רב וסבא כומר, זה אני, יאיר רובינשטיין, המועמד שלכם בפריימריז ומנהל מטה דת ומדינה במפלגה. \nנולדתי בירושלים ביום פרוץ מלחמת יום כיפור, ובגיל 50 ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/25544222_%D7%99%D7%90%D7%99%D7%A8_%D7%A8%D7%95%D7%91%D7%99%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F_candidatePhoto_20260623_175243.jpeg",
+    "socialLinks": {
+      "website": "https://yairrubinstein.org/",
+      "facebook": "https://www.facebook.com/YairRubinstein26%20",
+      "instagram": "https://www.instagram.com/yair.rubinstein/",
+      "twitter": "https://x.com/YairRubinstein"
+    }
+  },
+  {
+    "id": "candidate_031",
+    "name": "ענבר בזק",
+    "bio": "ח\"כ לשעבר ואקטיביסטית חברתית משנת 2015. מובילת מחאת העצמאים.\nבשלוש השנים האחרונות, כיהנתי כמנכ\"לית החברה הכלכלית גליל עליון, נלחמתי בוועדות הכנסת ובבי...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/27330455_%D7%A2%D7%A0%D7%91%D7%A8_%D7%91%D7%96%D7%A7_candidatePhoto_20260622_223729_%D7%A2%D7%A0%D7%91%D7%A8_%D7%91%D7%96%D7%A7_%D7%A6%D7%99%D7%9C%D7%95%D7%9D_%D7%A8%D7%A0%D7%99_%D7%9C%D7%95%D7%A8%D7%99%D7%90.jpg",
+    "socialLinks": {
+      "website": "https://inbarbezek.com/",
+      "facebook": "https://www.facebook.com/inbar.bezek100",
+      "instagram": "https://www.instagram.com/inbar.bezek/",
+      "twitter": "https://x.com/InbarBezek",
+      "linkedin": "https://il.linkedin.com/in/inbarbezek"
+    }
+  },
+  {
+    "id": "candidate_032",
+    "name": "עלי סלאלחה",
+    "bio": "עלי סלאלחה מהכפר בית ג׳ן שבצפון. נשוי באושר לתייסיר, אבא ל-5 ילדים וסבא ל-6 נכדים.\nאת כל חיי הקדשתי לחינוך ולמאבק למען שוויון הזדמנויות לכל ילד וילדה ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/50766757_%D7%A2%D7%9C%D7%99__%D7%A1%D7%9C%D7%90%D7%9C%D7%97%D7%94_candidatePhoto_20260625_140458_%D7%A2%D7%9C%D7%99_%D7%A1%D7%9C%D7%90%D7%9C%D7%97%D7%94_%D7%AA%D7%9E%D7%95%D7%A0%D7%94.jpeg",
+    "socialLinks": {
+      "website": "https://6976983f7e1ee.site123.me/",
+      "facebook": "https://www.facebook.com/ali4meretz",
+      "instagram": "https://www.instagram.com/alidemocrats/",
+      "twitter": "https://x.com/AliSalalha"
+    }
+  },
+  {
+    "id": "candidate_033",
+    "name": "נאור נרקיס",
+    "bio": "מתגורר בתל אביב עם בן זוגי דניאל. יזם חברתי להפרדת כת ממדינה ודת ממזומן. הקמתי את ארגון חוזרים בתבונה, שסייע לאלפי חרדים לעזוב את החברה החרדית ולהצטרף...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/301495917_%D7%A0%D7%90%D7%95%D7%A8_%D7%A0%D7%A8%D7%A7%D7%99%D7%A1_candidatePhoto_20260623_100930_%D7%A0%D7%90%D7%95%D7%A8%D7%A0%D7%A8%D7%A7%D7%99%D7%A11.png",
+    "socialLinks": {
+      "website": "https://www.naornarkis.org/",
+      "facebook": "https://www.facebook.com/naornarkis/",
+      "instagram": "https://www.instagram.com/naornarkis/",
+      "twitter": "https://x.com/NaorNarkis",
+      "linkedin": "https://www.linkedin.com/in/naornarkis/"
+    }
+  },
+  {
+    "id": "candidate_034",
+    "name": "זר קצנשטיין",
+    "bio": "בת 43 מחולון, אמא ל-4 בנים. ב-2020 ייסדתי את \"בונות אלטרנטיבה\" וב2023 הובלתי את מחאת השפחות שניצבה בחזית המאבק על הדמוקרטיה. ב-7 באוקטובר הקמנו מערכי ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/62865415_%D7%9E%D7%95%D7%A8%D7%9F_%D7%96%D7%A8_%D7%A7%D7%A6%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F_candidatePhoto_20260624_104703_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%9C%D7%9E%D7%A2%D7%A8%D7%9B%D7%AA_%D7%94%D7%91%D7%97%D7%99%D7%A8%D7%95%D7%AA_2%D7%9E%D7%92.jpg",
+    "socialLinks": {
+      "website": "http://www.moranzer.co.il/",
+      "facebook": "https://www.facebook.com/moran.zer",
+      "instagram": "https://www.instagram.com/moranzer/",
+      "twitter": "https://x.com/zermoran",
+      "linkedin": "https://www.linkedin.com/in/moran-zer-katzenstein-90b62a18"
+    }
+  },
+  {
+    "id": "candidate_035",
+    "name": "דימה שפירא",
+    "bio": "יקנעם עילית  Дима Шапира –\nאיש של אמת מלא מרצ. \n\n•\tהקול של פעילי השטח בכנסת –  מוביל את פעילות מרצ והדמוקרטים בשטח כבר 6 שנים. \n•\tמייסד ויו\"ר סניף מרצ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/16341042_%D7%93%D7%99%D7%9E%D7%94_%D7%A9%D7%A4%D7%99%D7%A8%D7%90_candidatePhoto_20260624_234741_DSC_3708_DxO.jpg",
+    "socialLinks": {
+      "website": "https://www.newmeretz.co.il/dima",
+      "facebook": "https://www.facebook.com/share/1JDMxaxerW/",
+      "instagram": "https://www.instagram.com/dima.shapira.9",
+      "twitter": "https://x.com/ShapiraDima"
+    }
+  },
+  {
+    "id": "candidate_036",
+    "name": "ירון ניב",
+    "bio": "נולדתי בתל אביב להורים מורים בזרם העובדים, למדתי בבית החינוך בצפון ע\"ש א.ד.גורדון ובתיכון עירוני ד'. הייתי חבר בתנועת הנוער העובד והלומד ובגרעין פסגות ליפתח. כעתודאי למדתי רפואה באוניברסיטת תל אביב, שרתתי כרופא צבאי ביחידות מודיעין בסיני ובהמשך הקמתי...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/10950665_%D7%99%D7%A8%D7%95%D7%9F_%D7%A0%D7%99%D7%91_candidatePhoto_20260622_171528_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%99%D7%A8%D7%95%D7%9F_%D7%A0%D7%99%D7%91_edited.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/yaron.niv"
+    }
+  },
+  {
+    "id": "candidate_037",
+    "name": "יעל כהן פארן",
+    "bio": "חברת כנסת לשעבר, חברת מועצת פרדס חנה-כרכור, מנהיגה סביבתית ויזמית חברתית.\n30 שנה נלחמת למען הסביבה, החברה והעתיד של כולנו.\nשירתתי כקצינת מודיעין ב-820...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/25700717_%D7%99%D7%A2%D7%9C_%D7%9B%D7%94%D7%9F_%D7%A4%D7%90%D7%A8%D7%9F_candidatePhoto_20260624_111340_WhatsApp_Image_2026-06-24_at_11.06.51.jpeg",
+    "socialLinks": {
+      "website": "https://yaelparan.co.il/",
+      "facebook": "https://www.facebook.com/YaelCohenParan/",
+      "instagram": "https://www.instagram.com/yael_cohen_paran/",
+      "twitter": "https://x.com/YaelCohenParan",
+      "linkedin": "https://www.linkedin.com/in/yael-cohen-paran/"
+    }
+  },
+  {
+    "id": "candidate_038",
+    "name": "רז",
+    "bio": "אני מוביל כל חיי את המאבק לשלום ונגד הכיבוש. \nהיום, ברור שאין דמוקרטיה אמיתית עם כיבוש. אחרי ה-7.10, אין דבר חשוב יותר מאשר החתירה לשלום.\nלרבים נדמה ש...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/22106165_%D7%9E%D7%95%D7%A1_%D7%A8%D7%96_candidatePhoto_20260622_114224_%D7%9E%D7%95%D7%A1%D7%99_%D7%AA%D7%9E%D7%95%D7%A0%D7%94.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/MossiRaz",
+      "instagram": "https://www.instagram.com/mossi_raz",
+      "twitter": "https://x.com/mossi_raz"
+    }
+  },
+  {
+    "id": "candidate_039",
+    "name": "קטי פיאסצקי",
+    "bio": "ילידת העיר בת ים. בת 42, נשואה, אמא ל- 2 בנות ו- 2 חתולות. \nסגנית ראש עיריית בת ים וחברת מועצת העיר כ-13 שנים. מחזיקה בתיקי הרווחה, התחבורה, איכות הסב...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/65942849_%D7%A7%D7%98%D7%99_%D7%A4%D7%99%D7%90%D7%A1%D7%A6%D7%A7%D7%99_candidatePhoto_20260623_123618_%D7%AA%D7%9E%D7%95%D7%A0%D7%94.jpeg",
+    "socialLinks": {
+      "website": "https://linktr.ee/Katipiasecki",
+      "facebook": "https://www.facebook.com/kati.piasecki",
+      "instagram": "https://www.instagram.com/kati_piasecki?igsh=MXY4OHY0a3JxcDhzZA==",
+      "twitter": "https://x.com/Kati_Piasecki",
+      "linkedin": "https://www.linkedin.com/in/kati-piasecki-72b930119/"
+    }
+  },
+  {
+    "id": "candidate_040",
+    "name": "אליס גולדמן",
+    "bio": "תושבי חיפה והצפון זקוקים לקול משלהם בכנסת: עו\"ד אליס גולדמן, מהפעילות\nהחברתיות והסביבתיות הבולטות באזור.\nגולדמן, תושבת נשר, מזוהה זה שנים עם מאבקים ציבוריים משמעותיים למען בריאות הציבור, איכות הסביבה, תכנון אחראי ופיתוח בר-קיימא במטרופולין חיפה והצפו...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/13277959_%D7%90%D7%9C%D7%99%D7%A1_%D7%92%D7%95%D7%9C%D7%93%D7%9E%D7%9F_candidatePhoto_20260624_100852_IMG-20260620-WA0046_1.jpg",
+    "socialLinks": {
+      "website": "https://he.wikipedia.org/wiki/%D7%90%D7%9C%D7%99%D7%A1_%D7%92%D7%95%D7%9C%D7%93%D7%9E%D7%9F",
+      "facebook": "https://www.facebook.com/elis.goldman"
+    }
+  },
+  {
+    "id": "candidate_041",
+    "name": "רם שפע",
+    "bio": "רם שפע, ח״כ לשעבר שימש בעבר כיו״ר התאחדות הסטודנטים הארצית. כיהן כיו״ר ועדת החינוך ויו״ר סיעת העבודה בממשלת השינוי. רם הוביל חקיקה לחיזוק מעמד המורה ו...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/36715472_%D7%A8%D7%9D_%D7%A9%D7%A4%D7%A2_candidatePhoto_20260625_101037_%D7%A8%D7%9D_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%9C%D7%A4%D7%95%D7%A8%D7%98%D7%9C_.jpg",
+    "socialLinks": {
+      "website": "https://www.ramshefa.com/",
+      "facebook": "https://www.facebook.com/share/14fsUJ69C7m/?mibextid=wwXIfr",
+      "instagram": "https://www.instagram.com/ramshefa?igsh=dXc4b3JwN2h2OHJj",
+      "twitter": "https://x.com/ramshefa"
+    }
+  },
+  {
+    "id": "candidate_042",
+    "name": "בנימין דניאל מיניץ",
+    "bio": "הרב בנימין מיניץ' – נולד באוקראינה, עלה לארץ ב2002. בוגר נעל\"ה, שירת בגדוד הקרקל. לאחר שחרורו, החל בלימודיו לתואר במחשבת ישראל ובפסיכולוגיה באוניברסיט...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/326898202_%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%93%D7%A0%D7%99%D7%90%D7%9C_%D7%9E%D7%99%D7%A0%D7%99%D7%A5_candidatePhoto_20260625_143623_BENNY.jpg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/binyamin.minich",
+      "instagram": "https://www.instagram.com/bennyminich/",
+      "twitter": "https://x.com/bennyminich/"
+    }
+  },
+  {
+    "id": "candidate_043",
+    "name": "אבישי ליכטנשטיין",
+    "bio": "אבישי אדריכל בוגר אוניברסיטת תל אביב עוסק למעלה משני עשורים במחקר הנושא יחסי צבא חברה. אבישי פעיל ציבור מאז שרותו הצבאי כלוחם ומפקד ושאיפתו היא להשפיע ברמה המקומית וגם בארצית. אבישי מגיע כדי לשרת את הציבור לתת מזמנו השכלתו ונסיונו המקצועי שצבר אבישי ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/%D7%90%D7%91%D7%99%D7%A9%D7%99-%D7%9C%D7%99%D7%9B%D7%98%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F.jpeg",
+    "socialLinks": {
+      "facebook": "https://www.facebook.com/avishai.lichtensztein"
+    }
+  },
+  {
+    "id": "candidate_044",
+    "name": "הדס רגולסקי",
+    "bio": "גדלתי בנתיב העשרה, הייתי עיתונאית ואשת תקשורת כמעט 30 שנה, משפטנית וזוכת EMMY אבל אחרי 7 באוקטובר הבנתי שאני חייבת להיות חלק מהתיקון. וכך עשיתי: כמובי...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/%D7%94%D7%93%D7%A1-%D7%A8%D7%92%D7%95%D7%9C%D7%A1%D7%A7%D7%99.jpg",
+    "socialLinks": {
+      "website": "https://www.hadasragolsky.com/",
+      "facebook": "https://www.facebook.com/hadas.ragolsky",
+      "instagram": "https://www.instagram.com/hadasragolsky/",
+      "twitter": "https://x.com/hragolsky?s=21",
+      "linkedin": "https://www.linkedin.com/in/hadas-ragolsky-0ab73491/"
+    }
+  },
+  {
+    "id": "candidate_045",
+    "name": "איהאב שליאן",
+    "bio": "סא״ל (מיל׳) איהאב שליאן, יליד 1981 מנוף הגליל. התנדבתי לצה״ל בשנת 2000 ושירתי 24 שנים בתפקידי לחימה, תקשוב וסייבר, כולל שני תפקידי מג״ד. זכיתי בצל״ש א...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/40525834_%D7%90%D7%99%D7%94%D7%90%D7%91_%D7%A9%D7%9C%D7%99%D7%90%D7%9F_candidatePhoto_20260622_095948_969929C9-003F-4F9D-8CE2-19E31150E03A.png",
+    "socialLinks": {
+      "website": "https://thebcards.com/ihab-shlayan/",
+      "facebook": "https://www.facebook.com/share/18mr4jNQj2",
+      "instagram": "https://www.instagram.com/israeli_christians",
+      "twitter": "https://x.com/ihab_shlayan",
+      "linkedin": "https://www.linkedin.com/in/ihab-shlayan-a862654b"
+    }
+  },
+  {
+    "id": "candidate_046",
+    "name": "מיכל רוזין",
+    "bio": "למה אני מבקשת את אמונכםן – כי החלפת השלטון לא תספיק אם הקואליציה תתפרק שוב על מזבח האגו והלחצים. אני מביאה איתי עשייה ציבורית רחבת היקף. ממנכ\"לית איגו...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/24426256_%D7%9E%D7%99%D7%9B%D7%9C_%D7%A8%D7%95%D7%96%D7%99%D7%9F_candidatePhoto_20260623_193652_%D7%9E%D7%99%D7%9B%D7%9C_%D7%A8%D7%95%D7%96%D7%99%D7%9F_%D7%A6%D7%99%D7%9C%D7%95%D7%9D_%D7%90%D7%9C%D7%A2%D7%93_%D7%9E%D7%9C%D7%9B%D7%94.jpg",
+    "socialLinks": {
+      "website": "https://michalrozin.co.il/",
+      "facebook": "http://facebook.com/michal.rozin",
+      "instagram": "http://instagram.com/michal_rozin",
+      "twitter": "https://x.com/Michal_Rozin"
+    }
+  },
+  {
+    "id": "candidate_047",
+    "name": "תומר אביטל",
+    "bio": "כאחד ממייסדי שקוף ולובי 99 צללתי לעומקי המערכת. למדתי איך כח״כ אוכל לבער שחיתות עם שקיפות, להילחם בפייק ולהוזיל את יוקר המחיה. \n\nגם אגן על הטבע, אעביר...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/61231346_%D7%AA%D7%95%D7%9E%D7%A8_%D7%90%D7%91%D7%99%D7%98%D7%9C_candidatePhoto_20260623_112130_%D7%AA%D7%95%D7%9E%D7%A8_%D7%A8%D7%90%D7%A9.jpg",
+    "socialLinks": {
+      "website": "https://knesset.tomeravital1.com",
+      "facebook": "https://www.facebook.com/tomer.avital1",
+      "instagram": "https://www.instagram.com/tomeravital100/",
+      "twitter": "https://x.com/TomerAvital1",
+      "linkedin": "https://www.linkedin.com/in/tomer-avital-52795315/"
+    }
+  },
+  {
+    "id": "candidate_048",
+    "name": "מוראן מישל",
+    "bio": "אני יזמת ואקטיביסטית שלושה עשורים, אמא לחמש בנות ורצה למרחקים ארוכים. בעלת רקע עשיר בניהול והקמת תשתיות למחנה הליברלי; מיוזמי ומארגני הצעדה לירושלים; ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/31414667_%D7%9E%D7%95%D7%A8%D7%9F_%D7%9E%D7%99%D7%A9%D7%9C_candidatePhoto_20260624_155454_profile_pic_new_copy.png",
+    "socialLinks": {
+      "website": "https://moranmichel.org/",
+      "facebook": "https://www.facebook.com/moran.michel",
+      "instagram": "https://www.instagram.com/moranmichel/",
+      "twitter": "https://x.com/moranmichel3"
+    }
+  },
+  {
+    "id": "candidate_049",
+    "name": "גלעד קריב",
+    "bio": "חה\"כ גלעד קריב הוא מהקולות המרכזיים בשמאל הציוני ובמחנה הדמוקרטי, וממובילי המאבק נגד המהפכה המשטרית והפגיעה בשלטון החוק. משמש כיו\"ר ועדת העלייה, הקליט...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/25514530_%D7%92%D7%9C%D7%A2%D7%93_%D7%A7%D7%A8%D7%99%D7%91_candidatePhoto_20260623_141058_WhatsApp_Image_2026-06-23_at_14.09.46.jpeg",
+    "socialLinks": {
+      "website": "https://giladkariv.com/",
+      "facebook": "https://www.facebook.com/RabbiGiladKariv",
+      "instagram": "https://www.instagram.com/gilad.kariv/",
+      "twitter": "https://x.com/KarivGilad?s=20"
+    }
+  },
+  {
+    "id": "candidate_050",
+    "name": "נאווה רוזוליו",
+    "bio": "עורכת דין, רואת חשבון, פעילה חברתית ודמות בולטת בעשייה הציבורית בישראל. \nלאחר שלקחתי חלק מרכזי בגלי המחאה בשנים האחרונות – מבלפור דרך הבימה וקפלן ושוב לרחוב עזה, ועד מאות שעות בוועדות הכנסת (בייחוד ועדת חוקה) והכרת העבודה הפרלמנטרית מבפנים, כיום אני ...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/21926159_%D7%A0%D7%90%D7%95%D7%95%D7%94_%D7%A8%D7%95%D7%96%D7%95%D7%9C%D7%99%D7%95_candidatePhoto_20260624_134745_%D7%AA%D7%9E%D7%95%D7%A0%D7%94.jpeg",
+    "socialLinks": {
+      "website": "https://linktr.ee/navarozolyo",
+      "facebook": "https://www.facebook.com/profile.php?id=61590401466687",
+      "instagram": "https://www.instagram.com/navarozolyo",
+      "twitter": "https://x.com/rozolyo",
+      "linkedin": "https://www.linkedin.com/in/nava-rozolyo-70abb072"
+    }
+  },
+  {
+    "id": "candidate_051",
+    "name": "גיל ביילין",
+    "bio": "גיל ביילין, ממשיך דרך של ערכים.\nאני מכיר את המפלגה מימיה הגדולים כשהתקשורת חיכתה במתח להחלטות מנהיגיה. בראשות יאיר גולן נחזיר את הרלוונטיות הזו. פוליט...",
+    "region": "",
+    "background": "",
+    "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/29647039_%D7%92%D7%99%D7%9C_%D7%91%D7%99%D7%99%D7%9C%D7%99%D7%9F_candidatePhoto_20260624_115810_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%A4%D7%A8%D7%99%D7%99%D7%9E%D7%A8%D7%99%D7%96_26.jpg",
+    "socialLinks": {
+      "website": "https://www.gilbeilin.co.il/",
+      "facebook": "https://www.facebook.com/GilBeilin?locale=he_IL",
+      "instagram": "https://www.instagram.com/gil_beilin?igsh=Nndld2E3dXN3YzJq"
+    }
+  }
+]
