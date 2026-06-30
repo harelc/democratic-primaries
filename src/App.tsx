@@ -76,18 +76,34 @@ export default function App() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
   const adminMode = isAdminMode()
 
-  const generateAdminAnalytics = (selectedArray: string[]) => {
-    const mockFrequency: Record<string, number> = {}
-    selectedArray.forEach(id => {
-      mockFrequency[id] = Math.random() * 0.8 + 0.2
-    })
-    return {
-      candidatePickFrequency: mockFrequency,
-      coOccurrenceMatrix: generateSparseMatrix(candidates, 0.12),
-      totalSubmissions: Math.floor(Math.random() * 2000) + 500,
-      allCandidates: candidates,
+  // Load real analytics for admin without voting
+  useEffect(() => {
+    if (adminMode && phase === 'building') {
+      fetch('/.netlify/functions/analytics')
+        .then(r => r.json())
+        .then(data => {
+          setAnalytics({
+            candidatePickFrequency: data.candidatePickFrequency || {},
+            coOccurrenceMatrix: data.coOccurrenceMatrix || {},
+            totalSubmissions: data.totalSubmissions || 0,
+            allCandidates: candidates,
+          })
+          setPhase('analytics')
+        })
+        .catch(() => {
+          // Fallback to sparse mock if API fails
+          const mockFrequency: Record<string, number> = {}
+          candidates.slice(0, 8).forEach(c => { mockFrequency[c.id] = Math.random() * 0.8 + 0.2 })
+          setAnalytics({
+            candidatePickFrequency: mockFrequency,
+            coOccurrenceMatrix: generateSparseMatrix(candidates, 0.12),
+            totalSubmissions: 0,
+            allCandidates: candidates,
+          })
+          setPhase('analytics')
+        })
     }
-  }
+  }, [adminMode])
 
   const handleRandomize = () => {
     const shuffled = [...candidatesData].sort(() => Math.random() - 0.5)
@@ -132,12 +148,7 @@ export default function App() {
 
   const handleSubmit = () => {
     if (!isValid) return
-    if (adminMode) {
-      // Skip captcha, go straight to real API submission
-      handleCaptchaVerify('dev-token-admin')
-    } else {
-      setPhase('captcha')
-    }
+    setPhase('captcha')
   }
 
   const handleCaptchaVerify = async (token: string) => {
