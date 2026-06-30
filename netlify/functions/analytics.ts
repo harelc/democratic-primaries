@@ -58,7 +58,7 @@ const handler: Handler = async (event, context) => {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=60',
+        'Cache-Control': 'public, max-age=120, stale-while-revalidate=60',
       },
       body: JSON.stringify({
         candidatePickFrequency,

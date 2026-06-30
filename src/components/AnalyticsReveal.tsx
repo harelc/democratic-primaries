@@ -113,7 +113,7 @@ function NewVoteToast({ totalSubmissions }: { totalSubmissions: number }) {
           setTimeout(() => setToast(null), 4000)
         }
       } catch {}
-    }, 15000)
+    }, 120000)
 
     return () => clearInterval(interval)
   }, [])

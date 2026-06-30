@@ -192,13 +192,9 @@ export default function App() {
         throw new Error(`Submit failed: ${submitResponse.status}`)
       }
 
-      // Fetch analytics from API
-      const analyticsResponse = await fetch('/.netlify/functions/analytics')
-      if (!analyticsResponse.ok) {
-        throw new Error(`Analytics fetch failed: ${analyticsResponse.status}`)
-      }
-
-      const analyticsData = await analyticsResponse.json()
+      // Use analytics returned inline from submit (saves a second function call)
+      const submitData = await submitResponse.json()
+      const analyticsData = submitData.analytics || {}
 
       setAnalytics({
         candidatePickFrequency: analyticsData.candidatePickFrequency || {},

@@ -99,9 +99,37 @@ const handler: Handler = async (event, context) => {
       args: [candidatesJson, body.timeToComplete, ipHash],
     })
 
+    // Return analytics inline — saves a second function call per vote
+    const ballots = await client.execute('SELECT selected_candidates FROM ballots')
+    const totalSubmissions = ballots.rows.length
+    const candidatePickFrequency: Record<string, number> = {}
+    const coOccurrenceMatrix: Record<string, number> = {}
+    for (const row of ballots.rows) {
+      const ids = JSON.parse((row.selected_candidates as string) || '[]')
+      ids.forEach((id: string) => {
+        candidatePickFrequency[id] = (candidatePickFrequency[id] || 0) + 1
+      })
+      for (let i = 0; i < ids.length; i++) {
+        for (let j = i + 1; j < ids.length; j++) {
+          const key = ids[i] < ids[j] ? `${ids[i]}_${ids[j]}` : `${ids[j]}_${ids[i]}`
+          coOccurrenceMatrix[key] = (coOccurrenceMatrix[key] || 0) + 1
+        }
+      }
+    }
+    Object.keys(candidatePickFrequency).forEach(id => {
+      candidatePickFrequency[id] = totalSubmissions > 0 ? candidatePickFrequency[id] / totalSubmissions : 0
+    })
+    Object.keys(coOccurrenceMatrix).forEach(key => {
+      coOccurrenceMatrix[key] = totalSubmissions > 0 ? coOccurrenceMatrix[key] / totalSubmissions : 0
+    })
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, ballotId: result.lastInsertRowid?.toString() }),
+      body: JSON.stringify({
+        success: true,
+        ballotId: result.lastInsertRowid?.toString(),
+        analytics: { candidatePickFrequency, coOccurrenceMatrix, totalSubmissions },
+      }),
     }
   } catch (error) {
     console.error('Submission error:', error)
