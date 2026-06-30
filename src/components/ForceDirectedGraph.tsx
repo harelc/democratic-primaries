@@ -139,8 +139,10 @@ export default function ForceDirectedGraph({
       .attr('fill', (d: any) => selectedIds.has(d.id)
         ? getGroupColorDark(d.candidate.group)
         : getGroupColor(d.candidate.group))
-      .attr('stroke', (d: any) => selectedIds.has(d.id) ? '#0c3b66' : '#a5b4fc')
-      .attr('stroke-width', (d: any) => selectedIds.has(d.id) ? 3 : 2)
+      .attr('stroke', (d: any) => selectedIds.has(d.id)
+        ? getGroupColorDark(d.candidate.group)
+        : getGroupColor(d.candidate.group))
+      .attr('stroke-width', (d: any) => selectedIds.has(d.id) ? 4 : 3)
       .attr('opacity', 1)
       .style('cursor', 'default')
       .on('mouseenter', (event: any, d: any) => {
