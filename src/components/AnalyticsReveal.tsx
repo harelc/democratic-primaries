@@ -621,10 +621,14 @@ export default function AnalyticsReveal({
                       </div>
                       <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
                     </div>
-                    {/* דומים: top-2 cosine similar candidates */}
+                    {/* דומים: top-3 cosine similar candidates */}
                     {snaData && allCandidates && (
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        {(snaData.cosineSimTop3[candidate.id] ?? []).slice(0, 2).map(simId => {
+                      <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
+                        <span className="text-xs text-slate-400">
+                          <Tooltip term="דומים">מועמדים עם פרופיל co-occurrence דומה — נבחרים יחד עם אותם מועמדים אחרים (cosine similarity בין וקטורי co-occurrence).</Tooltip>
+                        </span>
+                        <div className="flex items-center gap-1">
+                        {(snaData.cosineSimTop3[candidate.id] ?? []).slice(0, 3).map(simId => {
                           const simC = allCandidates.find(x => x.id === simId)
                           if (!simC) return null
                           return (
@@ -640,6 +644,7 @@ export default function AnalyticsReveal({
                             </div>
                           )
                         })}
+                        </div>
                       </div>
                     )}
                   </div>
