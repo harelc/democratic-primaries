@@ -23,10 +23,10 @@ const handler: Handler = async (event) => {
   )
 
   const ballots = result.rows.map(row => ({
-    id: row.id,
+    id: row.id?.toString(),
     selectedCandidates: JSON.parse(row.selected_candidates as string),
     timeToComplete: row.time_to_complete,
-    ipHash: (row.ip_hash as string)?.slice(0, 12) + '…', // truncate for display
+    ipHash: (row.ip_hash as string)?.slice(0, 12) + '…',
     createdAt: row.created_at,
   }))
 
