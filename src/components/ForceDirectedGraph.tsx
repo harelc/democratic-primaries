@@ -95,7 +95,13 @@ export default function ForceDirectedGraph({
       .data(edges)
       .join('line')
       .attr('stroke', '#64748b')
-      .attr('stroke-width', (d: any) => Math.max(2, Math.sqrt(d.value) * 3))
+      .attr('stroke-width', (d: any) => {
+        const minVal = Math.min(...edges.map((e: any) => e.value))
+        const maxVal = Math.max(...edges.map((e: any) => e.value))
+        const range = maxVal - minVal || 1
+        const normalized = (d.value - minVal) / range  // 0–1 relative to actual range
+        return 1 + normalized * 5  // 1px to 6px
+      })
       .attr('opacity', 0.6)
       .attr('x1', 0)
       .attr('y1', 0)
