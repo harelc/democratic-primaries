@@ -51,7 +51,7 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'log'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'log'>('picks')
   const [ballotLog, setBallotLog] = useState<any[]>([])
 
   useEffect(() => {
@@ -161,6 +161,16 @@ export default function AnalyticsReveal({
             }`}
           >
             גרף מועמדים
+          </button>
+          <button
+            onClick={() => setActiveTab('leaderboard')}
+            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'leaderboard'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            לוח מובילים
           </button>
           {adminMode && (
             <button
@@ -313,9 +323,16 @@ export default function AnalyticsReveal({
               <div className="md:w-48 bg-blue-50 border border-blue-200 rounded-lg p-3 flex-shrink-0">
                 <h3 className="font-bold text-blue-900 mb-2 text-xs">📊 מקרא</h3>
                 <div className="flex flex-row md:flex-col flex-wrap gap-x-4 gap-y-1 text-xs text-blue-800">
-                  <div><span className="font-semibold">🔵 גודל</span> — פופולריות</div>
+                  <div><span className="font-semibold">גודל</span> — פופולריות</div>
                   <div><span className="font-semibold">🔗 קו</span> — נבחרו ביחד</div>
                   <div><span className="font-semibold">✓</span> — בחרת</div>
+                  <div className="mt-2 pt-2 border-t border-blue-200 w-full hidden md:block">
+                    <div className="font-semibold mb-1">קבוצות:</div>
+                    <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#3b82f6' }} />אחר</div>
+                    <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#dc2626' }} />מרצ</div>
+                    <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#16a34a' }} />כפרי</div>
+                    <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#9333ea' }} />מיעוטים</div>
+                  </div>
                   <div className="text-blue-600 text-xs mt-1 hidden md:block">גרור · זום · לחץ</div>
                 </div>
               </div>
@@ -330,6 +347,61 @@ export default function AnalyticsReveal({
                 />
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'leaderboard' && allCandidates && (
+          <div className="space-y-2">
+            {[...allCandidates]
+              .sort((a, b) => {
+                const fa = analytics.candidatePickFrequency[a.id] || 0
+                const fb = analytics.candidatePickFrequency[b.id] || 0
+                return fb - fa
+              })
+              .map((candidate, index) => {
+                const frequency = analytics.candidatePickFrequency[candidate.id] || 0
+                const percentage = Math.round(frequency * 100)
+                const group = candidate.group || null
+
+                const getGroupStyle = (g: string | null) => {
+                  if (!g) return { pill: 'bg-blue-100 text-blue-800', bar: 'bg-blue-500' }
+                  if (g.includes('מרצ')) return { pill: 'bg-red-100 text-red-800', bar: 'bg-red-500' }
+                  if (g.includes('כפרי')) return { pill: 'bg-green-100 text-green-800', bar: 'bg-green-500' }
+                  if (g.includes('מיעוטים')) return { pill: 'bg-purple-100 text-purple-800', bar: 'bg-purple-500' }
+                  return { pill: 'bg-blue-100 text-blue-800', bar: 'bg-blue-500' }
+                }
+
+                const { pill: pillClass, bar: barClass } = getGroupStyle(group)
+
+                return (
+                  <div
+                    key={candidate.id}
+                    className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <span className="text-slate-400 font-mono text-sm w-6 text-right flex-shrink-0">{index + 1}</span>
+                    <img
+                      src={candidate.photoUrl}
+                      alt={candidate.name}
+                      className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                    />
+                    <span className="font-medium text-sm flex-1 min-w-0 truncate">{candidate.name}</span>
+                    {group && (
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 ${pillClass}`}>
+                        {group}
+                      </span>
+                    )}
+                    <div className="flex items-center gap-2 flex-shrink-0 w-32">
+                      <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                        <div
+                          className={`h-2 rounded-full ${barClass}`}
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
+                    </div>
+                  </div>
+                )
+              })}
           </div>
         )}
 
@@ -475,10 +547,19 @@ export default function AnalyticsReveal({
         </div>
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
           <h3 className="font-bold text-lg mb-2">ייחודיות הצבעתך</h3>
-          <p className="text-2xl font-bold text-purple-600">
-            {Math.round(Math.random() * 100)}%
-          </p>
-          <p className="text-sm text-purple-700 mt-1">יותר ייחודית מהממוצע</p>
+          {(() => {
+            const avgFreq = selectedCandidates.length > 0
+              ? selectedCandidates.reduce((sum, c) => sum + (analytics.candidatePickFrequency[c.id] || 0), 0) / selectedCandidates.length
+              : 0
+            const uniquenessScore = Math.round((1 - avgFreq) * 100)
+            const label = uniquenessScore > 70 ? 'ייחודית מאוד' : uniquenessScore >= 40 ? 'בינונית' : 'פופולרית'
+            return (
+              <>
+                <p className="text-2xl font-bold text-purple-600">{uniquenessScore}%</p>
+                <p className="text-sm text-purple-700 mt-1">{label}</p>
+              </>
+            )
+          })()}
         </div>
       </div>
     </div>

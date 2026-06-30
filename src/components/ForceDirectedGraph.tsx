@@ -116,10 +116,29 @@ export default function ForceDirectedGraph({
       .join('g')
       .attr('class', 'node')
 
+    // Group color helper
+    const getGroupColor = (group: string | null | undefined): string => {
+      if (!group) return '#3b82f6'
+      if (group.includes('מרצ')) return '#dc2626'
+      if (group.includes('כפרי')) return '#16a34a'
+      if (group.includes('מיעוטים')) return '#9333ea'
+      return '#3b82f6'
+    }
+
+    const getGroupColorDark = (group: string | null | undefined): string => {
+      if (!group) return '#1d4ed8'
+      if (group.includes('מרצ')) return '#991b1b'
+      if (group.includes('כפרי')) return '#15803d'
+      if (group.includes('מיעוטים')) return '#7e22ce'
+      return '#1d4ed8'
+    }
+
     // Node circles
     nodeGroups.append('circle')
       .attr('r', (d: any) => d.size)
-      .attr('fill', (d: any) => selectedIds.has(d.id) ? '#1e40af' : '#e0e7ff')
+      .attr('fill', (d: any) => selectedIds.has(d.id)
+        ? getGroupColorDark(d.candidate.group)
+        : getGroupColor(d.candidate.group))
       .attr('stroke', (d: any) => selectedIds.has(d.id) ? '#0c3b66' : '#a5b4fc')
       .attr('stroke-width', (d: any) => selectedIds.has(d.id) ? 3 : 2)
       .attr('opacity', 1)
@@ -166,6 +185,17 @@ export default function ForceDirectedGraph({
       .attr('pointer-events', 'none')
       .style('text-shadow', '0 0 2px #2563eb')
       .text('✓')
+
+    // Name label (shown on hover)
+    nodeGroups.append('text')
+      .attr('class', 'node-label')
+      .attr('text-anchor', 'middle')
+      .attr('dy', (d: any) => d.size + 22)
+      .attr('font-size', '11px')
+      .attr('fill', '#1e293b')
+      .attr('pointer-events', 'none')
+      .attr('opacity', 0)
+      .text((d: any) => d.candidate.name)
 
     // Tooltip with vote count
     nodeGroups.append('title')
@@ -238,6 +268,8 @@ export default function ForceDirectedGraph({
     if (!svgRef.current) return
     d3.select(svgRef.current).selectAll('circle')
       .attr('opacity', (d: any) => hoveredId === null || hoveredId === d.id ? 1 : 0.4)
+    d3.select(svgRef.current).selectAll('.node-label')
+      .attr('opacity', (d: any) => hoveredId !== null && hoveredId === d.id ? 1 : 0)
   }, [hoveredId])
 
   if (!analytics) {
