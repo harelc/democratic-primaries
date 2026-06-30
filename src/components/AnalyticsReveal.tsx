@@ -176,7 +176,6 @@ export default function AnalyticsReveal({
               {analytics?.totalSubmissions ? `${analytics.totalSubmissions.toLocaleString('he-IL')} הצבעות נרשמו עד כה` : 'טוען נתונים...'}
             </p>
           </div>
-          <ShareButton candidates={selectedCandidates} />
         </div>
         {adminMode && (
           <div className="mt-3 pt-3 border-t border-blue-400 text-xs text-blue-200">
@@ -184,6 +183,17 @@ export default function AnalyticsReveal({
           </div>
         )}
       </div>
+
+      {/* Share CTA */}
+      {!adminMode && selectedCandidates.length > 0 && (
+        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <p className="font-semibold text-slate-800 text-sm">רוצים להשפיע על התוצאות?</p>
+            <p className="text-slate-500 text-xs mt-0.5">שתפו את הרשימה שלכם עם חברים — ככל שיותר אנשים יצביעו, כך הניתוח יהיה משמעותי יותר</p>
+          </div>
+          <ShareButton candidates={selectedCandidates} />
+        </div>
+      )}
 
       <div>
         <div className="flex gap-1 mb-6 bg-slate-100 rounded-xl p-1 overflow-x-auto">

@@ -299,26 +299,27 @@ export default function App() {
               <div className="text-sm text-slate-600">
                 <span className="font-semibold text-slate-900">{selectedCount}</span> / {MAX_CANDIDATES}-{MIN_CANDIDATES}
               </div>
-              {hasVotedBefore && !adminMode && (
+              {hasVotedBefore && !adminMode ? (
                 <button
                   onClick={handleViewAdminAnalytics}
                   disabled={loading}
-                  className="text-xs text-blue-500 hover:text-blue-700 transition-colors"
+                  className="px-6 py-3 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all"
                 >
-                  {loading ? '...' : 'כבר הצבעת — צפה בתוצאות'}
+                  {loading ? '...' : '📊 צפה בתוצאות'}
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={!isValid}
+                  className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                    isValid
+                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl'
+                      : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  }`}
+                >
+                  הצבע
                 </button>
               )}
-              <button
-                onClick={handleSubmit}
-                disabled={!isValid}
-                className={`px-6 py-3 rounded-lg font-semibold transition-all ${
-                  isValid
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl'
-                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                }`}
-              >
-                הצבע
-              </button>
             </div>
           </>
         )}
