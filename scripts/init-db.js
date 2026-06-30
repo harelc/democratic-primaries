@@ -21,8 +21,17 @@ async function initDb() {
       )
     `)
 
+    await client.execute(`
+      CREATE TABLE IF NOT EXISTS vote_locks (
+        ip_hash TEXT NOT NULL,
+        vote_date TEXT NOT NULL,
+        PRIMARY KEY (ip_hash, vote_date)
+      )
+    `)
+
     console.log('✓ Database schema initialized successfully')
     console.log('  - Created ballots table')
+    console.log('  - Created vote_locks table')
   } catch (error) {
     console.error('✗ Failed to initialize database:', error)
     process.exit(1)

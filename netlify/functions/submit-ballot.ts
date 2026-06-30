@@ -70,13 +70,18 @@ const handler: Handler = async (event, context) => {
       || 'unknown'
     const ipHash = rawIp === 'unknown' ? 'unknown' : hashIp(rawIp)
 
-    // Rate limit: one vote per IP per 24 hours (skip for admin tokens)
+    const candidatesJson = JSON.stringify(body.selectedCandidateIds)
+
     if (!isAdminToken) {
-      const existing = await client.execute({
-        sql: `SELECT id FROM ballots WHERE ip_hash = ? AND created_at > datetime('now', '-24 hours') LIMIT 1`,
-        args: [ipHash],
-      })
-      if (existing.rows.length > 0) {
+      // Atomic rate limit: unique constraint on (ip_hash, vote_date) prevents concurrent dupes
+      const voteDate = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
+      try {
+        await client.execute({
+          sql: `INSERT INTO vote_locks (ip_hash, vote_date) VALUES (?, ?)`,
+          args: [ipHash, voteDate],
+        })
+      } catch {
+        // UNIQUE constraint violation = already voted today
         return {
           statusCode: 429,
           body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }),
@@ -84,7 +89,6 @@ const handler: Handler = async (event, context) => {
       }
     }
 
-    const candidatesJson = JSON.stringify(body.selectedCandidateIds)
     const result = await client.execute({
       sql: `INSERT INTO ballots (selected_candidates, time_to_complete, ip_hash, created_at)
             VALUES (?, ?, ?, datetime('now'))`,
