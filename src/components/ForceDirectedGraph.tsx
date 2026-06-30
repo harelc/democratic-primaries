@@ -144,7 +144,9 @@ export default function ForceDirectedGraph({
       .attr('pointer-events', 'none')
       .text((d: any) => {
         const freq = analytics.candidatePickFrequency[d.id]
-        return freq ? `${Math.round(freq * 100)}%` : ''
+        if (!freq) return ''
+        const pct = Math.round(freq * 100)
+        return pct > 0 ? `${pct}%` : ''
       })
 
     // Checkmark for selected (only shown when selected)
