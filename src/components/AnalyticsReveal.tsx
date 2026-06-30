@@ -766,7 +766,7 @@ export default function AnalyticsReveal({
                       <th className="px-4 py-2 text-right font-semibold w-40">Eigenvector (יוקרה)</th>
                       <th className="px-4 py-2 text-right font-semibold w-40">
                         <Tooltip term="PageRank">
-                          הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם מי מצביע איתו.
+                          הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם למי מצביעים ביחד איתו.
                         </Tooltip>
                       </th>
                       <th className="px-4 py-2 text-right font-semibold w-40">Degree (קשרים)</th>
