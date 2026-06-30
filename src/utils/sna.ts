@@ -120,15 +120,25 @@ export function computeSNA(
     if (!(candidate.id in result.communities)) result.communities[candidate.id] = 0
   }
 
-  // Build stable display index: raw Louvain IDs → sequential 0,1,2...
-  // singletons (all members isolated) are excluded → display index -1
-  const rawIds = Array.from(new Set(Object.values(result.communities))).sort()
+  // Build stable display index sorted by community size desc, then min candidateId as tiebreaker.
+  // Largest community = 0, second largest = 1, etc. Singletons = -1.
+  // This means even if Louvain reshuffles raw IDs, the biggest community keeps blue, etc.
+  const rawIds = Array.from(new Set(Object.values(result.communities)))
+  const communityMeta = rawIds.map(rawId => {
+    const members = candidates.filter(c => result.communities[c.id] === rawId)
+    const connectedSize = members.filter(c => (result.weightedDegree[c.id] ?? 0) > 0).length
+    const minId = members.map(c => c.id).sort()[0] ?? ''
+    return { rawId, connectedSize, minId }
+  })
+  communityMeta.sort((a, b) =>
+    b.connectedSize !== a.connectedSize
+      ? b.connectedSize - a.connectedSize
+      : a.minId < b.minId ? -1 : 1
+  )
   let displayIdx = 0
   const rawToDisplay: Record<number, number> = {}
-  for (const rawId of rawIds) {
-    const members = candidates.filter(c => result.communities[c.id] === rawId)
-    const hasEdges = members.some(c => (result.weightedDegree[c.id] ?? 0) > 0)
-    if (hasEdges) rawToDisplay[rawId] = displayIdx++
+  for (const { rawId, connectedSize } of communityMeta) {
+    if (connectedSize > 0) rawToDisplay[rawId] = displayIdx++
   }
   for (const candidate of candidates) {
     const rawId = result.communities[candidate.id]
