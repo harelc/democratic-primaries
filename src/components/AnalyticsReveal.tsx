@@ -532,27 +532,53 @@ export default function AnalyticsReveal({
               <h3 className="font-bold text-slate-800 mb-3 text-base">קהילות הצבעה</h3>
               <p className="text-xs text-slate-500 mb-4">קהילות שזוהו על ידי אלגוריתם Louvain — מועמדים שנבחרים ביחד בתדירות גבוהה</p>
               <div className="flex flex-wrap gap-4">
-                {Array.from(new Set(Object.values(snaData.communities))).sort().map(communityId => {
-                  const color = getCommunityColor(communityId)
-                  const members = allCandidates.filter(c => snaData.communities[c.id] === communityId)
-                  return (
-                    <div key={communityId} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                        <span className="font-semibold text-sm" style={{ color }}>קהילה {communityId + 1}</span>
-                        <span className="text-xs text-slate-400">({members.length} מועמדים)</span>
+                {(() => {
+                  const allIds = Array.from(new Set(Object.values(snaData.communities))).sort()
+                  const singletons: Candidate[] = []
+                  let communityIdx = 0
+                  const blocks = allIds.map(communityId => {
+                    const members = allCandidates.filter(c => snaData.communities[c.id] === communityId)
+                    if (members.length < 2) { singletons.push(...members); return null }
+                    const color = getCommunityColor(communityIdx++)
+                    return (
+                      <div key={communityId} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
+                          <span className="font-semibold text-sm" style={{ color }}>קהילה {communityIdx}</span>
+                          <span className="text-xs text-slate-400">({members.length} מועמדים)</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {members.map(c => (
+                            <div key={c.id} className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 text-xs shadow-sm border border-slate-100">
+                              <img src={c.photoUrl} alt={c.name} className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+                              <span className="text-slate-700">{c.name}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {members.map(c => (
-                          <div key={c.id} className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 text-xs shadow-sm border border-slate-100">
-                            <img src={c.photoUrl} alt={c.name} className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
-                            <span className="text-slate-700">{c.name}</span>
-                          </div>
-                        ))}
+                    )
+                  }).filter(Boolean)
+                  if (singletons.length > 0) {
+                    blocks.push(
+                      <div key="singletons" className="flex-1 min-w-[180px] rounded-xl border-2 p-3 border-slate-200 bg-slate-50">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 bg-slate-400" />
+                          <span className="font-semibold text-sm text-slate-500">ללא קהילה</span>
+                          <span className="text-xs text-slate-400">({singletons.length} מועמדים)</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {singletons.map(c => (
+                            <div key={c.id} className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 text-xs shadow-sm border border-slate-100">
+                              <img src={c.photoUrl} alt={c.name} className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+                              <span className="text-slate-700">{c.name}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
+                    )
+                  }
+                  return blocks
+                })()}
               </div>
             </div>
 
