@@ -52,7 +52,8 @@ export default function ForceDirectedGraph({
     // Create edges using candidate IDs (not array indices)
     const edges: any[] = []
     const coOccValues = Object.values(analytics.coOccurrenceMatrix).filter(v => typeof v === 'number') as number[]
-    const threshold = coOccValues.length > 0 ? d3.quantile(coOccValues, 0.3) || 0.3 : 0.3
+    // Use a low threshold so edges show even with few submissions; fall back to 0 if no data
+    const threshold = coOccValues.length > 0 ? (d3.quantile(coOccValues.sort(d3.ascending), 0.1) ?? 0) : 0
 
     for (let i = 0; i < candidates.length; i++) {
       for (let j = i + 1; j < candidates.length; j++) {
@@ -60,7 +61,7 @@ export default function ForceDirectedGraph({
         const key2 = `${candidates[j].id}_${candidates[i].id}`
         const coOcc = analytics.coOccurrenceMatrix[key] || analytics.coOccurrenceMatrix[key2] || 0
 
-        if (coOcc > threshold) {
+        if (coOcc >= threshold && coOcc > 0) {
           edges.push({
             source: candidates[i].id,
             target: candidates[j].id,
