@@ -90,70 +90,64 @@ export default function AnalyticsReveal({
   }
 
   return (
-    <div className="space-y-8">
-      {adminMode && (
-        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4">
-          <h3 className="font-bold text-yellow-900 mb-2">🔧 Admin Panel</h3>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => {
-                localStorage.removeItem('admin_authenticated')
-                window.location.reload()
-              }}
-              className="px-3 py-1 bg-gray-600 text-white rounded text-sm hover:bg-gray-700"
-            >
-              Exit Admin
-            </button>
-            <span className="text-xs text-yellow-800 self-center">
-              Selected: {selectedCandidates.length} | Total submissions: {analytics?.totalSubmissions}
-            </span>
-          </div>
-        </div>
-      )}
+    <div className="max-w-6xl mx-auto space-y-6">
 
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold">ניתוח הצבעתך</h2>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-700 to-blue-500 rounded-2xl p-6 text-white shadow-lg">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h2 className="text-2xl font-bold mb-1">ניתוח הצבעתך</h2>
+            <p className="text-blue-200 text-sm">
+              {analytics?.totalSubmissions ? `${analytics.totalSubmissions.toLocaleString('he-IL')} הצבעות נרשמו עד כה` : 'טוען נתונים...'}
+            </p>
+          </div>
           <ShareButton candidates={selectedCandidates} />
         </div>
+        {adminMode && (
+          <div className="mt-3 pt-3 border-t border-blue-400 text-xs text-blue-200">
+            ADMIN · {selectedCandidates.length} נבחרו
+          </div>
+        )}
+      </div>
 
-        <div className="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto">
+      <div>
+        <div className="flex gap-1 mb-6 bg-slate-100 rounded-xl p-1 overflow-x-auto">
           <button
             onClick={() => setActiveTab('picks')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'picks'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             הבחירות שלך
           </button>
           <button
             onClick={() => setActiveTab('cooccurrence')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'cooccurrence'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             השילובים שלך
           </button>
           <button
             onClick={() => setActiveTab('fullmatrix')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'fullmatrix'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             מטריצה מלאה (51×51)
           </button>
           <button
             onClick={() => setActiveTab('graph')}
-            className={`px-4 py-2 font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'graph'
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             גרף מועמדים
@@ -171,7 +165,7 @@ export default function AnalyticsReveal({
               return (
                 <div
                   key={candidate.id}
-                  className="flex gap-3 items-start p-3 bg-white border border-slate-200 rounded"
+                  className="flex gap-3 items-start p-4 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md transition-shadow"
                 >
                   <img
                     src={candidate.photoUrl}
