@@ -181,6 +181,7 @@ export default function AnalyticsReveal({
   const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'sna' | 'log'>('picks')
   const [ballotLog, setBallotLog] = useState<any[]>([])
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
+  const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
 
   const snaData = useMemo(() => {
     if (!analytics || !allCandidates || allCandidates.length === 0) return null
@@ -702,36 +703,52 @@ export default function AnalyticsReveal({
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-slate-100">
                 <h3 className="font-bold text-slate-800 text-base">מדדי רשת לפי מועמד</h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  ממויין לפי <Tooltip term="eigenvector centrality">
-                    פתרון Ax = λx כאשר A מטריצת הסמיכות המשוקללת (co-occurrence), λ הערך העצמי הדומיננטי. ציון המועמד i הוא xᵢ = (1/λ)Σⱼ∈N(i) xⱼ — ממוצע ציוני שכניו. נמצא בכוח חזרה (power iteration). גבוה = נבחר עם מועמדים שגם הם נבחרים עם מועמדים מרכזיים.
-                  </Tooltip> — מי נמצא במרכז הרשת
-                </p>
+                <p className="text-xs text-slate-500 mt-0.5">לחצו על כותרת עמודה למיון</p>
               </div>
               <div className="overflow-auto">
+                {(() => {
+                  const SortTh = ({ col, label, className }: { col: typeof snaSort, label: React.ReactNode, className?: string }) => (
+                    <th
+                      className={`px-4 py-2 text-right font-semibold cursor-pointer select-none hover:bg-slate-100 transition-colors ${snaSort === col ? 'text-blue-600 bg-slate-100' : ''} ${className ?? ''}`}
+                      onClick={() => setSnaSort(col)}
+                    >
+                      {label} {snaSort === col ? '↓' : ''}
+                    </th>
+                  )
+                  const sortedCandidates = [...allCandidates].sort((a, b) => {
+                    if (snaSort === 'votes') return (analytics.candidatePickFrequency[b.id] ?? 0) - (analytics.candidatePickFrequency[a.id] ?? 0)
+                    if (snaSort === 'pagerank') return (snaData.pagerank[b.id] ?? 0) - (snaData.pagerank[a.id] ?? 0)
+                    if (snaSort === 'degree') return (snaData.degree[b.id] ?? 0) - (snaData.degree[a.id] ?? 0)
+                    return (snaData.eigenvector[b.id] ?? 0) - (snaData.eigenvector[a.id] ?? 0)
+                  })
+                  return (
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500">
                     <tr>
                       <th className="px-4 py-2 text-right font-semibold">מועמד</th>
-                      <th className="px-4 py-2 text-right font-semibold w-40">Eigenvector (יוקרה)</th>
-                      <th className="px-4 py-2 text-right font-semibold w-40">
-                        <Tooltip term="PageRank">
-                          הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם למי מצביעים ביחד איתו.
-                        </Tooltip>
-                      </th>
-                      <th className="px-4 py-2 text-right font-semibold w-40">Degree (קשרים)</th>
+                      <SortTh col="votes" label="% הצבעות" className="w-32" />
+                      <SortTh col="eigenvector" label={<Tooltip term="Eigenvector">פתרון Ax = λx כאשר A מטריצת הסמיכות המשוקללת, λ הערך העצמי הדומיננטי. xᵢ = (1/λ)Σⱼ∈N(i) xⱼ. גבוה = נבחר עם מועמדים מרכזיים.</Tooltip>} className="w-36" />
+                      <SortTh col="pagerank" label={<Tooltip term="PageRank">הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם למי מצביעים ביחד איתו.</Tooltip>} className="w-36" />
+                      <SortTh col="degree" label="Degree" className="w-32" />
                       <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[...allCandidates]
-                      .sort((a, b) => (snaData.eigenvector[b.id] ?? 0) - (snaData.eigenvector[a.id] ?? 0))
-                      .map(candidate => {
+                    {sortedCandidates.map(candidate => {
+                        const votes = analytics.candidatePickFrequency[candidate.id] ?? 0
                         const bt = snaData.eigenvector[candidate.id] ?? 0
                         const pr = snaData.pagerank[candidate.id] ?? 0
                         const dg = snaData.degree[candidate.id] ?? 0
                         const communityId = snaData.communityDisplayIndex[candidate.id] ?? -1
                         const color = getCommunityColor(communityId)
+                        const Bar = ({ val, color: c }: { val: number, color: string }) => (
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                              <div className="h-2 rounded-full" style={{ width: `${Math.round(val * 100)}%`, background: c }} />
+                            </div>
+                            <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(val * 100)}%</span>
+                          </div>
+                        )
                         return (
                           <tr key={candidate.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                             <td className="px-4 py-2">
@@ -740,30 +757,10 @@ export default function AnalyticsReveal({
                                 <span className="font-medium text-slate-800 text-xs">{candidate.name}</span>
                               </div>
                             </td>
-                            <td className="px-4 py-2">
-                              <div className="flex items-center gap-2">
-                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
-                                  <div className="h-2 rounded-full bg-amber-500" style={{ width: `${Math.round(bt * 100)}%` }} />
-                                </div>
-                                <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(bt * 100)}%</span>
-                              </div>
-                            </td>
-                            <td className="px-4 py-2">
-                              <div className="flex items-center gap-2">
-                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
-                                  <div className="h-2 rounded-full bg-violet-500" style={{ width: `${Math.round(pr * 100)}%` }} />
-                                </div>
-                                <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(pr * 100)}%</span>
-                              </div>
-                            </td>
-                            <td className="px-4 py-2">
-                              <div className="flex items-center gap-2">
-                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
-                                  <div className="h-2 rounded-full bg-blue-500" style={{ width: `${Math.round(dg * 100)}%` }} />
-                                </div>
-                                <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(dg * 100)}%</span>
-                              </div>
-                            </td>
+                            <td className="px-4 py-2"><Bar val={votes} color="#0ea5e9" /></td>
+                            <td className="px-4 py-2"><Bar val={bt} color="#f59e0b" /></td>
+                            <td className="px-4 py-2"><Bar val={pr} color="#8b5cf6" /></td>
+                            <td className="px-4 py-2"><Bar val={dg} color="#3b82f6" /></td>
                             <td className="px-4 py-2">
                               <div className="flex items-center gap-1.5">
                                 <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
@@ -775,6 +772,8 @@ export default function AnalyticsReveal({
                       })}
                   </tbody>
                 </table>
+                  )
+                })()}
               </div>
             </div>
           </div>
