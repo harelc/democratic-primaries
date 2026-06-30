@@ -89,6 +89,16 @@ export default function App() {
     const url = window.location.port === '5173'
       ? 'http://localhost:8888/.netlify/functions/analytics'
       : '/.netlify/functions/analytics'
+
+    // Restore previously voted candidates for returning voters
+    const storedVote = localStorage.getItem('voted_candidates')
+    if (storedVote) {
+      try {
+        const ids = JSON.parse(storedVote) as string[]
+        setSelectedIds(new Set(ids))
+      } catch {}
+    }
+
     fetch(url)
       .then(r => r.json())
       .then(data => {
@@ -199,6 +209,7 @@ export default function App() {
 
       // Remember that this user voted on this device
       localStorage.setItem('has_voted', 'true')
+      localStorage.setItem('voted_candidates', JSON.stringify(selectedArray))
 
       setPhase('analytics')
     } catch (error) {
