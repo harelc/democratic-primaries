@@ -17,6 +17,11 @@ export default function CandidateModal({ candidate, onClose }: CandidateModalPro
         <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-500 text-white p-6 flex justify-between items-start gap-4">
           <div className="flex-1">
             <h2 className="text-2xl font-bold">{candidate.name}</h2>
+            {candidate.group && (
+              <p className="text-blue-200 text-sm mt-1">
+                קבוצת ייצוג: {candidate.group}
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}

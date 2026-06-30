@@ -70,6 +70,13 @@ export default function CandidateGrid({
           <h3 className="font-semibold text-xs text-center line-clamp-1 leading-tight text-slate-900 px-1">
             {candidate.name}
           </h3>
+          {candidate.group && (
+            <span className="text-center block text-xs mt-0.5 px-1">
+              {candidate.group.split(',').map(g => (
+                <span key={g} className="inline-block bg-blue-100 text-blue-700 rounded px-1 text-[10px] mr-0.5">{g.trim()}</span>
+              ))}
+            </span>
+          )}
         </div>
       ))}
     </div>

@@ -11,7 +11,8 @@
       "facebook": "https://www.facebook.com/share/18gPTbAQNS/",
       "instagram": "https://www.instagram.com/inbal_shoham",
       "twitter": "https://x.com/inbalshohamv"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_002",
@@ -22,7 +23,8 @@
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/304975311_%D7%99%D7%95%D7%90%D7%91_%D7%90%D7%92%D7%9E%D7%99_candidatePhoto_20260622_124929_%D7%AA%D7%9E%D7%95%D7%A0%D7%AA_%D7%A4%D7%A8%D7%99%D7%99%D7%9E%D7%A8%D7%99%D7%A1_2.png",
     "socialLinks": {
       "facebook": "https://www.facebook.com/yoav.agami1"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_003",
@@ -37,7 +39,8 @@
       "instagram": "https://www.instagram.com/eran.etzion",
       "twitter": "https://x.com/eranetzion",
       "linkedin": "https://www.linkedin.com/in/eran-ערן-etzion-עציון-2843a822"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_004",
@@ -51,7 +54,8 @@
       "facebook": "https://www.facebook.com/itai.leshem.1",
       "twitter": "https://x.com/Itai_Leshem",
       "linkedin": "https://il.linkedin.com/in/ileshem"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_005",
@@ -66,7 +70,8 @@
       "instagram": "https://www.instagram.com/rotemsivanhoffmann",
       "twitter": "https://x.com/DrRotemSivan",
       "linkedin": "https://www.linkedin.com/in/rotem-sivan-hoffmann-43937639"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_006",
@@ -80,7 +85,8 @@
       "facebook": "https://www.facebook.com/share/1TKMHd3f57",
       "instagram": "https://www.instagram.com/omrironenn",
       "twitter": "https://x.com/omrironen24"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_007",
@@ -94,7 +100,8 @@
       "facebook": "https://www.facebook.com/share/1H7uKkUrTp/",
       "instagram": "https://www.instagram.com/chenarieli?utm_source=qr&igsh=MWNhMGZyY3plc2Zkbg==",
       "twitter": "https://x.com/ArieliChen"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_008",
@@ -105,7 +112,8 @@
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/25974965_%D7%90%D7%9E%D7%99%D7%A8_%D7%97%D7%A0%D7%99%D7%A4%D7%A1_candidatePhoto_20260623_023810_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%90%D7%9E%D7%99%D7%A8_%D7%97%D7%A0%D7%99%D7%A4%D7%A1_.jpeg",
     "socialLinks": {
       "website": "https://www.amirkhnifess.co.il/"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_009",
@@ -119,7 +127,8 @@
       "facebook": "https://www.facebook.com/share/1FsDXBcCPk/?mibextid=wwXIfr",
       "instagram": "https://www.instagram.com/nimrodsheffer_?igsh=MTdqMjg5eDQ1N29sOQ==",
       "twitter": "https://x.com/nimrodsheffer?s=21"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_010",
@@ -128,7 +137,8 @@
     "region": "",
     "background": "",
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/311892749_%D7%90%D7%95%D7%9C%D7%99%D7%91%D7%99%D7%94_%D7%A2%D7%9E%D7%A0%D7%95%D7%90%D7%9C_%D7%93%D7%94_%D7%9C%D7%9D_candidatePhoto_20260624_142532_ViolonPerroquet.jpg",
-    "socialLinks": {}
+    "socialLinks": {},
+    "group": null
   },
   {
     "id": "candidate_011",
@@ -143,7 +153,8 @@
       "instagram": "https://www.instagram.com/yarivop/",
       "twitter": "https://x.com/yarivop",
       "linkedin": "https://il.linkedin.com/in/yariv-oppenheimer-26569167"
-    }
+    },
+    "group": "מרצ"
   },
   {
     "id": "candidate_012",
@@ -157,7 +168,8 @@
       "facebook": "https://www.facebook.com/share/1EQUSba2cB/",
       "instagram": "https://www.instagram.com/dany_elgarat",
       "twitter": "https://x.com/elgarat_dani"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_013",
@@ -172,7 +184,8 @@
       "instagram": "https://www.instagram.com/leehoffmann_agiv",
       "twitter": "https://x.com/leehoffmannagiv",
       "linkedin": "https://www.linkedin.com/in/lee-hoffmann-agiv-8b046b195"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_014",
@@ -184,7 +197,8 @@
     "socialLinks": {
       "facebook": "https://www.facebook.com/share/1EgQ2ieqiq/?mibextid=wwXIfr",
       "instagram": "https://www.instagram.com/ehsankhlaily?igsh=aGxnbGt6dXI1aHRk"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_015",
@@ -197,7 +211,8 @@
       "facebook": "https://www.facebook.com/gaby.lasky",
       "instagram": "https://www.instagram.com/gabylasky/",
       "twitter": "https://x.com/gaby_lasky"
-    }
+    },
+    "group": "מרצ"
   },
   {
     "id": "candidate_016",
@@ -211,7 +226,8 @@
       "facebook": "https://www.facebook.com/DabushMeretz/?locale=he_IL",
       "instagram": "https://www.instagram.com/dabushavi?igsh=N3d4eXNxY3J4aHBw&utm_source=qr",
       "twitter": "https://x.com/avidabush"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_017",
@@ -225,7 +241,8 @@
       "facebook": "https://www.facebook.com/share/18hYap6P3u/",
       "instagram": "https://www.instagram.com/emiliemoatti?igsh=NDZhMDVzNW83MmM5",
       "twitter": "https://x.com/EmilieMoatti"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_018",
@@ -236,7 +253,8 @@
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/37147303_%D7%A2%D7%90%D7%99%D7%93__%D7%91%D7%93%D7%99%D7%A8__candidatePhoto_20260623_002522_PHOTO-2026-06-22-10-52-31_1.jpg",
     "socialLinks": {
       "website": "https://linktr.ee/AaedBader"
-    }
+    },
+    "group": "מיעוטים, מרצ"
   },
   {
     "id": "candidate_019",
@@ -250,7 +268,8 @@
       "facebook": "https://www.facebook.com/share/192VuUoTC1/",
       "instagram": "https://www.instagram.com/naamalazimi",
       "twitter": "https://x.com/naamalazimi?s=20"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_020",
@@ -264,7 +283,8 @@
       "facebook": "https://www.facebook.com/share/1TtRRTHaQG/?mibextid=wwXIfr",
       "instagram": "https://www.instagram.com/efratrayten?utm_source=qr",
       "twitter": "https://x.com/efratrayten1?s=11"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_021",
@@ -277,7 +297,8 @@
       "facebook": "https://www.facebook.com/share/1BHqvwQPiz/",
       "instagram": "https://www.instagram.com/slamna_ghaleb_adv",
       "twitter": "https://x.com/Ghaleb_salamna"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_022",
@@ -291,7 +312,8 @@
       "facebook": "https://www.facebook.com/share/1DAfjkL9gP/",
       "instagram": "https://www.instagram.com/bashirsomaya?igsh=cW5wbjhqazV5NTYx",
       "twitter": "https://x.com/bashsomaya"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_023",
@@ -302,7 +324,8 @@
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/56302227_%D7%9E%D7%90%D7%9C%D7%9B_%D7%91%D7%93%D7%A8_candidatePhoto_20260622_202606_260326.jpg",
     "socialLinks": {
       "facebook": "https://www.facebook.com/share/1H96TWaH4e/"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_024",
@@ -317,7 +340,8 @@
       "instagram": "https://www.instagram.com/eran.nissan/",
       "twitter": "https://x.com/eran_nissan",
       "linkedin": "https://il.linkedin.com/in/eran-nissan-39b863188"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_025",
@@ -330,7 +354,8 @@
       "facebook": "https://www.facebook.com/share/1Gj1oQXsL8/",
       "instagram": "https://www.instagram.com/nedal_massalha",
       "twitter": "https://x.com/nmassalha70106"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_026",
@@ -344,7 +369,8 @@
       "facebook": "https://www.facebook.com/share/17mrvqG6BT/?mibextid=wwXIfr",
       "instagram": "https://www.instagram.com/yayafink/?hl=en",
       "twitter": "https://x.com/yayafink"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_027",
@@ -359,7 +385,8 @@
       "instagram": "https://www.instagram.com/radmanmoshe/",
       "twitter": "https://x.com/RadmanMoshe",
       "linkedin": "https://www.linkedin.com/in/moshe-radman-abutbul-משה-רדמן-אבוטבול-🇮🇱-8a628260/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_028",
@@ -371,7 +398,8 @@
     "socialLinks": {
       "facebook": "https://www.facebook.com/evyatar.najimov/",
       "instagram": "https://www.instagram.com/evyatarbeer"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_029",
@@ -385,7 +413,8 @@
       "facebook": "https://www.facebook.com/mehereta1/",
       "instagram": "https://www.instagram.com/mehereta.baruch.ron/",
       "linkedin": "https://www.linkedin.com/in/mehereta-baruch-ron-71bb4525a/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_030",
@@ -399,7 +428,8 @@
       "facebook": "https://www.facebook.com/YairRubinstein26%20",
       "instagram": "https://www.instagram.com/yair.rubinstein/",
       "twitter": "https://x.com/YairRubinstein"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_031",
@@ -414,7 +444,8 @@
       "instagram": "https://www.instagram.com/inbar.bezek/",
       "twitter": "https://x.com/InbarBezek",
       "linkedin": "https://il.linkedin.com/in/inbarbezek"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_032",
@@ -428,7 +459,8 @@
       "facebook": "https://www.facebook.com/ali4meretz",
       "instagram": "https://www.instagram.com/alidemocrats/",
       "twitter": "https://x.com/AliSalalha"
-    }
+    },
+    "group": "מיעוטים, מרצ"
   },
   {
     "id": "candidate_033",
@@ -443,7 +475,8 @@
       "instagram": "https://www.instagram.com/naornarkis/",
       "twitter": "https://x.com/NaorNarkis",
       "linkedin": "https://www.linkedin.com/in/naornarkis/"
-    }
+    },
+    "group": "מרצ"
   },
   {
     "id": "candidate_034",
@@ -458,7 +491,8 @@
       "instagram": "https://www.instagram.com/moranzer/",
       "twitter": "https://x.com/zermoran",
       "linkedin": "https://www.linkedin.com/in/moran-zer-katzenstein-90b62a18"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_035",
@@ -472,7 +506,8 @@
       "facebook": "https://www.facebook.com/share/1JDMxaxerW/",
       "instagram": "https://www.instagram.com/dima.shapira.9",
       "twitter": "https://x.com/ShapiraDima"
-    }
+    },
+    "group": "מרצ"
   },
   {
     "id": "candidate_036",
@@ -483,7 +518,8 @@
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/10950665_%D7%99%D7%A8%D7%95%D7%9F_%D7%A0%D7%99%D7%91_candidatePhoto_20260622_171528_%D7%AA%D7%9E%D7%95%D7%A0%D7%94_%D7%99%D7%A8%D7%95%D7%9F_%D7%A0%D7%99%D7%91_edited.jpg",
     "socialLinks": {
       "facebook": "https://www.facebook.com/yaron.niv"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_037",
@@ -498,7 +534,8 @@
       "instagram": "https://www.instagram.com/yael_cohen_paran/",
       "twitter": "https://x.com/YaelCohenParan",
       "linkedin": "https://www.linkedin.com/in/yael-cohen-paran/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_038",
@@ -511,7 +548,8 @@
       "facebook": "https://www.facebook.com/MossiRaz",
       "instagram": "https://www.instagram.com/mossi_raz",
       "twitter": "https://x.com/mossi_raz"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_039",
@@ -526,7 +564,8 @@
       "instagram": "https://www.instagram.com/kati_piasecki?igsh=MXY4OHY0a3JxcDhzZA==",
       "twitter": "https://x.com/Kati_Piasecki",
       "linkedin": "https://www.linkedin.com/in/kati-piasecki-72b930119/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_040",
@@ -538,7 +577,8 @@
     "socialLinks": {
       "website": "https://he.wikipedia.org/wiki/%D7%90%D7%9C%D7%99%D7%A1_%D7%92%D7%95%D7%9C%D7%93%D7%9E%D7%9F",
       "facebook": "https://www.facebook.com/elis.goldman"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_041",
@@ -552,7 +592,8 @@
       "facebook": "https://www.facebook.com/share/14fsUJ69C7m/?mibextid=wwXIfr",
       "instagram": "https://www.instagram.com/ramshefa?igsh=dXc4b3JwN2h2OHJj",
       "twitter": "https://x.com/ramshefa"
-    }
+    },
+    "group": "כפרי"
   },
   {
     "id": "candidate_042",
@@ -565,7 +606,8 @@
       "facebook": "https://www.facebook.com/binyamin.minich",
       "instagram": "https://www.instagram.com/bennyminich/",
       "twitter": "https://x.com/bennyminich/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_043",
@@ -576,7 +618,8 @@
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/%D7%90%D7%91%D7%99%D7%A9%D7%99-%D7%9C%D7%99%D7%9B%D7%98%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F.jpeg",
     "socialLinks": {
       "facebook": "https://www.facebook.com/avishai.lichtensztein"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_044",
@@ -591,7 +634,8 @@
       "instagram": "https://www.instagram.com/hadasragolsky/",
       "twitter": "https://x.com/hragolsky?s=21",
       "linkedin": "https://www.linkedin.com/in/hadas-ragolsky-0ab73491/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_045",
@@ -606,7 +650,8 @@
       "instagram": "https://www.instagram.com/israeli_christians",
       "twitter": "https://x.com/ihab_shlayan",
       "linkedin": "https://www.linkedin.com/in/ihab-shlayan-a862654b"
-    }
+    },
+    "group": "מיעוטים"
   },
   {
     "id": "candidate_046",
@@ -620,7 +665,8 @@
       "facebook": "http://facebook.com/michal.rozin",
       "instagram": "http://instagram.com/michal_rozin",
       "twitter": "https://x.com/Michal_Rozin"
-    }
+    },
+    "group": "מרצ"
   },
   {
     "id": "candidate_047",
@@ -635,7 +681,8 @@
       "instagram": "https://www.instagram.com/tomeravital100/",
       "twitter": "https://x.com/TomerAvital1",
       "linkedin": "https://www.linkedin.com/in/tomer-avital-52795315/"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_048",
@@ -649,7 +696,8 @@
       "facebook": "https://www.facebook.com/moran.michel",
       "instagram": "https://www.instagram.com/moranmichel/",
       "twitter": "https://x.com/moranmichel3"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_049",
@@ -663,7 +711,8 @@
       "facebook": "https://www.facebook.com/RabbiGiladKariv",
       "instagram": "https://www.instagram.com/gilad.kariv/",
       "twitter": "https://x.com/KarivGilad?s=20"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_050",
@@ -678,7 +727,8 @@
       "instagram": "https://www.instagram.com/navarozolyo",
       "twitter": "https://x.com/rozolyo",
       "linkedin": "https://www.linkedin.com/in/nava-rozolyo-70abb072"
-    }
+    },
+    "group": null
   },
   {
     "id": "candidate_051",
@@ -691,6 +741,7 @@
       "website": "https://www.gilbeilin.co.il/",
       "facebook": "https://www.facebook.com/GilBeilin?locale=he_IL",
       "instagram": "https://www.instagram.com/gil_beilin?igsh=Nndld2E3dXN3YzJq"
-    }
+    },
+    "group": null
   }
 ]

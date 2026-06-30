@@ -5,6 +5,7 @@ export interface Candidate {
   region: string
   background: string
   photoUrl: string
+  group?: string | null
   socialLinks?: Record<string, string>
 }
 
