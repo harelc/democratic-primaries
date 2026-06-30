@@ -746,7 +746,7 @@ export default function AnalyticsReveal({
                       <SortTh col="degree" label="Degree" className="w-32" />
                       <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
                       <th className="px-4 py-2 text-right font-semibold">
-                        <Tooltip term="דומים (CF)">מועמדים עם פרופיל הצבעה דומה — מצביעים שבחרו את מועמד זה בחרו גם את אלה. חישוב: cosine similarity בין וקטורי ה-co-occurrence (item-item collaborative filtering).</Tooltip>
+                        <Tooltip term="דומים (CF)">מועמדים עם פרופיל co-occurrence דומה — לא בהכרח אלה שנבחרים הכי הרבה ביחד, אלא אלה שנבחרים יחד עם אותם מועמדים אחרים. חישוב: sim(i,j) = (vᵢ·vⱼ)/(‖vᵢ‖·‖vⱼ‖) כאשר vᵢ ∈ ℝ⁵¹ הוא וקטור ה-co-occurrence של מועמד i עם כל שאר המועמדים.</Tooltip>
                       </th>
                     </tr>
                   </thead>
