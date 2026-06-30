@@ -650,23 +650,23 @@ export default function AnalyticsReveal({
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-slate-100">
                 <h3 className="font-bold text-slate-800 text-base">מדדי רשת לפי מועמד</h3>
-                <p className="text-xs text-slate-500 mt-0.5">ממויין לפי betweenness — מי מחבר בין קהילות</p>
+                <p className="text-xs text-slate-500 mt-0.5">ממויין לפי eigenvector centrality — מי נמצא במרכז הרשת</p>
               </div>
               <div className="overflow-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500">
                     <tr>
                       <th className="px-4 py-2 text-right font-semibold">מועמד</th>
-                      <th className="px-4 py-2 text-right font-semibold w-40">Betweenness (גישור)</th>
+                      <th className="px-4 py-2 text-right font-semibold w-40">Eigenvector (יוקרה)</th>
                       <th className="px-4 py-2 text-right font-semibold w-40">Degree (קשרים)</th>
                       <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
                     </tr>
                   </thead>
                   <tbody>
                     {[...allCandidates]
-                      .sort((a, b) => (snaData.betweenness[b.id] ?? 0) - (snaData.betweenness[a.id] ?? 0))
+                      .sort((a, b) => (snaData.eigenvector[b.id] ?? 0) - (snaData.eigenvector[a.id] ?? 0))
                       .map(candidate => {
-                        const bt = snaData.betweenness[candidate.id] ?? 0
+                        const bt = snaData.eigenvector[candidate.id] ?? 0
                         const dg = snaData.degree[candidate.id] ?? 0
                         const communityId = snaData.communityDisplayIndex[candidate.id] ?? -1
                         const color = getCommunityColor(communityId)

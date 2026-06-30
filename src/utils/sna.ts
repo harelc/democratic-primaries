@@ -1,13 +1,13 @@
 import Graph from 'graphology'
 import louvain from 'graphology-communities-louvain'
-import { betweenness } from 'graphology-metrics/centrality'
+import { eigenvector } from 'graphology-metrics/centrality'
 import { weightedDegree } from 'graphology-metrics/node'
 import { Candidate } from '../types'
 
 export interface SNAResult {
   communities: Record<string, number>        // candidateId → raw Louvain ID
   communityDisplayIndex: Record<string, number> // candidateId → stable display index (singletons = -1)
-  betweenness: Record<string, number>
+  eigenvector: Record<string, number>
   degree: Record<string, number>
   weightedDegree: Record<string, number>
   clusteringCoefficient: Record<string, number>
@@ -80,8 +80,14 @@ export function computeSNA(
   // Community detection via Louvain
   const communityMapping = louvain(graph, { getEdgeWeight: 'weight' })
 
-  // Betweenness centrality (normalized)
-  const betweennessRaw = betweenness(graph, { normalized: true })
+  // Eigenvector centrality — prestige: central if connected to other central nodes
+  let eigenvectorRaw: Record<string, number> = {}
+  try {
+    eigenvectorRaw = eigenvector(graph)
+  } catch {
+    // Falls back to 0 for disconnected graphs
+    graph.forEachNode(id => { eigenvectorRaw[id] = 0 })
+  }
 
   // Degree centrality (normalized: degree / (n - 1))
   const n = graph.order
@@ -105,7 +111,7 @@ export function computeSNA(
   const result: SNAResult = {
     communities: communityMapping,
     communityDisplayIndex: {},
-    betweenness: betweennessRaw,
+    eigenvector: normalizeRecord(eigenvectorRaw),
     degree: degreeRaw,
     weightedDegree: weightedDegreeNorm,
     clusteringCoefficient: clusteringRaw,
@@ -113,7 +119,7 @@ export function computeSNA(
 
   // Fill in zeros for isolated nodes
   for (const candidate of candidates) {
-    if (!(candidate.id in result.betweenness)) result.betweenness[candidate.id] = 0
+    if (!(candidate.id in result.eigenvector)) result.eigenvector[candidate.id] = 0
     if (!(candidate.id in result.degree)) result.degree[candidate.id] = 0
     if (!(candidate.id in result.weightedDegree)) result.weightedDegree[candidate.id] = 0
     if (!(candidate.id in result.clusteringCoefficient)) result.clusteringCoefficient[candidate.id] = 0
