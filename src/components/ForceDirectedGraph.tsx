@@ -117,11 +117,7 @@ export default function ForceDirectedGraph({
       .attr('stroke', (d: any) => selectedIds.has(d.id) ? '#0c3b66' : '#a5b4fc')
       .attr('stroke-width', (d: any) => selectedIds.has(d.id) ? 3 : 2)
       .attr('opacity', 1)
-      .style('cursor', 'pointer')
-      .on('click', (event: any, d: any) => {
-        event.stopPropagation()
-        onSelect(d.id)
-      })
+      .style('cursor', 'default')
       .on('mouseenter', (event: any, d: any) => {
         setHoveredId(d.id)
       })

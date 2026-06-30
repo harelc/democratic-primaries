@@ -431,9 +431,6 @@ export default function AnalyticsReveal({
                   <span>0%</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-500 mt-3">
-                💡 Hover over cells to see exact percentages. Numbers on axes show candidate rank (1-51).
-              </p>
             </div>
           </div>
         )}
