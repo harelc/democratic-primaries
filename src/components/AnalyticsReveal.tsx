@@ -335,35 +335,63 @@ export default function AnalyticsReveal({
           <div className="flex flex-col gap-2" style={{ height: 'calc(100vh - 300px)' }}>
             <LowVotesWarning />
             <div className="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
-              {/* Legend — horizontal on mobile, sidebar on desktop */}
-              <div className="md:w-48 bg-blue-50 border border-blue-200 rounded-lg p-3 flex-shrink-0">
-                <h3 className="font-bold text-blue-900 mb-2 text-xs">📊 מקרא</h3>
-                <div className="flex flex-row md:flex-col flex-wrap gap-x-4 gap-y-1 text-xs text-blue-800">
-                  <div><span className="font-semibold">גודל</span> — פופולריות</div>
-                  <div><span className="font-semibold">🔗 קו</span> — נבחרו ביחד</div>
-                  <div><span className="font-semibold">✓</span> — בחרת</div>
-                  <div className="mt-2 pt-2 border-t border-blue-200 w-full hidden md:block">
+              {/* Legend — compact strip on mobile, detailed sidebar on desktop */}
+              <div className="md:w-56 bg-blue-50 border border-blue-200 rounded-lg p-3 flex-shrink-0">
+                <h3 className="font-bold text-blue-900 mb-2 text-sm hidden md:block">📊 מקרא</h3>
+
+                {/* Mobile: single line */}
+                <div className="flex md:hidden flex-row flex-wrap gap-x-3 gap-y-1 text-xs text-blue-800">
+                  <span>📏 גודל = פופולריות</span>
+                  <span>🔗 קו = שילוב נפוץ</span>
+                  <span>✓ = בחרת</span>
+                </div>
+
+                {/* Desktop: full legend */}
+                <div className="hidden md:flex flex-col gap-3 text-xs text-blue-800">
+                  <div className="space-y-1">
+                    <div className="font-semibold text-blue-900">📏 גודל הצומת</div>
+                    <div>ככל שגדול יותר — נבחר יותר פעמים</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="font-semibold text-blue-900">🔗 קווים</div>
+                    <div>עובי הקו = תדירות השילוב</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="font-semibold text-blue-900">✓ סימון</div>
+                    <div>מועמד שהצבעת עבורו</div>
+                  </div>
+                  <div className="pt-2 border-t border-blue-200 space-y-1.5">
+                    <div className="font-semibold text-blue-900">🎨 צבע גבול</div>
                     {snaData ? (
                       <>
-                        <div className="font-semibold mb-1">קהילות (Louvain):</div>
+                        <div className="text-blue-600 mb-1">קהילות (Louvain)</div>
                         {Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => (
-                          <div key={cId} className="flex items-center gap-1.5 mb-1">
-                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: getCommunityColor(cId) }} />
-                            קהילה {cId + 1}
+                          <div key={cId} className="flex items-center gap-2">
+                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: getCommunityColor(cId) }} />
+                            <span>קהילה {cId + 1}</span>
                           </div>
                         ))}
                       </>
                     ) : (
                       <>
-                        <div className="font-semibold mb-1">קבוצות:</div>
-                        <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#3b82f6' }} />אחר</div>
-                        <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#dc2626' }} />מרצ</div>
-                        <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#16a34a' }} />כפרי</div>
-                        <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#9333ea' }} />מיעוטים</div>
+                        <div className="text-blue-600 mb-1">קבוצת ייצוג</div>
+                        {[
+                          { color: '#dc2626', label: 'מרצ' },
+                          { color: '#16a34a', label: 'כפרי' },
+                          { color: '#9333ea', label: 'מיעוטים' },
+                          { color: '#3b82f6', label: 'אחר / לא ידוע' },
+                        ].map(({ color, label }) => (
+                          <div key={label} className="flex items-center gap-2">
+                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: color }} />
+                            <span>{label}</span>
+                          </div>
+                        ))}
                       </>
                     )}
                   </div>
-                  <div className="text-blue-600 text-xs mt-1 hidden md:block">גרור · זום · לחץ</div>
+                  <div className="pt-2 border-t border-blue-200 text-blue-500">
+                    💡 גרור · גלגל עכבר לזום
+                  </div>
                 </div>
               </div>
 

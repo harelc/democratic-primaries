@@ -81,6 +81,7 @@ export default function App() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null)
   const [startTime] = useState(Date.now())
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
+  const [hasVotedBefore] = useState(() => localStorage.getItem('has_voted') === 'true')
   const adminMode = isAdminMode()
 
   const handleViewAdminAnalytics = () => {
@@ -196,6 +197,9 @@ export default function App() {
         allCandidates: candidates,
       })
 
+      // Remember that this user voted on this device
+      localStorage.setItem('has_voted', 'true')
+
       setPhase('analytics')
     } catch (error) {
       console.error('Submission failed:', error)
@@ -241,6 +245,19 @@ export default function App() {
               )}
               </div>
             </div>
+
+            {hasVotedBefore && !adminMode && (
+              <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 flex items-center justify-between gap-3 text-sm">
+                <span className="text-blue-700">כבר הצבעת — רוצה לראות את התוצאות המעודכנות?</span>
+                <button
+                  onClick={handleViewAdminAnalytics}
+                  disabled={loading}
+                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition-colors flex-shrink-0"
+                >
+                  {loading ? '...' : 'צפה בתוצאות'}
+                </button>
+              </div>
+            )}
 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
               <div className="flex-1 flex flex-col overflow-hidden p-4 md:p-6">
