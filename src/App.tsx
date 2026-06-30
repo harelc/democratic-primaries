@@ -283,17 +283,19 @@ export default function App() {
 
         {phase === 'analytics' && (
           <div className="flex-1 overflow-y-auto p-4 md:p-6">
-            <button
-              onClick={() => {
-                setSelectedIds(new Set())
-                setPhase('building')
-                setAnalytics(null)
-                setSearchTerm('')
-              }}
-              className="mb-4 text-blue-600 hover:text-blue-800 font-medium"
-            >
-              ← חזור לעריכה
-            </button>
+            <div className="sticky top-0 bg-white z-10 pb-4 mb-4 border-b border-slate-200">
+              <button
+                onClick={() => {
+                  setSelectedIds(new Set())
+                  setPhase('building')
+                  setAnalytics(null)
+                  setSearchTerm('')
+                }}
+                className="px-4 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 font-medium rounded-lg transition-colors"
+              >
+                ← חזור לעריכה
+              </button>
+            </div>
             <AnalyticsReveal
               selectedCandidates={selectedCandidates}
               analytics={analytics}
