@@ -133,10 +133,8 @@ export default function App() {
   const handleSubmit = () => {
     if (!isValid) return
     if (adminMode) {
-      // Skip captcha in admin/dev mode, use mock analytics
-      const selectedArray = Array.from(selectedIds)
-      setAnalytics(generateAdminAnalytics(selectedArray))
-      setPhase('analytics')
+      // Skip captcha, go straight to real API submission
+      handleCaptchaVerify('dev-token-admin')
     } else {
       setPhase('captcha')
     }
