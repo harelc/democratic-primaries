@@ -158,7 +158,9 @@ export default function App() {
       })
 
       if (!submitResponse.ok) {
-        throw new Error(`Submit failed: ${submitResponse.status}`)
+        const errText = await submitResponse.text()
+        console.error('Submit response:', submitResponse.status, errText)
+        throw new Error(`Submit failed: ${submitResponse.status} - ${errText}`)
       }
 
       // Fetch analytics from API
@@ -193,9 +195,9 @@ export default function App() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {phase === 'building' && (
           <>
-            <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 md:px-6 py-4 shadow-lg relative">
-              <h1 className="text-2xl md:text-3xl font-bold">הרשימה שלי לפריימריז</h1>
-              <p className="text-blue-100 text-sm mt-1">בחרו 8-6 מועמדים</p>
+            <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white px-4 md:px-6 py-3 shadow-md relative">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight">🗳️ הרשימה שלי לפריימריז הדמוקרטים</h1>
+              <p className="text-blue-200 text-xs mt-0.5">בנו את הרשימה שלכם — בחרו 8-6 מועמדים וגלו דפוסי הצבעה</p>
               {adminMode && (
                 <div className="absolute top-2 right-4 flex gap-2 items-center">
                   <div className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
