@@ -209,8 +209,19 @@ export default function App() {
               <h1 className="text-2xl md:text-3xl font-bold">הרשימה שלי לפריימריז</h1>
               <p className="text-blue-100 text-sm mt-1">בחרו 8-6 מועמדים</p>
               {adminMode && (
-                <div className="absolute top-2 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
-                  ADMIN MODE
+                <div className="absolute top-2 right-4 flex gap-2 items-center">
+                  <div className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
+                    ADMIN MODE
+                  </div>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem('admin_authenticated')
+                      window.location.reload()
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-2 py-1 rounded transition-colors"
+                  >
+                    Exit
+                  </button>
                 </div>
               )}
             </div>
