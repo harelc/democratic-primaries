@@ -151,9 +151,9 @@ async function scrapeCanditates() {
       const newData = candidates[idx]
       const oldBioLength = (oldCandidate.bio || '').trim().length
 
-      // If old bio is short (<=20 chars) and new bio is longer, use new
-      if (oldBioLength <= 20 && newData.bio.length > 30) {
-        console.log(`  ✓ Updated bio for ${oldCandidate.name}`)
+      // Always update bio if new scrape got a longer one
+      if (newData.bio.length > oldBioLength) {
+        console.log(`  ✓ Updated bio for ${oldCandidate.name} (${oldBioLength} → ${newData.bio.length} chars)`)
         return {
           ...oldCandidate,
           bio: newData.bio,
