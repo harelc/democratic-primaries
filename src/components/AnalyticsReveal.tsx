@@ -6,8 +6,8 @@ function ShareButton({ candidates }: { candidates: Candidate[] }) {
   const [copied, setCopied] = useState(false)
 
   const handleShare = async () => {
-    const names = candidates.map(c => c.name).join(', ')
-    const text = `🗳️ הרשימה שלי לפריימריז הדמוקרטים:\n${names}\n\nבנו גם את הרשימה שלכם: ${window.location.origin}`
+    const list = candidates.map((c, i) => `${i + 1}. ${c.name}`).join('\n')
+    const text = `🗳️ הרשימה שלי לפריימריז הדמוקרטים:\n\n${list}\n\nבנו גם את הרשימה שלכם: ${window.location.origin}`
 
     if (navigator.share) {
       try {
@@ -27,7 +27,7 @@ function ShareButton({ candidates }: { candidates: Candidate[] }) {
   return (
     <button
       onClick={handleShare}
-      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors shadow-sm"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-base transition-colors shadow-md hover:shadow-lg"
     >
       {copied ? '✓ הועתק!' : '📤 שתפו את הרשימה שלכם'}
     </button>
