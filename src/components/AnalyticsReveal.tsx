@@ -2,6 +2,38 @@ import { useState } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 
+function ShareButton({ candidates }: { candidates: Candidate[] }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleShare = async () => {
+    const names = candidates.map(c => c.name).join(', ')
+    const text = `🗳️ הרשימה שלי לפריימריז הדמוקרטים:\n${names}\n\nבנו גם את הרשימה שלכם: ${window.location.origin}`
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text })
+        return
+      } catch {}
+    }
+
+    // Fallback: copy to clipboard
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  if (candidates.length === 0) return null
+
+  return (
+    <button
+      onClick={handleShare}
+      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors shadow-sm"
+    >
+      {copied ? '✓ הועתק!' : '📤 שתפו את הרשימה שלכם'}
+    </button>
+  )
+}
+
 interface AnalyticsRevealProps {
   selectedCandidates: Candidate[]
   analytics: Analytics | null
@@ -74,7 +106,10 @@ export default function AnalyticsReveal({
       )}
 
       <div>
-        <h2 className="text-2xl font-bold mb-4">ניתוח הצבעתך</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold">ניתוח הצבעתך</h2>
+          <ShareButton candidates={selectedCandidates} />
+        </div>
 
         <div className="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto">
           <button
