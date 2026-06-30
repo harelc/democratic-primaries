@@ -18,10 +18,10 @@ const handler: Handler = async (event) => {
       return { statusCode: 403, body: JSON.stringify({ error: 'Forbidden' }) }
     }
 
-    const client = createClient({
-      url: process.env.TURSO_DATABASE_URL || 'file:local.db',
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    })
+    // Force HTTPS transport (not WebSocket) — WebSocket can crash Lambda
+    const rawUrl = process.env.TURSO_DATABASE_URL || 'file:local.db'
+    const url = rawUrl.startsWith('libsql://') ? rawUrl.replace('libsql://', 'https://') : rawUrl
+    const client = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN })
 
     const result = await client.execute(
       'SELECT id, selected_candidates, time_to_complete, ip_hash, created_at FROM ballots ORDER BY created_at DESC LIMIT 200'
