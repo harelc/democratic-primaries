@@ -133,10 +133,25 @@ export default function ForceDirectedGraph({
       .force('x', d3.forceX(width / 2).strength(0.05))
       .force('y', d3.forceY(height / 2).strength(0.05))
 
-    // For spectral layout, stop simulation immediately and fix node positions
+    // For spectral layout: resolve overlaps while preserving spectral structure
     if (layout === 'spectral') {
+      // Store spectral target positions
+      const spectralX = new Map(nodes.map(n => [n.id, n.x]))
+      const spectralY = new Map(nodes.map(n => [n.id, n.y]))
+
+      simulation
+        .force('link', null)                                       // no link force — preserve spectral layout
+        .force('charge', d3.forceManyBody().strength(-30))        // weak repulsion
+        .force('collision', d3.forceCollide().radius((d: any) => d.size + 6).strength(1)) // strong collision
+        .force('center', null)
+        .force('x', d3.forceX((d: any) => spectralX.get(d.id) ?? width / 2).strength(0.4))  // pull back to spectral pos
+        .force('y', d3.forceY((d: any) => spectralY.get(d.id) ?? height / 2).strength(0.4))
+        .alpha(1)
+        .alphaDecay(0.05)
+
+      // Run synchronously for N ticks then stop
+      for (let i = 0; i < 120; i++) simulation.tick()
       simulation.stop()
-      nodes.forEach(d => { d.fx = d.x; d.fy = d.y })
     }
 
     // Draw edges FIRST (behind nodes)
