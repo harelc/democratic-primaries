@@ -527,42 +527,7 @@ export default function AnalyticsReveal({
                     <div>מועמד שהצבעת עבורו</div>
                   </div>
                   <div className="pt-2 border-t border-blue-200 space-y-1.5">
-                    <div className="font-semibold text-blue-900 mb-1">📐 פריסת גרף</div>
-                    <div className="flex rounded-lg overflow-hidden border border-blue-200 text-xs mb-3">
-                      <button
-                        onClick={() => setGraphLayout('force')}
-                        className={`flex-1 px-2 py-1 transition-colors ${graphLayout === 'force' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
-                      >
-                        כוחות
-                      </button>
-                      <button
-                        onClick={() => setGraphLayout('spectral')}
-                        className={`flex-1 px-2 py-1 transition-colors ${graphLayout === 'spectral' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
-                      >
-                        ספקטרלי
-                      </button>
-                    </div>
-                    {graphLayout === 'spectral' && (
-                      <div className="text-xs text-blue-600 bg-blue-50 rounded p-1.5 mb-2 leading-relaxed">
-                        מיקום: 2 וקטורים עצמיים של ה-Laplacian הנורמלי (שיטת Fiedler)
-                      </div>
-                    )}
                     <div className="font-semibold text-blue-900 mb-1">🎨 צבע גבול</div>
-                    {/* Toggle */}
-                    <div className="flex rounded-lg overflow-hidden border border-blue-200 text-xs mb-2">
-                      <button
-                        onClick={() => setGraphColorMode('group')}
-                        className={`flex-1 px-2 py-1 transition-colors ${graphColorMode === 'group' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
-                      >
-                        קבוצת ייצוג
-                      </button>
-                      <button
-                        onClick={() => setGraphColorMode('community')}
-                        className={`flex-1 px-2 py-1 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
-                      >
-                        קהילה
-                      </button>
-                    </div>
                     {graphColorMode === 'group' ? (
                       [
                         { color: '#dc2626', label: 'מרצ' },
