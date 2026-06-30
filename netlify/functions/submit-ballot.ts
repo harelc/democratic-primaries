@@ -1,11 +1,15 @@
 import { Handler } from '@netlify/functions'
 import { createClient } from '@libsql/client'
+import { createHash } from 'crypto'
 
 interface SubmissionBody {
   selectedCandidateIds: string[]
   timeToComplete: number
   captchaToken: string
 }
+
+const hashIp = (ip: string) =>
+  createHash('sha256').update(ip + 'democratim-salt').digest('hex')
 
 const verifyCaptcha = async (token: string): Promise<boolean> => {
   try {
@@ -37,43 +41,50 @@ const verifyCaptcha = async (token: string): Promise<boolean> => {
 
 const handler: Handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    }
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
 
   try {
     const body: SubmissionBody = JSON.parse(event.body || '{}')
 
     if (!body.selectedCandidateIds || body.selectedCandidateIds.length === 0) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'No candidates selected' }),
-      }
+      return { statusCode: 400, body: JSON.stringify({ error: 'No candidates selected' }) }
     }
 
     const isAdminToken = body.captchaToken?.startsWith('dev-token-')
     if (!isAdminToken) {
       const isValidCaptcha = await verifyCaptcha(body.captchaToken)
       if (!isValidCaptcha) {
-        return {
-          statusCode: 403,
-          body: JSON.stringify({ error: 'CAPTCHA verification failed' }),
-        }
+        return { statusCode: 403, body: JSON.stringify({ error: 'CAPTCHA verification failed' }) }
       }
     }
 
-    // Connect to Turso
     const client = createClient({
       url: process.env.TURSO_DATABASE_URL || 'file:local.db',
       authToken: process.env.TURSO_AUTH_TOKEN,
     })
 
-    // Store ballot
-    const candidatesJson = JSON.stringify(body.selectedCandidateIds)
-    const ipHash = event.headers['client-ip'] || 'unknown'
+    // Hash the IP (GDPR-friendly — no raw IPs stored)
+    const rawIp = event.headers['x-forwarded-for']?.split(',')[0].trim()
+      || event.headers['client-ip']
+      || 'unknown'
+    const ipHash = rawIp === 'unknown' ? 'unknown' : hashIp(rawIp)
 
+    // Rate limit: one vote per IP per 24 hours (skip for admin tokens)
+    if (!isAdminToken) {
+      const existing = await client.execute({
+        sql: `SELECT id FROM ballots WHERE ip_hash = ? AND created_at > datetime('now', '-24 hours') LIMIT 1`,
+        args: [ipHash],
+      })
+      if (existing.rows.length > 0) {
+        return {
+          statusCode: 429,
+          body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }),
+        }
+      }
+    }
+
+    const candidatesJson = JSON.stringify(body.selectedCandidateIds)
     const result = await client.execute({
       sql: `INSERT INTO ballots (selected_candidates, time_to_complete, ip_hash, created_at)
             VALUES (?, ?, ?, datetime('now'))`,
@@ -82,17 +93,11 @@ const handler: Handler = async (event, context) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        ballotId: result.lastInsertRowid?.toString(),
-      }),
+      body: JSON.stringify({ success: true, ballotId: result.lastInsertRowid?.toString() }),
     }
   } catch (error) {
     console.error('Submission error:', error)
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Submission failed' }),
-    }
+    return { statusCode: 500, body: JSON.stringify({ error: 'Submission failed' }) }
   }
 }
 

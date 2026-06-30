@@ -164,9 +164,14 @@ export default function App() {
       })
 
       if (!submitResponse.ok) {
-        const errText = await submitResponse.text()
-        console.error('Submit response:', submitResponse.status, errText)
-        throw new Error(`Submit failed: ${submitResponse.status} - ${errText}`)
+        const errData = await submitResponse.json().catch(() => ({}))
+        if (submitResponse.status === 429) {
+          alert(errData.error || 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.')
+          setPhase('building')
+          return
+        }
+        console.error('Submit response:', submitResponse.status, errData)
+        throw new Error(`Submit failed: ${submitResponse.status}`)
       }
 
       // Fetch analytics from API
