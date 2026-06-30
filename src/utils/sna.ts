@@ -2,6 +2,7 @@ import Graph from 'graphology'
 import louvain from 'graphology-communities-louvain'
 import { eigenvector, pagerank } from 'graphology-metrics/centrality'
 import { weightedDegree } from 'graphology-metrics/node'
+import { Matrix, EigenvalueDecomposition } from 'ml-matrix'
 import { Candidate } from '../types'
 
 export interface SNAResult {
@@ -13,6 +14,7 @@ export interface SNAResult {
   clusteringCoefficient: Record<string, number>
   pagerank: Record<string, number>           // candidateId → normalized PageRank
   cosineSimTop3: Record<string, string[]>    // candidateId → top 3 most similar candidate IDs
+  spectralPositions: Record<string, { x: number; y: number }>
 }
 
 function computeClusteringCoefficients(graph: Graph): Record<string, number> {
@@ -177,6 +179,70 @@ function normalizeRecord(record: Record<string, number>): Record<string, number>
   return Object.fromEntries(Object.entries(record).map(([k, v]) => [k, (v - min) / range]))
 }
 
+export function computeSpectralEmbedding(
+  candidates: Candidate[],
+  coOccurrenceMatrix: Record<string, number>
+): Record<string, { x: number; y: number }> {
+  const n = candidates.length
+  const ids = candidates.map(c => c.id)
+
+  // Build weighted adjacency matrix W
+  const W = Matrix.zeros(n, n)
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const key = ids[i] < ids[j] ? `${ids[i]}_${ids[j]}` : `${ids[j]}_${ids[i]}`
+      const w = coOccurrenceMatrix[key] ?? 0
+      if (w > 0) {
+        W.set(i, j, w)
+        W.set(j, i, w)
+      }
+    }
+  }
+
+  // Build degree vector and D^(-1/2)
+  const dInvSqrt = new Array(n).fill(0)
+  for (let i = 0; i < n; i++) {
+    let deg = 0
+    for (let j = 0; j < n; j++) deg += W.get(i, j)
+    dInvSqrt[i] = deg > 0 ? 1 / Math.sqrt(deg) : 0
+  }
+
+  // Normalized Laplacian: L = I - D^(-1/2) * W * D^(-1/2)
+  const L = Matrix.identity(n)
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i !== j) {
+        const val = dInvSqrt[i] * W.get(i, j) * dInvSqrt[j]
+        L.set(i, j, -val)
+      }
+    }
+  }
+
+  // Eigendecomposition
+  const eig = new EigenvalueDecomposition(L)
+  const eigenvalues = eig.realEigenvalues
+  const eigenvectors = eig.eigenvectorMatrix // columns are eigenvectors
+
+  // Sort eigenvectors by eigenvalue ascending
+  const sorted = eigenvalues
+    .map((val, idx) => ({ val, idx }))
+    .sort((a, b) => a.val - b.val)
+
+  // Skip the trivial first (index 0), use 2nd and 3rd
+  const col1 = sorted[1]?.idx ?? 1
+  const col2 = sorted[2]?.idx ?? 2
+
+  const result: Record<string, { x: number; y: number }> = {}
+  for (let i = 0; i < n; i++) {
+    result[ids[i]] = {
+      x: eigenvectors.get(i, col1),
+      y: eigenvectors.get(i, col2),
+    }
+  }
+
+  return result
+}
+
 export function computeSNA(
   candidates: Candidate[],
   coOccurrenceMatrix: Record<string, number>
@@ -241,6 +307,9 @@ export function computeSNA(
   // Cosine similarity (item-item collaborative filtering)
   const cosineSimTop3 = computeCosineSimilarityTop3(candidates, coOccurrenceMatrix)
 
+  // Spectral embedding via normalized graph Laplacian
+  const spectralPositions = computeSpectralEmbedding(candidates, coOccurrenceMatrix)
+
   // Normalize weighted degree (degree is already 0–1, betweenness already normalized, clustering is 0–1)
   const weightedDegreeNorm = normalizeRecord(weightedDegreeRaw)
 
@@ -253,6 +322,7 @@ export function computeSNA(
     clusteringCoefficient: clusteringRaw,
     pagerank: normalizeRecord(pagerankRaw),
     cosineSimTop3,
+    spectralPositions,
   }
 
   // Fill in zeros for isolated nodes

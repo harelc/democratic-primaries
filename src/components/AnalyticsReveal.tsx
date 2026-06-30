@@ -181,6 +181,7 @@ export default function AnalyticsReveal({
   const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'sna' | 'log'>('picks')
   const [ballotLog, setBallotLog] = useState<any[]>([])
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
+  const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
 
   const snaData = useMemo(() => {
@@ -500,6 +501,26 @@ export default function AnalyticsReveal({
                     <div>מועמד שהצבעת עבורו</div>
                   </div>
                   <div className="pt-2 border-t border-blue-200 space-y-1.5">
+                    <div className="font-semibold text-blue-900 mb-1">📐 פריסת גרף</div>
+                    <div className="flex rounded-lg overflow-hidden border border-blue-200 text-xs mb-3">
+                      <button
+                        onClick={() => setGraphLayout('force')}
+                        className={`flex-1 px-2 py-1 transition-colors ${graphLayout === 'force' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
+                      >
+                        כוחות
+                      </button>
+                      <button
+                        onClick={() => setGraphLayout('spectral')}
+                        className={`flex-1 px-2 py-1 transition-colors ${graphLayout === 'spectral' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
+                      >
+                        ספקטרלי
+                      </button>
+                    </div>
+                    {graphLayout === 'spectral' && (
+                      <div className="text-xs text-blue-600 bg-blue-50 rounded p-1.5 mb-2 leading-relaxed">
+                        מיקום: 2 וקטורים עצמיים של ה-Laplacian הנורמלי (שיטת Fiedler)
+                      </div>
+                    )}
                     <div className="font-semibold text-blue-900 mb-1">🎨 צבע גבול</div>
                     {/* Toggle */}
                     <div className="flex rounded-lg overflow-hidden border border-blue-200 text-xs mb-2">
@@ -552,6 +573,8 @@ export default function AnalyticsReveal({
                   analytics={analytics}
                   snaData={snaData ?? undefined}
                   colorMode={graphColorMode}
+                  layout={graphLayout}
+                  spectralPositions={snaData?.spectralPositions}
                 />
               </div>
             </div>

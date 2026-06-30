@@ -10,6 +10,8 @@ interface ForceDirectedGraphProps {
   analytics: Analytics | null
   snaData?: SNAResult
   colorMode?: 'group' | 'community'
+  layout?: 'force' | 'spectral'
+  spectralPositions?: Record<string, { x: number; y: number }>
 }
 
 export default function ForceDirectedGraph({
@@ -19,6 +21,8 @@ export default function ForceDirectedGraph({
   analytics,
   snaData,
   colorMode = 'group',
+  layout = 'force',
+  spectralPositions,
 }: ForceDirectedGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -53,9 +57,28 @@ export default function ForceDirectedGraph({
       (Math.max(0, displayIdx) / numCommunities) * 2 * Math.PI
     const radius = Math.min(width, height) * 0.3
 
+    // Compute spectral scale if using spectral layout
+    let spectralScaleX: ((v: number) => number) | null = null
+    let spectralScaleY: ((v: number) => number) | null = null
+    if (layout === 'spectral' && spectralPositions) {
+      const xVals = candidates.map(c => spectralPositions[c.id]?.x ?? 0)
+      const yVals = candidates.map(c => spectralPositions[c.id]?.y ?? 0)
+      const xMin = Math.min(...xVals), xMax = Math.max(...xVals)
+      const yMin = Math.min(...yVals), yMax = Math.max(...yVals)
+      const padding = 80
+      spectralScaleX = (v: number) => xMax === xMin ? width / 2 : padding + (v - xMin) / (xMax - xMin) * (width - 2 * padding)
+      spectralScaleY = (v: number) => yMax === yMin ? height / 2 : padding + (v - yMin) / (yMax - yMin) * (height - 2 * padding)
+    }
+
     const nodes: any[] = candidates.map((c) => {
       let x = width / 2, y = height / 2
-      if (snaData) {
+      if (layout === 'spectral' && spectralPositions && spectralScaleX && spectralScaleY) {
+        const pos = spectralPositions[c.id]
+        if (pos) {
+          x = spectralScaleX(pos.x)
+          y = spectralScaleY(pos.y)
+        }
+      } else if (snaData) {
         const displayIdx = snaData.communityDisplayIndex[c.id] ?? -1
         const angle = communityAngle(displayIdx)
         const jitter = () => (Math.random() - 0.5) * 80
@@ -109,6 +132,12 @@ export default function ForceDirectedGraph({
       .force('collision', d3.forceCollide().radius((d: any) => d.size + 8))
       .force('x', d3.forceX(width / 2).strength(0.05))
       .force('y', d3.forceY(height / 2).strength(0.05))
+
+    // For spectral layout, stop simulation immediately and fix node positions
+    if (layout === 'spectral') {
+      simulation.stop()
+      nodes.forEach(d => { d.fx = d.x; d.fy = d.y })
+    }
 
     // Draw edges FIRST (behind nodes)
     const links = mainGroup.append('g')
@@ -234,48 +263,71 @@ export default function ForceDirectedGraph({
       d3.drag<any, any>()
         .touchable(true)
         .on('start', (event: any, d: any) => {
-          if (!event.active) simulation.alphaTarget(0.3).restart()
+          if (layout !== 'spectral') {
+            if (!event.active) simulation.alphaTarget(0.3).restart()
+          }
           d.fx = d.x
           d.fy = d.y
         })
         .on('drag', (event: any, d: any) => {
           d.fx = event.x
           d.fy = event.y
+          if (layout === 'spectral') {
+            // Update position directly without simulation
+            d.x = event.x
+            d.y = event.y
+            nodeGroups.filter((n: any) => n.id === d.id)
+              .attr('transform', `translate(${d.x},${d.y})`)
+            links
+              .attr('x1', (e: any) => (typeof e.source === 'object' ? e.source.x : nodeMap.get(e.source)?.x) ?? 0)
+              .attr('y1', (e: any) => (typeof e.source === 'object' ? e.source.y : nodeMap.get(e.source)?.y) ?? 0)
+              .attr('x2', (e: any) => (typeof e.target === 'object' ? e.target.x : nodeMap.get(e.target)?.x) ?? 0)
+              .attr('y2', (e: any) => (typeof e.target === 'object' ? e.target.y : nodeMap.get(e.target)?.y) ?? 0)
+          }
         })
         .on('end', (event: any, d: any) => {
-          if (!event.active) simulation.alphaTarget(0)
-          d.fx = null
-          d.fy = null
+          if (layout !== 'spectral') {
+            if (!event.active) simulation.alphaTarget(0)
+            d.fx = null
+            d.fy = null
+          }
+          // In spectral mode, keep node pinned where user dragged it
         })
     )
 
     // Create node index for faster lookup
     const nodeMap = new Map(nodes.map(n => [n.id, n]))
 
-    // Animation
-    let tickCount = 0
-    simulation.on('tick', () => {
-      tickCount++
-
-      // D3 forceLink replaces source/target IDs with node objects
+    const renderPositions = () => {
       links
         .attr('x1', (d: any) => (typeof d.source === 'object' ? d.source.x : nodeMap.get(d.source)?.x) ?? 0)
         .attr('y1', (d: any) => (typeof d.source === 'object' ? d.source.y : nodeMap.get(d.source)?.y) ?? 0)
         .attr('x2', (d: any) => (typeof d.target === 'object' ? d.target.x : nodeMap.get(d.target)?.x) ?? 0)
         .attr('y2', (d: any) => (typeof d.target === 'object' ? d.target.y : nodeMap.get(d.target)?.y) ?? 0)
-
       nodeGroups.attr('transform', (d: any) => `translate(${d.x},${d.y})`)
+    }
 
-      if (tickCount === 1) {
-        console.log('First tick - checking edges:', {
-          sampleEdge: edges[0],
-          sourceType: typeof edges[0]?.source,
-          sourceHasX: edges[0]?.source?.x !== undefined,
-          targetType: typeof edges[0]?.target,
-          targetHasX: edges[0]?.target?.x !== undefined,
-        })
-      }
-    })
+    if (layout === 'spectral') {
+      // Render once immediately — no animation needed
+      renderPositions()
+    } else {
+      // Animation
+      let tickCount = 0
+      simulation.on('tick', () => {
+        tickCount++
+        renderPositions()
+
+        if (tickCount === 1) {
+          console.log('First tick - checking edges:', {
+            sampleEdge: edges[0],
+            sourceType: typeof edges[0]?.source,
+            sourceHasX: edges[0]?.source?.x !== undefined,
+            targetType: typeof edges[0]?.target,
+            targetHasX: edges[0]?.target?.x !== undefined,
+          })
+        }
+      })
+    }
 
     // Zoom
     const zoom = d3.zoom<SVGSVGElement, unknown>()
@@ -285,7 +337,7 @@ export default function ForceDirectedGraph({
 
     svg.call(zoom)
 
-  }, [candidates, selectedIds, analytics, onSelect, snaData, colorMode])
+  }, [candidates, selectedIds, analytics, onSelect, snaData, colorMode, layout, spectralPositions])
 
   // Update opacity on hover without reinitializing
   useEffect(() => {
