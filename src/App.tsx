@@ -246,18 +246,6 @@ export default function App() {
               </div>
             </div>
 
-            {hasVotedBefore && !adminMode && (
-              <div className="bg-blue-50 border-b border-blue-200 px-4 py-2 flex items-center justify-between gap-3 text-sm">
-                <span className="text-blue-700">כבר הצבעת — רוצה לראות את התוצאות המעודכנות?</span>
-                <button
-                  onClick={handleViewAdminAnalytics}
-                  disabled={loading}
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium transition-colors flex-shrink-0"
-                >
-                  {loading ? '...' : 'צפה בתוצאות'}
-                </button>
-              </div>
-            )}
 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
               <div className="flex-1 flex flex-col overflow-hidden p-4 md:p-6">
@@ -311,6 +299,15 @@ export default function App() {
               <div className="text-sm text-slate-600">
                 <span className="font-semibold text-slate-900">{selectedCount}</span> / {MAX_CANDIDATES}-{MIN_CANDIDATES}
               </div>
+              {hasVotedBefore && !adminMode && (
+                <button
+                  onClick={handleViewAdminAnalytics}
+                  disabled={loading}
+                  className="text-xs text-blue-500 hover:text-blue-700 transition-colors"
+                >
+                  {loading ? '...' : 'כבר הצבעת — צפה בתוצאות'}
+                </button>
+              )}
               <button
                 onClick={handleSubmit}
                 disabled={!isValid}
