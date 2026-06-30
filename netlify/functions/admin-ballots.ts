@@ -19,16 +19,22 @@ const handler: Handler = async (event) => {
   })
 
   const result = await client.execute(
-    'SELECT id, selected_candidates, time_to_complete, ip_hash, created_at FROM ballots ORDER BY created_at DESC'
+    'SELECT id, selected_candidates, time_to_complete, ip_hash, created_at FROM ballots ORDER BY created_at DESC LIMIT 200'
   )
 
-  const ballots = result.rows.map(row => ({
-    id: row.id?.toString(),
-    selectedCandidates: JSON.parse(row.selected_candidates as string),
-    timeToComplete: row.time_to_complete,
-    ipHash: (row.ip_hash as string)?.slice(0, 12) + '…',
-    createdAt: row.created_at,
-  }))
+  const ballots = result.rows.map(row => {
+    try {
+      return {
+        id: String(row.id ?? ''),
+        selectedCandidates: JSON.parse(row.selected_candidates as string),
+        timeToComplete: Number(row.time_to_complete ?? 0),
+        ipHash: (row.ip_hash as string)?.slice(0, 12) + '…',
+        createdAt: String(row.created_at ?? ''),
+      }
+    } catch {
+      return { id: String(row.id ?? ''), selectedCandidates: [], timeToComplete: 0, ipHash: '…', createdAt: '' }
+    }
+  })
 
   return {
     statusCode: 200,
