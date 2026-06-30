@@ -8,7 +8,8 @@ const handler: Handler = async (event) => {
 
   // Require admin nonce
   const nonce = event.headers['x-admin-nonce']
-  if (!nonce || nonce !== process.env.VITE_ADMIN_NONCE) {
+  const expectedNonce = process.env.ADMIN_NONCE || process.env.VITE_ADMIN_NONCE
+  if (!nonce || !expectedNonce || nonce !== expectedNonce) {
     return { statusCode: 403, body: JSON.stringify({ error: 'Forbidden' }) }
   }
 
