@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { Candidate, Analytics } from '../types'
+import { SNAResult, getCommunityColor } from '../utils/sna'
 
 interface ForceDirectedGraphProps {
   candidates: Candidate[]
   selectedIds: Set<string>
   onSelect: (id: string) => void
   analytics: Analytics | null
+  snaData?: SNAResult
 }
 
 export default function ForceDirectedGraph({
@@ -14,6 +16,7 @@ export default function ForceDirectedGraph({
   selectedIds,
   onSelect,
   analytics,
+  snaData,
 }: ForceDirectedGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -116,7 +119,7 @@ export default function ForceDirectedGraph({
       .join('g')
       .attr('class', 'node')
 
-    // Group color helper
+    // Color helpers
     const getGroupColor = (group: string | null | undefined): string => {
       if (!group) return '#3b82f6'
       if (group.includes('מרצ')) return '#dc2626'
@@ -133,15 +136,20 @@ export default function ForceDirectedGraph({
       return '#1d4ed8'
     }
 
+    const getNodeColor = (d: any): string => {
+      if (snaData) {
+        return getCommunityColor(snaData.communities[d.id] ?? 0)
+      }
+      return selectedIds.has(d.id)
+        ? getGroupColorDark(d.candidate.group)
+        : getGroupColor(d.candidate.group)
+    }
+
     // Node circles
     nodeGroups.append('circle')
       .attr('r', (d: any) => d.size)
-      .attr('fill', (d: any) => selectedIds.has(d.id)
-        ? getGroupColorDark(d.candidate.group)
-        : getGroupColor(d.candidate.group))
-      .attr('stroke', (d: any) => selectedIds.has(d.id)
-        ? getGroupColorDark(d.candidate.group)
-        : getGroupColor(d.candidate.group))
+      .attr('fill', (d: any) => getNodeColor(d))
+      .attr('stroke', (d: any) => getNodeColor(d))
       .attr('stroke-width', (d: any) => selectedIds.has(d.id) ? 4 : 3)
       .attr('opacity', 1)
       .style('cursor', 'default')
@@ -263,7 +271,7 @@ export default function ForceDirectedGraph({
 
     svg.call(zoom)
 
-  }, [candidates, selectedIds, analytics, onSelect])
+  }, [candidates, selectedIds, analytics, onSelect, snaData])
 
   // Update opacity on hover without reinitializing
   useEffect(() => {

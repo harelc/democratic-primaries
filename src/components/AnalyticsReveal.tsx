@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
+import { computeSNA, getCommunityColor } from '../utils/sna'
 
 function ShareButton({ candidates }: { candidates: Candidate[] }) {
   const [copied, setCopied] = useState(false)
@@ -51,8 +52,13 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'log'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'sna' | 'log'>('picks')
   const [ballotLog, setBallotLog] = useState<any[]>([])
+
+  const snaData = useMemo(() => {
+    if (!analytics || !allCandidates || allCandidates.length === 0) return null
+    return computeSNA(allCandidates, analytics.coOccurrenceMatrix)
+  }, [analytics, allCandidates])
 
   useEffect(() => {
     if (!adminMode || activeTab !== 'log') return
@@ -171,6 +177,16 @@ export default function AnalyticsReveal({
             }`}
           >
             לוח מובילים
+          </button>
+          <button
+            onClick={() => setActiveTab('sna')}
+            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'sna'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            ניתוח רשת
           </button>
           {adminMode && (
             <button
@@ -327,11 +343,25 @@ export default function AnalyticsReveal({
                   <div><span className="font-semibold">🔗 קו</span> — נבחרו ביחד</div>
                   <div><span className="font-semibold">✓</span> — בחרת</div>
                   <div className="mt-2 pt-2 border-t border-blue-200 w-full hidden md:block">
-                    <div className="font-semibold mb-1">קבוצות:</div>
-                    <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#3b82f6' }} />אחר</div>
-                    <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#dc2626' }} />מרצ</div>
-                    <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#16a34a' }} />כפרי</div>
-                    <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#9333ea' }} />מיעוטים</div>
+                    {snaData ? (
+                      <>
+                        <div className="font-semibold mb-1">קהילות (Louvain):</div>
+                        {Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => (
+                          <div key={cId} className="flex items-center gap-1.5 mb-1">
+                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: getCommunityColor(cId) }} />
+                            קהילה {cId + 1}
+                          </div>
+                        ))}
+                      </>
+                    ) : (
+                      <>
+                        <div className="font-semibold mb-1">קבוצות:</div>
+                        <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#3b82f6' }} />אחר</div>
+                        <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#dc2626' }} />מרצ</div>
+                        <div className="flex items-center gap-1.5 mb-1"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#16a34a' }} />כפרי</div>
+                        <div className="flex items-center gap-1.5"><span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: '#9333ea' }} />מיעוטים</div>
+                      </>
+                    )}
                   </div>
                   <div className="text-blue-600 text-xs mt-1 hidden md:block">גרור · זום · לחץ</div>
                 </div>
@@ -344,6 +374,7 @@ export default function AnalyticsReveal({
                   selectedIds={selectedIds}
                   onSelect={onSelect}
                   analytics={analytics}
+                  snaData={snaData ?? undefined}
                 />
               </div>
             </div>
@@ -402,6 +433,103 @@ export default function AnalyticsReveal({
                   </div>
                 )
               })}
+          </div>
+        )}
+
+        {activeTab === 'sna' && snaData && allCandidates && (
+          <div className="space-y-6">
+            <LowVotesWarning />
+
+            {/* Community section */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <h3 className="font-bold text-slate-800 mb-3 text-base">קהילות הצבעה</h3>
+              <p className="text-xs text-slate-500 mb-4">קהילות שזוהו על ידי אלגוריתם Louvain — מועמדים שנבחרים ביחד בתדירות גבוהה</p>
+              <div className="flex flex-wrap gap-4">
+                {Array.from(new Set(Object.values(snaData.communities))).sort().map(communityId => {
+                  const color = getCommunityColor(communityId)
+                  const members = allCandidates.filter(c => snaData.communities[c.id] === communityId)
+                  return (
+                    <div key={communityId} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
+                        <span className="font-semibold text-sm" style={{ color }}>קהילה {communityId + 1}</span>
+                        <span className="text-xs text-slate-400">({members.length} מועמדים)</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {members.map(c => (
+                          <div key={c.id} className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 text-xs shadow-sm border border-slate-100">
+                            <img src={c.photoUrl} alt={c.name} className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+                            <span className="text-slate-700">{c.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Metrics table */}
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+              <div className="px-4 py-3 border-b border-slate-100">
+                <h3 className="font-bold text-slate-800 text-base">מדדי רשת לפי מועמד</h3>
+                <p className="text-xs text-slate-500 mt-0.5">ממויין לפי betweenness — מי מחבר בין קהילות</p>
+              </div>
+              <div className="overflow-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500">
+                    <tr>
+                      <th className="px-4 py-2 text-right font-semibold">מועמד</th>
+                      <th className="px-4 py-2 text-right font-semibold w-40">Betweenness (גישור)</th>
+                      <th className="px-4 py-2 text-right font-semibold w-40">Degree (קשרים)</th>
+                      <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[...allCandidates]
+                      .sort((a, b) => (snaData.betweenness[b.id] ?? 0) - (snaData.betweenness[a.id] ?? 0))
+                      .map(candidate => {
+                        const bt = snaData.betweenness[candidate.id] ?? 0
+                        const dg = snaData.degree[candidate.id] ?? 0
+                        const communityId = snaData.communities[candidate.id] ?? 0
+                        const color = getCommunityColor(communityId)
+                        return (
+                          <tr key={candidate.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                            <td className="px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <img src={candidate.photoUrl} alt={candidate.name} className="w-7 h-7 rounded-full object-cover flex-shrink-0" />
+                                <span className="font-medium text-slate-800 text-xs">{candidate.name}</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                                  <div className="h-2 rounded-full bg-amber-500" style={{ width: `${Math.round(bt * 100)}%` }} />
+                                </div>
+                                <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(bt * 100)}%</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                                  <div className="h-2 rounded-full bg-blue-500" style={{ width: `${Math.round(dg * 100)}%` }} />
+                                </div>
+                                <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(dg * 100)}%</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="flex items-center gap-1.5">
+                                <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
+                                <span className="text-xs text-slate-500">{communityId + 1}</span>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
