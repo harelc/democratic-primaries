@@ -189,9 +189,14 @@ export default function AnalyticsReveal({
 
         {activeTab === 'cooccurrence' && (
           <div className="bg-white border border-slate-200 rounded-lg p-4 overflow-auto">
-            <p className="text-slate-600 mb-4 text-sm">
+            <p className="text-slate-600 mb-2 text-sm">
               מטריצת השילובים - כל ריבוע מראה כמה פעמים בחרו בשני מועמדים ביחד
             </p>
+            {analytics.totalSubmissions < 10 && (
+              <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4">
+                ⚠️ נאספו רק {analytics.totalSubmissions} הצבעות עד כה — הנתונים יהיו משמעותיים יותר עם יותר משתתפים
+              </p>
+            )}
 
             {/* Heatmap Matrix */}
             <div className="inline-block min-w-full">
@@ -229,12 +234,12 @@ export default function AnalyticsReveal({
                       cellClass = '#2563eb'
                     } else if (i < j) {
                       const key = `${c1.id}_${c2.id}`
-                      cooccurrence = analytics.coOccurrenceMatrix[key] || Math.random() * 0.8
+                      cooccurrence = analytics.coOccurrenceMatrix[key] || 0
                       cellClass = getHeatColor(cooccurrence)
                     } else {
                       // Mirror: use the same value from the upper triangle
                       const key = `${c2.id}_${c1.id}`
-                      cooccurrence = analytics.coOccurrenceMatrix[key] || Math.random() * 0.8
+                      cooccurrence = analytics.coOccurrenceMatrix[key] || 0
                       cellClass = getHeatColor(cooccurrence)
                     }
 
