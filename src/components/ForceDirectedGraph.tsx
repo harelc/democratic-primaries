@@ -101,8 +101,9 @@ export default function ForceDirectedGraph({
     const simulation = d3.forceSimulation(nodes)
       .force('link', d3.forceLink(edges)
         .id((d: any) => d.id)
-        .distance((d: any) => 80 + (1 - d.value) * 120)
-        .strength((d: any) => d.value * 0.6))
+        .distance((d: any) => 200 * (1 - Math.pow(d.value, 1.5)))  // shrinks fast at high co-occurrence
+        .strength((d: any) => Math.pow(d.value, 2) * 2)             // superlinear: 52% → 0.54, 10% → 0.02
+      )
       .force('charge', d3.forceManyBody().strength(-400))
       .force('center', d3.forceCenter(width / 2, height / 2).strength(0.05))
       .force('collision', d3.forceCollide().radius((d: any) => d.size + 8))
@@ -116,11 +117,7 @@ export default function ForceDirectedGraph({
       .data(edges)
       .join('line')
       .attr('stroke', '#64748b')
-      .attr('stroke-width', (d: any) => {
-        // Use absolute co-occurrence (value is already normalized by totalSubmissions)
-        // sqrt scale so rare pairs are visible but dominant ones stand out
-        return 1 + Math.sqrt(d.value) * 6  // 1px (0%) to 7px (100%)
-      })
+      .attr('stroke-width', (d: any) => 1 + Math.pow(d.value, 1.5) * 8)
       .attr('opacity', 0.6)
       .attr('x1', 0)
       .attr('y1', 0)
@@ -313,8 +310,8 @@ export default function ForceDirectedGraph({
         const src = typeof d.source === 'object' ? d.source.id : d.source
         const tgt = typeof d.target === 'object' ? d.target.id : d.target
         return src === hoveredId || tgt === hoveredId
-          ? Math.max(2, 1 + Math.sqrt(d.value) * 6) * 1.8
-          : 1 + Math.sqrt(d.value) * 6
+          ? (1 + Math.pow(d.value, 1.5) * 8) * 1.8
+          : 1 + Math.pow(d.value, 1.5) * 8
       })
       .attr('stroke', (d: any) => {
         if (hoveredId === null) return '#64748b'
