@@ -43,14 +43,33 @@ export default function ForceDirectedGraph({
     // Create main group for content
     const mainGroup = svg.append('g')
 
-    // Create nodes array
-    const nodes: any[] = candidates.map((c, i) => ({
-      id: c.id,
-      candidate: c,
-      fx: undefined,
-      fy: undefined,
-      size: Math.max(8, Math.sqrt(analytics.candidatePickFrequency[c.id] || 0.02) * 60),
-    }))
+    // Place community centroids evenly around a circle, then scatter nodes near their centroid
+    const communityIds = snaData
+      ? Array.from(new Set(Object.values(snaData.communities))).sort()
+      : []
+    const numCommunities = communityIds.length || 1
+    const communityAngle = (commId: number) => {
+      const idx = communityIds.indexOf(commId)
+      return (idx / numCommunities) * 2 * Math.PI
+    }
+    const radius = Math.min(width, height) * 0.3
+
+    const nodes: any[] = candidates.map((c) => {
+      let x = width / 2, y = height / 2
+      if (snaData) {
+        const commId = snaData.communities[c.id] ?? 0
+        const angle = communityAngle(commId)
+        const jitter = () => (Math.random() - 0.5) * 80
+        x = width / 2 + Math.cos(angle) * radius + jitter()
+        y = height / 2 + Math.sin(angle) * radius + jitter()
+      }
+      return {
+        id: c.id,
+        candidate: c,
+        x, y,
+        size: Math.max(8, Math.sqrt(analytics.candidatePickFrequency[c.id] || 0.02) * 60),
+      }
+    })
 
     // Create edges using candidate IDs (not array indices)
     const edges: any[] = []
