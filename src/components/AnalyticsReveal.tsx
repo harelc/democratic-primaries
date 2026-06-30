@@ -3,6 +3,65 @@ import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
 
+function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData }: {
+  allCandidates: Candidate[]
+  coOccurrenceMatrix: Record<string, number>
+  snaData: ReturnType<typeof computeSNA> | null
+}) {
+  const ordered = snaData
+    ? [...allCandidates].sort((a, b) => {
+        const ca = snaData.communities[a.id] ?? 99
+        const cb = snaData.communities[b.id] ?? 99
+        if (ca !== cb) return ca - cb
+        return (snaData.weightedDegree[b.id] ?? 0) - (snaData.weightedDegree[a.id] ?? 0)
+      })
+    : allCandidates
+
+  return (
+    <div className="overflow-auto border border-slate-200 rounded" style={{ maxHeight: '600px' }}>
+      <div className="inline-block min-w-full">
+        <div className="flex mb-1 sticky top-0 bg-white z-10">
+          <div className="flex-shrink-0 bg-slate-50 border-r border-b border-slate-200" style={{ width: '120px' }} />
+          {ordered.map(c => (
+            <div key={`h-${c.id}`} className="flex-shrink-0 flex items-center justify-center text-xs font-semibold bg-slate-50 border-r border-b border-slate-200 p-0.5"
+              title={c.name} style={{ width: '60px', height: '60px', wordBreak: 'break-word', fontSize: '10px',
+                color: snaData ? getCommunityColor(snaData.communities[c.id] ?? 0) : '#475569' }}>
+              {c.name}
+            </div>
+          ))}
+        </div>
+        {ordered.map(c1 => {
+          const comm = snaData?.communities[c1.id] ?? null
+          return (
+            <div key={`r-${c1.id}`} className="flex mb-1">
+              <div className="flex-shrink-0 text-xs font-semibold px-1 flex items-center justify-end border-r border-slate-200 truncate"
+                title={c1.name} style={{ width: '120px',
+                  color: comm !== null ? getCommunityColor(comm) : '#475569',
+                  backgroundColor: comm !== null ? `${getCommunityColor(comm)}15` : '#f8fafc' }}>
+                {c1.name}
+              </div>
+              {ordered.map(c2 => {
+                const self = c1.id === c2.id
+                const key = c1.id < c2.id ? `${c1.id}_${c2.id}` : `${c2.id}_${c1.id}`
+                const v = self ? 1 : (coOccurrenceMatrix[key] || 0)
+                const bg = self ? '#2563eb' : `hsl(210, 100%, ${100 - v * 80}%)`
+                return (
+                  <div key={`c-${c1.id}-${c2.id}`}
+                    className="flex-shrink-0 flex items-center justify-center text-xs font-bold border-r border-b border-slate-200"
+                    style={{ width: '60px', height: '60px', backgroundColor: bg, color: v > 0.5 ? 'white' : '#475569' }}
+                    title={`${c1.name} & ${c2.name}: ${Math.round(v * 100)}%`}>
+                    {Math.round(v * 100)}
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function ShareButton({ candidates }: { candidates: Candidate[] }) {
   const [copied, setCopied] = useState(false)
 
@@ -563,78 +622,18 @@ export default function AnalyticsReveal({
 
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <p className="text-slate-600 mb-2 text-sm">מטריצת הדפוסים - שילובים של כל 51 המשתתפים</p>
+            <p className="text-slate-600 mb-2 text-sm">מטריצת הדפוסים - שילובים של כל 51 המשתתפים, מסודרת לפי קהילות הצבעה</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
             </p>
 
-            {/* Full Matrix - Scrollable */}
-            <div className="overflow-auto border border-slate-200 rounded" style={{ maxHeight: '600px' }}>
-              <div className="inline-block min-w-full">
-                {/* Header row */}
-                <div className="flex mb-1 sticky top-0 bg-white z-10">
-                  <div className="flex-shrink-0 bg-slate-50 border-r border-b border-slate-200" style={{ width: '120px' }} />
-                  {analytics.allCandidates.map((candidate) => (
-                    <div
-                      key={`header-${candidate.id}`}
-                      className="flex-shrink-0 flex items-center justify-center text-xs font-semibold text-slate-600 bg-slate-50 border-r border-b border-slate-200 p-0.5"
-                      title={candidate.name}
-                      style={{ width: '60px', height: '60px', wordBreak: 'break-word', fontSize: '10px' }}
-                    >
-                      {candidate.name}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Matrix rows */}
-                {analytics.allCandidates.map((c1) => (
-                  <div key={`row-${c1.id}`} className="flex mb-1">
-                    {/* Row label */}
-                    <div
-                      className="flex-shrink-0 text-xs font-semibold text-slate-600 px-1 flex items-center justify-end bg-slate-50 border-r border-slate-200 truncate"
-                      title={c1.name}
-                      style={{ width: '120px' }}
-                    >
-                      {c1.name}
-                    </div>
-
-                    {/* Matrix cells */}
-                    {analytics.allCandidates.map((c2) => {
-                      let cooccurrence = 0
-
-                      if (c1.id === c2.id) {
-                        cooccurrence = 1
-                      } else {
-                        const key = c1.id < c2.id ? `${c1.id}_${c2.id}` : `${c2.id}_${c1.id}`
-                        cooccurrence = analytics.coOccurrenceMatrix[key] || 0
-                      }
-
-                      // Continuous color gradient: white (0%) → blue (100%)
-                      const hue = 210 // blue hue
-                      const lightness = 100 - (cooccurrence * 80) // white (100) to darker blue (20)
-                      const cellColor = `hsl(${hue}, 100%, ${lightness}%)`
-
-                      return (
-                        <div
-                          key={`cell-${c1.id}-${c2.id}`}
-                          className="flex-shrink-0 flex items-center justify-center text-xs font-bold transition-all cursor-help border-r border-b border-slate-200"
-                          style={{
-                            width: '60px',
-                            height: '60px',
-                            backgroundColor: cellColor,
-                            color: cooccurrence > 0.5 ? 'white' : 'slate'
-                          }}
-                          title={`${c1.name} & ${c2.name}: ${Math.round(cooccurrence * 100)}%`}
-                        >
-                          {c1.id === c2.id ? '100' : Math.round(cooccurrence * 100)}
-                        </div>
-                      )
-                    })}
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Full Matrix - Scrollable, sorted by community for block structure */}
+            <FullMatrix
+              allCandidates={analytics.allCandidates}
+              coOccurrenceMatrix={analytics.coOccurrenceMatrix}
+              snaData={snaData}
+            />
 
             {/* Legend */}
             <div className="mt-6 pt-4 border-t border-slate-200">
