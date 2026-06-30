@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 
@@ -51,7 +51,17 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'log'>('picks')
+  const [ballotLog, setBallotLog] = useState<any[]>([])
+
+  useEffect(() => {
+    if (!adminMode || activeTab !== 'log') return
+    const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
+    fetch('/.netlify/functions/admin-ballots', { headers: { 'x-admin-nonce': nonce } })
+      .then(r => r.json())
+      .then(d => setBallotLog(d.ballots || []))
+      .catch(() => {})
+  }, [adminMode, activeTab])
 
   const LowVotesWarning = () => analytics && analytics.totalSubmissions < 10 ? (
     <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4">
@@ -152,6 +162,18 @@ export default function AnalyticsReveal({
           >
             גרף מועמדים
           </button>
+          {adminMode && (
+            <button
+              onClick={() => setActiveTab('log')}
+              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+                activeTab === 'log'
+                  ? 'bg-white text-yellow-700 shadow-sm font-semibold'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              🔧 יומן הצבעות
+            </button>
+          )}
         </div>
 
         {activeTab === 'picks' && (
@@ -412,6 +434,34 @@ export default function AnalyticsReveal({
                 </div>
               </div>
             </div>
+          </div>
+        )}
+        {activeTab === 'log' && adminMode && (
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+            <table className="w-full text-sm text-right">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="px-4 py-2 text-slate-600 font-semibold">#</th>
+                  <th className="px-4 py-2 text-slate-600 font-semibold">תאריך</th>
+                  <th className="px-4 py-2 text-slate-600 font-semibold">IP Hash</th>
+                  <th className="px-4 py-2 text-slate-600 font-semibold">זמן (שנ)</th>
+                  <th className="px-4 py-2 text-slate-600 font-semibold">מועמדים</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ballotLog.length === 0 ? (
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">טוען...</td></tr>
+                ) : ballotLog.map((b, i) => (
+                  <tr key={b.id} className="border-b border-slate-100 hover:bg-slate-50">
+                    <td className="px-4 py-2 text-slate-500">{b.id}</td>
+                    <td className="px-4 py-2 text-slate-600 font-mono text-xs">{b.createdAt}</td>
+                    <td className="px-4 py-2 text-slate-500 font-mono text-xs">{b.ipHash}</td>
+                    <td className="px-4 py-2 text-slate-600">{b.timeToComplete}s</td>
+                    <td className="px-4 py-2 text-slate-700">{b.selectedCandidates.length} מועמדים</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
