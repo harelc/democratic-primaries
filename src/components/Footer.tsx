@@ -45,7 +45,7 @@ export default function Footer() {
         </a>
         <span>|</span>
         <a
-          href="https://github.com/harelc/ballot-builder-game"
+          href="https://github.com/harelc/democratic-primaries"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden sm:inline hover:text-slate-600 transition-colors"
