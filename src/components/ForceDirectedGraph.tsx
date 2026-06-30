@@ -46,7 +46,7 @@ export default function ForceDirectedGraph({
       candidate: c,
       fx: undefined,
       fy: undefined,
-      size: Math.max(8, (analytics.candidatePickFrequency[c.id] || 0.5) * 20 + 10),
+      size: Math.max(8, Math.sqrt(analytics.candidatePickFrequency[c.id] || 0.02) * 60),
     }))
 
     // Create edges using candidate IDs (not array indices)
