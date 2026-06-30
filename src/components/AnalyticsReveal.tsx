@@ -179,7 +179,8 @@ export default function AnalyticsReveal({
   adminMode,
 }: AnalyticsRevealProps) {
   const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'sna' | 'log'>('picks')
-  const [ballotLog, setBallotLog] = useState<any[]>([])
+  const [ballotLog, setBallotLog] = useState<any[] | null>(null)
+  const [ballotLogError, setBallotLogError] = useState<string | null>(null)
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
@@ -191,11 +192,19 @@ export default function AnalyticsReveal({
 
   useEffect(() => {
     if (!adminMode || activeTab !== 'log') return
+    setBallotLog(null)
+    setBallotLogError(null)
     const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
-    fetch('/.netlify/functions/admin-ballots', { headers: { 'x-admin-nonce': nonce } })
-      .then(r => r.json())
+    const url = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/admin-ballots'
+      : '/.netlify/functions/admin-ballots'
+    fetch(url, { headers: { 'x-admin-nonce': nonce } })
+      .then(async r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}: ${await r.text()}`)
+        return r.json()
+      })
       .then(d => setBallotLog(d.ballots || []))
-      .catch(() => {})
+      .catch(e => setBallotLogError(e.message))
   }, [adminMode, activeTab])
 
   const LowVotesWarning = () => analytics && analytics.totalSubmissions < 10 ? (
@@ -847,8 +856,12 @@ export default function AnalyticsReveal({
                 </tr>
               </thead>
               <tbody>
-                {ballotLog.length === 0 ? (
+                {ballotLogError ? (
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-red-500 text-xs font-mono">{ballotLogError}</td></tr>
+                ) : ballotLog === null ? (
                   <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">טוען...</td></tr>
+                ) : ballotLog.length === 0 ? (
+                  <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">אין הצבעות</td></tr>
                 ) : ballotLog.map((b, i) => (
                   <tr key={b.id} className="border-b border-slate-100 hover:bg-slate-50">
                     <td className="px-4 py-2 text-slate-500">{b.id}</td>
