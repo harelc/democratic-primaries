@@ -316,7 +316,7 @@ export default function App() {
                   disabled={loading}
                   className="px-6 py-3 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all"
                 >
-                  {loading ? '...' : '📊 צפה בתוצאות'}
+                  {loading ? '...' : 'כבר הצבעת — צפה בתוצאות'}
                 </button>
               ) : (
                 <button

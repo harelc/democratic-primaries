@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
@@ -57,6 +57,46 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData }: {
             </div>
           )
         })}
+      </div>
+    </div>
+  )
+}
+
+function NewVoteToast({ totalSubmissions }: { totalSubmissions: number }) {
+  const [toast, setToast] = useState<string | null>(null)
+  const lastCount = useRef(totalSubmissions)
+
+  useEffect(() => {
+    lastCount.current = totalSubmissions
+  }, [])
+
+  useEffect(() => {
+    const url = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/analytics'
+      : '/.netlify/functions/analytics'
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await fetch(url).then(r => r.json())
+        const newCount = data.totalSubmissions || 0
+        if (newCount > lastCount.current) {
+          const diff = newCount - lastCount.current
+          setToast(`🗳️ ${diff === 1 ? 'הצבעה חדשה נכנסה' : `${diff} הצבעות חדשות נכנסו`}!`)
+          lastCount.current = newCount
+          setTimeout(() => setToast(null), 4000)
+        }
+      } catch {}
+    }, 15000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  if (!toast) return null
+
+  return (
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-bounce-once">
+      <div className="bg-blue-600 text-white px-5 py-3 rounded-full shadow-xl text-sm font-semibold flex items-center gap-2">
+        {toast}
       </div>
     </div>
   )
@@ -166,6 +206,7 @@ export default function AnalyticsReveal({
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
+      <NewVoteToast totalSubmissions={analytics.totalSubmissions} />
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-700 to-blue-500 rounded-2xl p-6 text-white shadow-lg">
