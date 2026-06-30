@@ -296,7 +296,7 @@ export default function AnalyticsReveal({
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            מטריצה מלאה (51×51)
+            מטריצה מלאה
           </button>
           <button
             onClick={() => setActiveTab('graph')}
@@ -497,7 +497,7 @@ export default function AnalyticsReveal({
                 </button>
               </div>
               {graphLayout === 'spectral' && (
-                <span className="text-xs text-blue-600">מיקום: וקטורי Fiedler של ה-Laplacian</span>
+                <Tooltip term="ספקטרלי">מיקום מחושב מ-2 הווקטורים העצמיים הקטנים ביותר (אחרי הטריוויאלי) של ה-Laplacian הנורמלי L = I − D⁻¹ᐟ²WD⁻¹ᐟ². הווקטור השני (Fiedler) חותך את הגרף לשני חצאים אופטימליים; השלישי מחלק שוב. תוצאה: קהילות הצבעה שנמצאות קרובות גיאוגרפית — בניגוד לפריסת הכוחות שמבוססת על פיזיקה, כאן המיקום אינו אקראי אלא נובע ישירות ממבנה הגרף.</Tooltip>
               )}
             </div>
             <div className="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
