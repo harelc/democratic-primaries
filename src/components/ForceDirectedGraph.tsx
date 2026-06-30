@@ -117,11 +117,9 @@ export default function ForceDirectedGraph({
       .join('line')
       .attr('stroke', '#64748b')
       .attr('stroke-width', (d: any) => {
-        const minVal = Math.min(...edges.map((e: any) => e.value))
-        const maxVal = Math.max(...edges.map((e: any) => e.value))
-        const range = maxVal - minVal || 1
-        const normalized = (d.value - minVal) / range  // 0–1 relative to actual range
-        return 1 + normalized * 5  // 1px to 6px
+        // Use absolute co-occurrence (value is already normalized by totalSubmissions)
+        // sqrt scale so rare pairs are visible but dominant ones stand out
+        return 1 + Math.sqrt(d.value) * 6  // 1px (0%) to 7px (100%)
       })
       .attr('opacity', 0.6)
       .attr('x1', 0)
