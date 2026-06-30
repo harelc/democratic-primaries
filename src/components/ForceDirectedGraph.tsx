@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as d3 from 'd3'
 import { Candidate, Analytics } from '../types'
-import { SNAResult, getCommunityColor } from '../utils/sna'
+import { SNAResult } from '../utils/sna'
 
 interface ForceDirectedGraphProps {
   candidates: Candidate[]
@@ -155,19 +155,12 @@ export default function ForceDirectedGraph({
       return '#1d4ed8'
     }
 
-    const getNodeColor = (d: any): string => {
-      if (snaData) {
-        return getCommunityColor(snaData.communities[d.id] ?? 0)
-      }
-      return selectedIds.has(d.id)
-        ? getGroupColorDark(d.candidate.group)
-        : getGroupColor(d.candidate.group)
-    }
-
-    // Node circles
+    // Node circles — group color for both fill and stroke; community structure visible via layout
     nodeGroups.append('circle')
       .attr('r', (d: any) => d.size)
-      .attr('fill', (d: any) => getNodeColor(d))
+      .attr('fill', (d: any) => selectedIds.has(d.id)
+        ? getGroupColorDark(d.candidate.group)
+        : getGroupColor(d.candidate.group))
       .attr('stroke', (d: any) => selectedIds.has(d.id)
         ? getGroupColorDark(d.candidate.group)
         : getGroupColor(d.candidate.group))

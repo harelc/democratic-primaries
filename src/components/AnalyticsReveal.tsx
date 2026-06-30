@@ -431,41 +431,20 @@ export default function AnalyticsReveal({
                   </div>
                   <div className="pt-2 border-t border-blue-200 space-y-1.5">
                     <div className="font-semibold text-blue-900">🎨 צבע גבול</div>
-                    {snaData ? (
-                      <>
-                        <div className="text-blue-600 mb-1">קהילות (Louvain)</div>
-                        {(() => {
-                          let idx = 0
-                          return Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => {
-                            const members = allCandidates?.filter(c => snaData.communities[c.id] === cId) ?? []
-                            const hasEdges = members.some(c => (snaData.weightedDegree[c.id] ?? 0) > 0)
-                            if (!hasEdges) return null
-                            const color = getCommunityColor(idx++)
-                            return (
-                              <div key={cId} className="flex items-center gap-2">
-                                <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: color }} />
-                                <span>קהילה {idx}</span>
-                              </div>
-                            )
-                          })
-                        })()}
-                      </>
-                    ) : (
-                      <>
-                        <div className="text-blue-600 mb-1">קבוצת ייצוג</div>
-                        {[
-                          { color: '#dc2626', label: 'מרצ' },
-                          { color: '#16a34a', label: 'כפרי' },
-                          { color: '#9333ea', label: 'מיעוטים' },
-                          { color: '#3b82f6', label: 'אחר / לא ידוע' },
-                        ].map(({ color, label }) => (
-                          <div key={label} className="flex items-center gap-2">
-                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: color }} />
-                            <span>{label}</span>
-                          </div>
-                        ))}
-                      </>
-                    )}
+                    <>
+                      <div className="text-blue-600 mb-1">קבוצת ייצוג</div>
+                      {[
+                        { color: '#dc2626', label: 'מרצ' },
+                        { color: '#16a34a', label: 'כפרי' },
+                        { color: '#9333ea', label: 'מיעוטים' },
+                        { color: '#3b82f6', label: 'אחר / לא ידוע' },
+                      ].map(({ color, label }) => (
+                        <div key={label} className="flex items-center gap-2">
+                          <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: color }} />
+                          <span>{label}</span>
+                        </div>
+                      ))}
+                    </>
                   </div>
                   <div className="pt-2 border-t border-blue-200 text-blue-500">
                     💡 גרור · גלגל עכבר לזום
