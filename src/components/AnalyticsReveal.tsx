@@ -4,20 +4,26 @@ import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
 
 function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
-  const [visible, setVisible] = useState(false)
+  const [rect, setRect] = useState<DOMRect | null>(null)
+  const ref = useRef<HTMLSpanElement>(null)
+
   return (
     <span className="relative inline-block">
       <span
+        ref={ref}
         className="border-b border-dotted border-slate-400 cursor-help"
-        onMouseEnter={() => setVisible(true)}
-        onMouseLeave={() => setVisible(false)}
+        onMouseEnter={() => setRect(ref.current?.getBoundingClientRect() ?? null)}
+        onMouseLeave={() => setRect(null)}
       >
         {term}
       </span>
-      {visible && (
-        <span className="absolute bottom-full right-0 mb-2 z-50 w-64 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 shadow-xl leading-relaxed pointer-events-none">
+      {rect && (
+        <span
+          className="fixed z-[9999] w-64 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 shadow-xl leading-relaxed pointer-events-none"
+          style={{ bottom: window.innerHeight - rect.top + 8, left: Math.min(rect.left, window.innerWidth - 272) }}
+        >
           {children}
-          <span className="absolute top-full right-4 border-4 border-transparent border-t-slate-800" />
+          <span className="absolute top-full left-4 border-4 border-transparent border-t-slate-800" />
         </span>
       )}
     </span>
