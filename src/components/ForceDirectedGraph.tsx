@@ -292,8 +292,28 @@ export default function ForceDirectedGraph({
     if (!svgRef.current) return
     const svg = d3.select(svgRef.current)
 
+    const similarIds = new Set<string>(
+      hoveredId && snaData?.cosineSimTop3?.[hoveredId]
+        ? snaData.cosineSimTop3[hoveredId].slice(0, 2)
+        : []
+    )
+
     svg.selectAll('circle')
       .attr('opacity', (d: any) => hoveredId === null || hoveredId === d.id ? 1 : 0.25)
+      .attr('stroke-dasharray', (d: any) => similarIds.has(d.id) ? '4 2' : null)
+      .attr('stroke-width', (d: any) => {
+        if (similarIds.has(d.id)) return 5
+        return selectedIds.has(d.id) ? 4 : 3
+      })
+      // Only override stroke for similar nodes; leave others alone (do not call .attr('stroke') for them)
+      .each(function(d: any) {
+        if (similarIds.has(d.id)) {
+          d3.select(this).attr('stroke', '#f59e0b')
+        } else if (hoveredId !== null) {
+          // Restore stroke-dasharray when no longer similar
+          d3.select(this).attr('stroke-dasharray', null)
+        }
+      })
 
     svg.selectAll('.node-label')
       .attr('opacity', (d: any) => hoveredId !== null && hoveredId === d.id ? 1 : 0)

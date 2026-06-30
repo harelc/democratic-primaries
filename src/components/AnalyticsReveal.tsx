@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
-import { computeSNA, getCommunityColor } from '../utils/sna'
+import { computeSNA, getCommunityColor, computeGroupAssortativity } from '../utils/sna'
 
 function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
   const [rect, setRect] = useState<DOMRect | null>(null)
@@ -606,6 +606,27 @@ export default function AnalyticsReveal({
                       </div>
                       <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
                     </div>
+                    {/* דומים: top-2 cosine similar candidates */}
+                    {snaData && allCandidates && (
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        {(snaData.cosineSimTop3[candidate.id] ?? []).slice(0, 2).map(simId => {
+                          const simC = allCandidates.find(x => x.id === simId)
+                          if (!simC) return null
+                          return (
+                            <div key={simId} className="relative group/sim">
+                              <img
+                                src={simC.photoUrl}
+                                alt={simC.name}
+                                className="w-6 h-6 rounded-full object-cover border border-slate-200 cursor-help"
+                              />
+                              <span className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-800 text-white text-xs rounded px-2 py-0.5 opacity-0 group-hover/sim:opacity-100 pointer-events-none z-50 transition-opacity">
+                                {simC.name}
+                              </span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -677,6 +698,56 @@ export default function AnalyticsReveal({
               </div>
             </div>
 
+            {/* Group assortativity card */}
+            {analytics && (() => {
+              const assort = computeGroupAssortativity(allCandidates, analytics.coOccurrenceMatrix)
+              const groups = [
+                { label: 'מרצ', color: '#dc2626' },
+                { label: 'כפרי', color: '#16a34a' },
+                { label: 'מיעוטים', color: '#9333ea' },
+              ]
+              return (
+                <div className="bg-white border border-slate-200 rounded-xl p-4">
+                  <h3 className="font-bold text-slate-800 mb-1 text-base">
+                    <Tooltip term="אסורטטיביות קבוצתית">
+                      מודד האם מצביעים נוטים לבחור מועמדים מאותה קבוצת ייצוג. r=1: בחירה מושלמת בתוך הקבוצה; r=0: אקראי; r&lt;0: מצביעים מעדיפים לשלב קבוצות.
+                    </Tooltip>
+                  </h3>
+                  <p className="text-xs text-slate-500 mb-4">
+                    האם מצביעים בוחרים מועמדים מאותה קבוצת ייצוג, או שהם מערבבים קבוצות? ערך חיובי = העדפה לבחור בתוך הקבוצה; שלילי = העדפה לשלב קבוצות.
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    {groups.map(({ label, color }) => {
+                      const r = assort[label] ?? 0
+                      const pct = Math.round(r * 100)
+                      const barWidth = Math.abs(pct)
+                      const isPositive = r >= 0
+                      return (
+                        <div key={label} className="flex-1 min-w-[140px] border rounded-lg p-3" style={{ borderColor: color + '40', background: color + '08' }}>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
+                            <span className="font-semibold text-sm" style={{ color }}>{label}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                              <div
+                                className="h-2 rounded-full"
+                                style={{ width: `${barWidth}%`, background: isPositive ? color : '#94a3b8' }}
+                              />
+                            </div>
+                            <span className="text-xs font-mono text-slate-600 w-10 text-right">{r.toFixed(2)}</span>
+                          </div>
+                          <p className="text-xs text-slate-400 mt-1">
+                            {r > 0.3 ? 'בחירה בתוך הקבוצה' : r < -0.1 ? 'שילוב קבוצות' : 'ניטרלי'}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+
             {/* Metrics table */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-slate-100">
@@ -693,6 +764,11 @@ export default function AnalyticsReveal({
                     <tr>
                       <th className="px-4 py-2 text-right font-semibold">מועמד</th>
                       <th className="px-4 py-2 text-right font-semibold w-40">Eigenvector (יוקרה)</th>
+                      <th className="px-4 py-2 text-right font-semibold w-40">
+                        <Tooltip term="PageRank">
+                          הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם מי מצביע איתו.
+                        </Tooltip>
+                      </th>
                       <th className="px-4 py-2 text-right font-semibold w-40">Degree (קשרים)</th>
                       <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
                     </tr>
@@ -702,6 +778,7 @@ export default function AnalyticsReveal({
                       .sort((a, b) => (snaData.eigenvector[b.id] ?? 0) - (snaData.eigenvector[a.id] ?? 0))
                       .map(candidate => {
                         const bt = snaData.eigenvector[candidate.id] ?? 0
+                        const pr = snaData.pagerank[candidate.id] ?? 0
                         const dg = snaData.degree[candidate.id] ?? 0
                         const communityId = snaData.communityDisplayIndex[candidate.id] ?? -1
                         const color = getCommunityColor(communityId)
@@ -719,6 +796,14 @@ export default function AnalyticsReveal({
                                   <div className="h-2 rounded-full bg-amber-500" style={{ width: `${Math.round(bt * 100)}%` }} />
                                 </div>
                                 <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(bt * 100)}%</span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-2">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
+                                  <div className="h-2 rounded-full bg-violet-500" style={{ width: `${Math.round(pr * 100)}%` }} />
+                                </div>
+                                <span className="text-xs text-slate-500 font-mono w-8 text-right">{Math.round(pr * 100)}%</span>
                               </div>
                             </td>
                             <td className="px-4 py-2">
