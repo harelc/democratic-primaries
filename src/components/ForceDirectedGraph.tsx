@@ -116,9 +116,9 @@ export default function ForceDirectedGraph({
       .selectAll('line')
       .data(edges)
       .join('line')
-      .attr('stroke', '#64748b')
-      .attr('stroke-width', (d: any) => 1 + Math.pow(d.value, 1.5) * 8)
-      .attr('opacity', 0.6)
+      .attr('stroke', '#cbd5e1')
+      .attr('stroke-width', (d: any) => 0.3 + Math.pow(d.value, 1.5) * 12)
+      .attr('opacity', 0.5)
       .attr('x1', 0)
       .attr('y1', 0)
       .attr('x2', 0)
@@ -320,24 +320,24 @@ export default function ForceDirectedGraph({
 
     svg.selectAll('line')
       .attr('opacity', (d: any) => {
-        if (hoveredId === null) return 0.6
+        if (hoveredId === null) return 0.5
         const src = typeof d.source === 'object' ? d.source.id : d.source
         const tgt = typeof d.target === 'object' ? d.target.id : d.target
         return src === hoveredId || tgt === hoveredId ? 1 : 0.05
       })
       .attr('stroke-width', (d: any) => {
-        if (hoveredId === null) return 1 + Math.sqrt(d.value) * 6
+        if (hoveredId === null) return 0.3 + Math.pow(d.value, 1.5) * 12
         const src = typeof d.source === 'object' ? d.source.id : d.source
         const tgt = typeof d.target === 'object' ? d.target.id : d.target
         return src === hoveredId || tgt === hoveredId
-          ? (1 + Math.pow(d.value, 1.5) * 8) * 1.8
-          : 1 + Math.pow(d.value, 1.5) * 8
+          ? (0.3 + Math.pow(d.value, 1.5) * 12) * 1.8
+          : 0.3 + Math.pow(d.value, 1.5) * 12
       })
       .attr('stroke', (d: any) => {
-        if (hoveredId === null) return '#64748b'
+        if (hoveredId === null) return '#cbd5e1'
         const src = typeof d.source === 'object' ? d.source.id : d.source
         const tgt = typeof d.target === 'object' ? d.target.id : d.target
-        return src === hoveredId || tgt === hoveredId ? '#2563eb' : '#64748b'
+        return src === hoveredId || tgt === hoveredId ? '#2563eb' : '#cbd5e1'
       })
   }, [hoveredId])
 
