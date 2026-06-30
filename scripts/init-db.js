@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 import { createClient } from '@libsql/client'
 
+const url = process.env.TURSO_DATABASE_URL || 'file:local.db'
 const client = createClient({
-  url: process.env.TURSO_DATABASE_URL || 'file:local.db',
+  url,
   authToken: process.env.TURSO_AUTH_TOKEN,
 })
 
 async function initDb() {
-  console.log('Initializing database schema...')
+  console.log(`Initializing database schema at: ${url}`)
 
   try {
-    // Create ballots table
     await client.execute(`
       CREATE TABLE IF NOT EXISTS ballots (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
