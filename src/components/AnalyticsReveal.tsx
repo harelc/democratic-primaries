@@ -474,6 +474,32 @@ export default function AnalyticsReveal({
         {activeTab === 'graph' && analytics && allCandidates && selectedIds && onSelect && (
           <div className="flex flex-col gap-2" style={{ height: 'calc(100vh - 300px)' }}>
             <LowVotesWarning />
+            {/* Layout + color toggles — always visible */}
+            <div className="flex gap-2 flex-wrap items-center">
+              <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
+                <button onClick={() => setGraphLayout('force')}
+                  className={`px-3 py-1.5 transition-colors ${graphLayout === 'force' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                  כוחות
+                </button>
+                <button onClick={() => setGraphLayout('spectral')}
+                  className={`px-3 py-1.5 transition-colors ${graphLayout === 'spectral' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                  ספקטרלי
+                </button>
+              </div>
+              <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
+                <button onClick={() => setGraphColorMode('group')}
+                  className={`px-3 py-1.5 transition-colors ${graphColorMode === 'group' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                  קבוצת ייצוג
+                </button>
+                <button onClick={() => setGraphColorMode('community')}
+                  className={`px-3 py-1.5 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                  קהילה
+                </button>
+              </div>
+              {graphLayout === 'spectral' && (
+                <span className="text-xs text-blue-600">מיקום: וקטורי Fiedler של ה-Laplacian</span>
+              )}
+            </div>
             <div className="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
               {/* Legend — compact strip on mobile, detailed sidebar on desktop */}
               <div className="md:w-56 bg-blue-50 border border-blue-200 rounded-lg p-3 flex-shrink-0">
