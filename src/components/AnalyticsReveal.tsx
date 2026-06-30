@@ -286,52 +286,38 @@ export default function AnalyticsReveal({
         {activeTab === 'graph' && analytics && allCandidates && selectedIds && onSelect && (
           <div className="flex flex-col gap-2" style={{ height: 'calc(100vh - 300px)' }}>
             <LowVotesWarning />
-            <div className="flex gap-4 flex-1 min-h-0">
-            {/* Legend Sidebar */}
-            <div className="w-56 bg-blue-50 border border-blue-200 rounded-lg p-4 overflow-y-auto flex-shrink-0">
-              <h3 className="font-bold text-blue-900 mb-3 text-sm">📊 כיצד לקרוא את הגרף</h3>
-              <div className="space-y-2 text-xs text-blue-800">
-                <div>
-                  <span className="font-semibold block">🔵 גודל הצומת</span>
-                  <span className="text-blue-700">ככל שגדול יותר, יותר בחירות</span>
-                </div>
-                <div>
-                  <span className="font-semibold block">🔗 קווים</span>
-                  <span className="text-blue-700">קשר בין מועמדים שנבחרו ביחד</span>
-                </div>
-                <div>
-                  <span className="font-semibold block">📏 עובי הקו</span>
-                  <span className="text-blue-700">קשר חזק יותר = קו עבה יותר</span>
-                </div>
-                <div>
-                  <span className="font-semibold block">✓ סימון</span>
-                  <span className="text-blue-700">מועמד שבחרת בהצבעה שלך</span>
-                </div>
-                <div className="text-xs text-blue-700 bg-blue-100 p-2 rounded mt-3">
-                  💡 גרור, הקטן/הגדל בעכבר, קליק לבחור
+            <div className="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
+              {/* Legend — horizontal on mobile, sidebar on desktop */}
+              <div className="md:w-48 bg-blue-50 border border-blue-200 rounded-lg p-3 flex-shrink-0">
+                <h3 className="font-bold text-blue-900 mb-2 text-xs">📊 מקרא</h3>
+                <div className="flex flex-row md:flex-col flex-wrap gap-x-4 gap-y-1 text-xs text-blue-800">
+                  <div><span className="font-semibold">🔵 גודל</span> — פופולריות</div>
+                  <div><span className="font-semibold">🔗 קו</span> — נבחרו ביחד</div>
+                  <div><span className="font-semibold">✓</span> — בחרת</div>
+                  <div className="text-blue-600 text-xs mt-1 hidden md:block">גרור · זום · לחץ</div>
                 </div>
               </div>
-            </div>
 
-            {/* Graph Canvas */}
-            <div className="flex-1 bg-white border border-slate-200 rounded-lg p-4 min-w-0">
-              <ForceDirectedGraph
-                candidates={allCandidates}
-                selectedIds={selectedIds}
-                onSelect={onSelect}
-                analytics={analytics}
-              />
-            </div>
+              {/* Graph Canvas */}
+              <div className="flex-1 bg-white border border-slate-200 rounded-lg p-2 min-w-0 min-h-0">
+                <ForceDirectedGraph
+                  candidates={allCandidates}
+                  selectedIds={selectedIds}
+                  onSelect={onSelect}
+                  analytics={analytics}
+                />
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <p className="text-slate-600 mb-2 text-sm">
-              מטריצת הדפוסים - שילובים של כל 51 המשתתפים
-            </p>
+            <p className="text-slate-600 mb-2 text-sm">מטריצת הדפוסים - שילובים של כל 51 המשתתפים</p>
             <LowVotesWarning />
+            <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
+              📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
+            </p>
 
             {/* Full Matrix - Scrollable */}
             <div className="overflow-auto border border-slate-200 rounded" style={{ maxHeight: '600px' }}>

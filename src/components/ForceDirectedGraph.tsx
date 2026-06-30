@@ -139,7 +139,7 @@ export default function ForceDirectedGraph({
     nodeGroups.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', (d: any) => d.size + 10)
-      .attr('font-size', '9px')
+      .attr('font-size', '11px')
       .attr('fill', '#475569')
       .attr('pointer-events', 'none')
       .text((d: any) => {
@@ -169,9 +169,10 @@ export default function ForceDirectedGraph({
         return `${d.candidate.name}\nנבחר ב-${pct}% מהרשימות`
       })
 
-    // Drag
+    // Drag (mouse + touch)
     nodeGroups.call(
       d3.drag<any, any>()
+        .touchable(true)
         .on('start', (event: any, d: any) => {
           if (!event.active) simulation.alphaTarget(0.3).restart()
           d.fx = d.x

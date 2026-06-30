@@ -85,7 +85,10 @@ export default function App() {
 
   const handleViewAdminAnalytics = () => {
     setLoading(true)
-    fetch('/.netlify/functions/analytics')
+    const url = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/analytics'
+      : '/.netlify/functions/analytics'
+    fetch(url)
       .then(r => r.json())
       .then(data => {
         setAnalytics({
@@ -96,7 +99,7 @@ export default function App() {
         })
         setPhase('analytics')
       })
-      .catch(() => alert('שגיאה בטעינת הנתונים'))
+      .catch(() => alert('שגיאה בטעינת הנתונים — השתמש ב-netlify dev במקום vite'))
       .finally(() => setLoading(false))
   }
 
@@ -206,11 +209,14 @@ export default function App() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {phase === 'building' && (
           <>
-            <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white px-4 md:px-6 py-3 shadow-md relative">
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight">🗳️ הרשימה שלי לפריימריז הדמוקרטים</h1>
-              <p className="text-blue-200 text-xs mt-0.5">בנו את הרשימה שלכם — בחרו 8-6 מועמדים וגלו דפוסי הצבעה</p>
+            <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white px-4 md:px-6 py-3 shadow-md">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h1 className="text-lg md:text-2xl font-bold tracking-tight leading-tight">🗳️ הרשימה שלי לפריימריז הדמוקרטים</h1>
+                  <p className="text-blue-200 text-xs mt-0.5 hidden sm:block">בנו את הרשימה שלכם — בחרו 8-6 מועמדים וגלו דפוסי הצבעה</p>
+                </div>
               {adminMode && (
-                <div className="absolute top-2 right-4 flex gap-2 items-center">
+                <div className="flex gap-1 items-center flex-shrink-0">
                   <div className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
                     ADMIN
                   </div>
@@ -219,7 +225,7 @@ export default function App() {
                     disabled={loading}
                     className="bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold px-2 py-1 rounded transition-colors"
                   >
-                    {loading ? '...' : 'צפה בנתונים'}
+                    {loading ? '...' : 'נתונים'}
                   </button>
                   <button
                     onClick={exitAdminMode}
@@ -229,6 +235,7 @@ export default function App() {
                   </button>
                 </div>
               )}
+              </div>
             </div>
 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
@@ -245,10 +252,11 @@ export default function App() {
                   />
                   <button
                     onClick={handleRandomize}
-                    className="px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors font-medium text-sm"
+                    className="px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition-colors font-medium text-sm flex-shrink-0"
                     title="סדר אקראי חדש"
                   >
-                    🔄 סדר אקראי חדש
+                    <span className="hidden sm:inline">🔄 סדר אקראי חדש</span>
+                    <span className="sm:hidden">🔄</span>
                   </button>
                 </div>
 
