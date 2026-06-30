@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { PrivacyLink } from './PrivacyModal'
 
 export default function Footer() {
   const [visitorCount, setVisitorCount] = useState<number | null>(null)
@@ -43,6 +44,8 @@ export default function Footer() {
         >
           CC BY-NC-SA 4.0
         </a>
+        <span>|</span>
+        <PrivacyLink />
         <span>|</span>
         <a
           href="https://github.com/harelc/democratic-primaries"
