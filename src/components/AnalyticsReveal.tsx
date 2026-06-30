@@ -424,12 +424,21 @@ export default function AnalyticsReveal({
                     {snaData ? (
                       <>
                         <div className="text-blue-600 mb-1">קהילות (Louvain)</div>
-                        {Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => (
-                          <div key={cId} className="flex items-center gap-2">
-                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: getCommunityColor(cId) }} />
-                            <span>קהילה {cId + 1}</span>
-                          </div>
-                        ))}
+                        {(() => {
+                          let idx = 0
+                          return Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => {
+                            const members = allCandidates?.filter(c => snaData.communities[c.id] === cId) ?? []
+                            const hasEdges = members.some(c => (snaData.weightedDegree[c.id] ?? 0) > 0)
+                            if (!hasEdges) return null
+                            const color = getCommunityColor(idx++)
+                            return (
+                              <div key={cId} className="flex items-center gap-2">
+                                <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: color }} />
+                                <span>קהילה {idx}</span>
+                              </div>
+                            )
+                          })
+                        })()}
                       </>
                     ) : (
                       <>
@@ -534,21 +543,26 @@ export default function AnalyticsReveal({
               <div className="flex flex-wrap gap-4">
                 {(() => {
                   const allIds = Array.from(new Set(Object.values(snaData.communities))).sort()
+                  // A candidate is isolated if they have no co-occurrence edges (weightedDegree = 0)
+                  const isIsolated = (c: Candidate) => (snaData.weightedDegree[c.id] ?? 0) === 0
                   const singletons: Candidate[] = []
                   let communityIdx = 0
                   const blocks = allIds.map(communityId => {
                     const members = allCandidates.filter(c => snaData.communities[c.id] === communityId)
-                    if (members.length < 2) { singletons.push(...members); return null }
+                    const realMembers = members.filter(c => !isIsolated(c))
+                    const isolatedMembers = members.filter(isIsolated)
+                    singletons.push(...isolatedMembers)
+                    if (realMembers.length < 1) return null
                     const color = getCommunityColor(communityIdx++)
                     return (
                       <div key={communityId} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
                           <span className="font-semibold text-sm" style={{ color }}>קהילה {communityIdx}</span>
-                          <span className="text-xs text-slate-400">({members.length} מועמדים)</span>
+                          <span className="text-xs text-slate-400">({realMembers.length} מועמדים)</span>
                         </div>
                         <div className="flex flex-wrap gap-1">
-                          {members.map(c => (
+                          {realMembers.map(c => (
                             <div key={c.id} className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 text-xs shadow-sm border border-slate-100">
                               <img src={c.photoUrl} alt={c.name} className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
                               <span className="text-slate-700">{c.name}</span>
