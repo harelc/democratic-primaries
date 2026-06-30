@@ -19,7 +19,7 @@ function Tooltip({ term, children }: { term: string; children: React.ReactNode }
       </span>
       {rect && (
         <span
-          className="fixed z-[9999] w-64 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 shadow-xl leading-relaxed pointer-events-none"
+          className="fixed z-[9999] w-80 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 shadow-xl leading-relaxed pointer-events-none whitespace-pre-line"
           style={{ bottom: window.innerHeight - rect.top + 8, left: Math.min(rect.left, window.innerWidth - 272) }}
         >
           {children}
@@ -620,7 +620,9 @@ export default function AnalyticsReveal({
             <div className="bg-white border border-slate-200 rounded-xl p-4">
               <h3 className="font-bold text-slate-800 mb-3 text-base">קהילות הצבעה</h3>
               <p className="text-xs text-slate-500 mb-4">
-                קהילות שזוהו על ידי <Tooltip term="אלגוריתם Louvain">שיטה למציאת קבוצות בגרף — מחפשת קבוצות שבהן הקשרים הפנימיים צפופים מהצפוי במקרה. כל קהילה היא "בלוק הצבעה" טבעי שצץ מהנתונים.</Tooltip> — מועמדים שנבחרים ביחד בתדירות גבוהה
+                קהילות שזוהו על ידי <Tooltip term="אלגוריתם Louvain">
+                  ממקסם מודולריות Q = (1/2m)Σᵢⱼ[Aᵢⱼ − kᵢkⱼ/2m]δ(cᵢ,cⱼ) — ההפרש בין צפיפות הקשרים הנצפית לצפויה בגרף אקראי עם אותם דרגות.{'\n\n'}אם ממש מעניין אותך: שני שלבים — (1) Greedy local: כל קודקוד עובר לקהילה השכנה שממקסמת ΔQ; (2) Compression: כל קהילה מתכווצת לקודקוד יחיד וחוזר חלילה. מורכבות O(n log n). אופטימום גלובלי אינו מובטח — NP-hard.
+                </Tooltip> — מועמדים שנבחרים ביחד בתדירות גבוהה
               </p>
               <div className="flex flex-wrap gap-4">
                 {(() => {
@@ -680,7 +682,9 @@ export default function AnalyticsReveal({
               <div className="px-4 py-3 border-b border-slate-100">
                 <h3 className="font-bold text-slate-800 text-base">מדדי רשת לפי מועמד</h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  ממויין לפי <Tooltip term="eigenvector centrality">מועמד מרכזי אם הוא נבחר יחד עם מועמדים מרכזיים אחרים — מדד יוקרה: להיות "בלב" הרשת, לא רק פופולרי בפני עצמו.</Tooltip> — מי נמצא במרכז הרשת
+                  ממויין לפי <Tooltip term="eigenvector centrality">
+                    פתרון Ax = λx כאשר A מטריצת הסמיכות המשוקללת (co-occurrence), λ הערך העצמי הדומיננטי. ציון המועמד i הוא xᵢ = (1/λ)Σⱼ∈N(i) xⱼ — ממוצע ציוני שכניו. נמצא בכוח חזרה (power iteration). גבוה = נבחר עם מועמדים שגם הם נבחרים עם מועמדים מרכזיים.
+                  </Tooltip> — מי נמצא במרכז הרשת
                 </p>
               </div>
               <div className="overflow-auto">
