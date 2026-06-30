@@ -73,7 +73,7 @@ export default function AnalyticsReveal({
     if (frequency >= 0.6) return 'קונסנזוס'
     if (frequency >= 0.3) return 'פופולרי'
     if (frequency >= 0.1) return 'נישתי'
-    return 'קונטרה'
+    return 'נדיר'
   }
 
   const getHeatColor = (cooccurrence: number) => {
