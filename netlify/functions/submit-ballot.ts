@@ -80,12 +80,16 @@ const handler: Handler = async (event, context) => {
           sql: `INSERT INTO vote_locks (ip_hash, vote_date) VALUES (?, ?)`,
           args: [ipHash, voteDate],
         })
-      } catch {
-        // UNIQUE constraint violation = already voted today
-        return {
-          statusCode: 429,
-          body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }),
+      } catch (e: any) {
+        const msg = e?.message || ''
+        if (msg.includes('UNIQUE') || msg.includes('SQLITE_CONSTRAINT')) {
+          return {
+            statusCode: 429,
+            body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }),
+          }
         }
+        console.error('vote_locks error:', msg)
+        throw e // propagate real errors (e.g. missing table)
       }
     }
 
