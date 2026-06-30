@@ -1,7 +1,28 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
+
+function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
+  const [visible, setVisible] = useState(false)
+  return (
+    <span className="relative inline-block">
+      <span
+        className="border-b border-dotted border-slate-400 cursor-help"
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+      >
+        {term}
+      </span>
+      {visible && (
+        <span className="absolute bottom-full right-0 mb-2 z-50 w-64 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 shadow-xl leading-relaxed pointer-events-none">
+          {children}
+          <span className="absolute top-full right-4 border-4 border-transparent border-t-slate-800" />
+        </span>
+      )}
+    </span>
+  )
+}
 
 function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData }: {
   allCandidates: Candidate[]
@@ -592,7 +613,9 @@ export default function AnalyticsReveal({
             {/* Community section */}
             <div className="bg-white border border-slate-200 rounded-xl p-4">
               <h3 className="font-bold text-slate-800 mb-3 text-base">קהילות הצבעה</h3>
-              <p className="text-xs text-slate-500 mb-4">קהילות שזוהו על ידי אלגוריתם Louvain — מועמדים שנבחרים ביחד בתדירות גבוהה</p>
+              <p className="text-xs text-slate-500 mb-4">
+                קהילות שזוהו על ידי <Tooltip term="אלגוריתם Louvain">שיטה למציאת קבוצות בגרף — מחפשת קבוצות שבהן הקשרים הפנימיים צפופים מהצפוי במקרה. כל קהילה היא "בלוק הצבעה" טבעי שצץ מהנתונים.</Tooltip> — מועמדים שנבחרים ביחד בתדירות גבוהה
+              </p>
               <div className="flex flex-wrap gap-4">
                 {(() => {
                   // Use communityDisplayIndex — single source of truth
@@ -650,7 +673,9 @@ export default function AnalyticsReveal({
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-slate-100">
                 <h3 className="font-bold text-slate-800 text-base">מדדי רשת לפי מועמד</h3>
-                <p className="text-xs text-slate-500 mt-0.5">ממויין לפי eigenvector centrality — מי נמצא במרכז הרשת</p>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  ממויין לפי <Tooltip term="eigenvector centrality">מועמד מרכזי אם הוא נבחר יחד עם מועמדים מרכזיים אחרים — מדד יוקרה: להיות "בלב" הרשת, לא רק פופולרי בפני עצמו.</Tooltip> — מי נמצא במרכז הרשת
+                </p>
               </div>
               <div className="overflow-auto">
                 <table className="w-full text-sm">
