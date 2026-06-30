@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
-import { computeSNA, getCommunityColor, computeGroupAssortativity } from '../utils/sna'
+import { computeSNA, getCommunityColor } from '../utils/sna'
 
 function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
   const [rect, setRect] = useState<DOMRect | null>(null)
@@ -697,56 +697,6 @@ export default function AnalyticsReveal({
                 })()}
               </div>
             </div>
-
-            {/* Group assortativity card */}
-            {analytics && (() => {
-              const assort = computeGroupAssortativity(allCandidates, analytics.coOccurrenceMatrix)
-              const groups = [
-                { label: 'מרצ', color: '#dc2626' },
-                { label: 'כפרי', color: '#16a34a' },
-                { label: 'מיעוטים', color: '#9333ea' },
-              ]
-              return (
-                <div className="bg-white border border-slate-200 rounded-xl p-4">
-                  <h3 className="font-bold text-slate-800 mb-1 text-base">
-                    <Tooltip term="אסורטטיביות קבוצתית">
-                      מודד האם מצביעים נוטים לבחור מועמדים מאותה קבוצת ייצוג. r=1: בחירה מושלמת בתוך הקבוצה; r=0: אקראי; r&lt;0: מצביעים מעדיפים לשלב קבוצות.
-                    </Tooltip>
-                  </h3>
-                  <p className="text-xs text-slate-500 mb-4">
-                    האם מצביעים בוחרים מועמדים מאותה קבוצת ייצוג, או שהם מערבבים קבוצות? ערך חיובי = העדפה לבחור בתוך הקבוצה; שלילי = העדפה לשלב קבוצות.
-                  </p>
-                  <div className="flex flex-wrap gap-4">
-                    {groups.map(({ label, color }) => {
-                      const r = assort[label] ?? 0
-                      const pct = Math.round(r * 100)
-                      const barWidth = Math.abs(pct)
-                      const isPositive = r >= 0
-                      return (
-                        <div key={label} className="flex-1 min-w-[140px] border rounded-lg p-3" style={{ borderColor: color + '40', background: color + '08' }}>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                            <span className="font-semibold text-sm" style={{ color }}>{label}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
-                              <div
-                                className="h-2 rounded-full"
-                                style={{ width: `${barWidth}%`, background: isPositive ? color : '#94a3b8' }}
-                              />
-                            </div>
-                            <span className="text-xs font-mono text-slate-600 w-10 text-right">{r.toFixed(2)}</span>
-                          </div>
-                          <p className="text-xs text-slate-400 mt-1">
-                            {r > 0.3 ? 'בחירה בתוך הקבוצה' : r < -0.1 ? 'שילוב קבוצות' : 'ניטרלי'}
-                          </p>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })()}
 
             {/* Metrics table */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
