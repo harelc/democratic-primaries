@@ -59,22 +59,6 @@ export default function AnalyticsReveal({
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => {
-                // Regenerate all analytics
-                const mockCoOcc: Record<string, number> = {}
-                for (let i = 0; i < (allCandidates?.length || 51); i++) {
-                  for (let j = i + 1; j < (allCandidates?.length || 51); j++) {
-                    const key = `${allCandidates?.[i].id || i}_${allCandidates?.[j].id || j}`
-                    mockCoOcc[key] = Math.random() * 0.9
-                  }
-                }
-                window.location.reload()
-              }}
-              className="px-3 py-1 bg-yellow-600 text-white rounded text-sm hover:bg-yellow-700"
-            >
-              🔄 Regenerate Data
-            </button>
-            <button
-              onClick={() => {
                 localStorage.removeItem('admin_authenticated')
                 window.location.reload()
               }}
