@@ -153,6 +153,7 @@ export default function AnalyticsReveal({
 }: AnalyticsRevealProps) {
   const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'sna' | 'log'>('picks')
   const [ballotLog, setBallotLog] = useState<any[]>([])
+  const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
 
   const snaData = useMemo(() => {
     if (!analytics || !allCandidates || allCandidates.length === 0) return null
@@ -471,21 +472,51 @@ export default function AnalyticsReveal({
                     <div>מועמד שהצבעת עבורו</div>
                   </div>
                   <div className="pt-2 border-t border-blue-200 space-y-1.5">
-                    <div className="font-semibold text-blue-900">🎨 צבע גבול</div>
-                    <>
-                      <div className="text-blue-600 mb-1">קבוצת ייצוג</div>
-                      {[
+                    <div className="font-semibold text-blue-900 mb-1">🎨 צבע גבול</div>
+                    {/* Toggle */}
+                    <div className="flex rounded-lg overflow-hidden border border-blue-200 text-xs mb-2">
+                      <button
+                        onClick={() => setGraphColorMode('group')}
+                        className={`flex-1 px-2 py-1 transition-colors ${graphColorMode === 'group' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
+                      >
+                        קבוצת ייצוג
+                      </button>
+                      <button
+                        onClick={() => setGraphColorMode('community')}
+                        className={`flex-1 px-2 py-1 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-blue-700 hover:bg-blue-50'}`}
+                      >
+                        קהילה
+                      </button>
+                    </div>
+                    {graphColorMode === 'group' ? (
+                      [
                         { color: '#dc2626', label: 'מרצ' },
                         { color: '#16a34a', label: 'כפרי' },
                         { color: '#9333ea', label: 'מיעוטים' },
                         { color: '#3b82f6', label: 'אחר / לא ידוע' },
                       ].map(({ color, label }) => (
                         <div key={label} className="flex items-center gap-2">
-                          <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 border border-white/50" style={{ background: color }} />
+                          <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
                           <span>{label}</span>
                         </div>
-                      ))}
-                    </>
+                      ))
+                    ) : snaData ? (
+                      (() => {
+                        let idx = 0
+                        return Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => {
+                          const members = allCandidates?.filter(c => snaData.communities[c.id] === cId) ?? []
+                          const hasEdges = members.some(c => (snaData.weightedDegree[c.id] ?? 0) > 0)
+                          if (!hasEdges) return null
+                          const color = getCommunityColor(idx++)
+                          return (
+                            <div key={cId} className="flex items-center gap-2">
+                              <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
+                              <span>קהילה {idx}</span>
+                            </div>
+                          )
+                        })
+                      })()
+                    ) : null}
                   </div>
                   <div className="pt-2 border-t border-blue-200 text-blue-500">
                     💡 גרור · גלגל עכבר לזום
@@ -501,6 +532,7 @@ export default function AnalyticsReveal({
                   onSelect={onSelect}
                   analytics={analytics}
                   snaData={snaData ?? undefined}
+                  colorMode={graphColorMode}
                 />
               </div>
             </div>
