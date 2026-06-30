@@ -76,34 +76,18 @@ export default function App() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
   const adminMode = isAdminMode()
 
-  // Load demo data in admin mode
-  useEffect(() => {
-    if (adminMode && phase === 'building') {
-      // Auto-generate analytics and jump to analytics view
-      const selectedArray = Array.from(selectedIds).length > 0
-        ? Array.from(selectedIds)
-        : candidates.slice(0, 8).map(c => c.id)
-
-      setSelectedIds(new Set(selectedArray))
-
-      // Generate demo analytics with sparse random matrix
-      const mockFrequency: Record<string, number> = {}
-      selectedArray.forEach(id => {
-        mockFrequency[id] = Math.random() * 0.8 + 0.2
-      })
-
-      const mockCoOccurrence = generateSparseMatrix(candidates, 0.12)
-
-      setAnalytics({
-        candidatePickFrequency: mockFrequency,
-        coOccurrenceMatrix: mockCoOccurrence,
-        totalSubmissions: Math.floor(Math.random() * 2000) + 500,
-        allCandidates: candidates,
-      })
-
-      setPhase('analytics')
+  const generateAdminAnalytics = (selectedArray: string[]) => {
+    const mockFrequency: Record<string, number> = {}
+    selectedArray.forEach(id => {
+      mockFrequency[id] = Math.random() * 0.8 + 0.2
+    })
+    return {
+      candidatePickFrequency: mockFrequency,
+      coOccurrenceMatrix: generateSparseMatrix(candidates, 0.12),
+      totalSubmissions: Math.floor(Math.random() * 2000) + 500,
+      allCandidates: candidates,
     }
-  }, [adminMode, phase, candidates, selectedIds])
+  }
 
   const handleRandomize = () => {
     const shuffled = [...candidatesData].sort(() => Math.random() - 0.5)
@@ -147,7 +131,13 @@ export default function App() {
   }
 
   const handleSubmit = () => {
-    if (isValid) {
+    if (!isValid) return
+    if (adminMode) {
+      // Skip captcha in admin/dev mode, use mock analytics
+      const selectedArray = Array.from(selectedIds)
+      setAnalytics(generateAdminAnalytics(selectedArray))
+      setPhase('analytics')
+    } else {
       setPhase('captcha')
     }
   }

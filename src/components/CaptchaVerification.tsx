@@ -1,8 +1,9 @@
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 declare global {
   interface Window {
     grecaptcha?: any
+    onRecaptchaReady?: () => void
   }
 }
 
@@ -15,92 +16,68 @@ export default function CaptchaVerification({
   onVerify,
   loading,
 }: CaptchaVerificationProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isReady, setIsReady] = useState(false)
-  const hasSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY
+  const [executing, setExecuting] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!hasSiteKey) {
-      setIsReady(true)
-      return
-    }
+    if (!siteKey) return
 
-    // Load reCAPTCHA script
+    // Load reCAPTCHA v3 script
     const script = document.createElement('script')
-    script.src = 'https://www.google.com/recaptcha/api.js'
+    script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`
     script.async = true
-    script.defer = true
-    script.onload = () => {
-      if (containerRef.current && window.grecaptcha) {
-        window.grecaptcha.render(containerRef.current, {
-          sitekey: hasSiteKey,
-          callback: handleCaptchaSuccess,
-          'error-callback': handleCaptchaError,
-        })
-        setIsReady(true)
-      }
-    }
     document.head.appendChild(script)
 
     return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script)
-      }
+      if (script.parentNode) script.parentNode.removeChild(script)
     }
-  }, [hasSiteKey])
+  }, [siteKey])
 
-  const handleCaptchaSuccess = (token: string) => {
-    onVerify(token)
-  }
+  const handleVerify = async () => {
+    if (!siteKey) {
+      onVerify('dev-token-' + Date.now())
+      return
+    }
 
-  const handleCaptchaError = () => {
-    console.error('reCAPTCHA error')
-  }
-
-  const handleManualVerify = () => {
-    // Fallback for dev mode
-    onVerify('dev-token-' + Date.now())
+    setExecuting(true)
+    setError('')
+    try {
+      await new Promise<void>((resolve) => {
+        if (window.grecaptcha?.ready) {
+          window.grecaptcha.ready(resolve)
+        } else {
+          resolve()
+        }
+      })
+      const token = await window.grecaptcha.execute(siteKey, { action: 'submit' })
+      onVerify(token)
+    } catch (e) {
+      setError('אימות נכשל. נסה שוב.')
+      setExecuting(false)
+    }
   }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full">
+      <div className="bg-white rounded-lg p-6 max-w-md w-full text-center">
         <h2 className="text-xl font-bold mb-4">אימות אדם</h2>
         <p className="text-slate-600 mb-6">
-          אנא אשר שאתה אדם כדי להגיש את הצעתך
+          לחצו על הכפתור כדי לאמת ולהגיש את הצעתך
         </p>
 
-        {!hasSiteKey ? (
-          <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mb-6">
-            <p className="text-sm text-yellow-800">
-              reCAPTCHA לא מוגדר. במצב פיתוח, לחץ על "אימות" כדי להמשיך.
-            </p>
-            <button
-              onClick={handleManualVerify}
-              disabled={loading}
-              className="mt-3 w-full px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 disabled:bg-slate-400"
-            >
-              {loading ? 'מעבד...' : 'אימות'}
-            </button>
-          </div>
-        ) : (
-          <>
-            {isReady && (
-              <div className="bg-slate-50 border border-slate-200 rounded p-4 mb-6 flex justify-center">
-                <div ref={containerRef} />
-              </div>
-            )}
-          </>
-        )}
+        <button
+          onClick={handleVerify}
+          disabled={loading || executing}
+          className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:bg-slate-400 transition-colors"
+        >
+          {loading || executing ? 'מאמת...' : 'אמת והגש'}
+        </button>
 
-        {loading && (
-          <div className="text-center text-sm text-slate-500">
-            מעבד את הצעתך...
-          </div>
-        )}
+        {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
         <p className="text-xs text-slate-400 text-center mt-4">
-          אנו משתמשים ב-reCAPTCHA כדי להגן מפני בוטים
+          מוגן על ידי reCAPTCHA
         </p>
       </div>
     </div>
