@@ -5,7 +5,8 @@ import { weightedDegree } from 'graphology-metrics/node'
 import { Candidate } from '../types'
 
 export interface SNAResult {
-  communities: Record<string, number>
+  communities: Record<string, number>        // candidateId → raw Louvain ID
+  communityDisplayIndex: Record<string, number> // candidateId → stable display index (singletons = -1)
   betweenness: Record<string, number>
   degree: Record<string, number>
   weightedDegree: Record<string, number>
@@ -101,22 +102,37 @@ export function computeSNA(
   // Normalize weighted degree (degree is already 0–1, betweenness already normalized, clustering is 0–1)
   const weightedDegreeNorm = normalizeRecord(weightedDegreeRaw)
 
-  // Ensure all candidates have entries (isolated nodes get 0)
   const result: SNAResult = {
     communities: communityMapping,
+    communityDisplayIndex: {},
     betweenness: betweennessRaw,
     degree: degreeRaw,
     weightedDegree: weightedDegreeNorm,
     clusteringCoefficient: clusteringRaw,
   }
 
-  // Fill in zeros for any missing candidates (isolated nodes)
+  // Fill in zeros for isolated nodes
   for (const candidate of candidates) {
     if (!(candidate.id in result.betweenness)) result.betweenness[candidate.id] = 0
     if (!(candidate.id in result.degree)) result.degree[candidate.id] = 0
     if (!(candidate.id in result.weightedDegree)) result.weightedDegree[candidate.id] = 0
     if (!(candidate.id in result.clusteringCoefficient)) result.clusteringCoefficient[candidate.id] = 0
     if (!(candidate.id in result.communities)) result.communities[candidate.id] = 0
+  }
+
+  // Build stable display index: raw Louvain IDs → sequential 0,1,2...
+  // singletons (all members isolated) are excluded → display index -1
+  const rawIds = Array.from(new Set(Object.values(result.communities))).sort()
+  let displayIdx = 0
+  const rawToDisplay: Record<number, number> = {}
+  for (const rawId of rawIds) {
+    const members = candidates.filter(c => result.communities[c.id] === rawId)
+    const hasEdges = members.some(c => (result.weightedDegree[c.id] ?? 0) > 0)
+    if (hasEdges) rawToDisplay[rawId] = displayIdx++
+  }
+  for (const candidate of candidates) {
+    const rawId = result.communities[candidate.id]
+    result.communityDisplayIndex[candidate.id] = rawToDisplay[rawId] ?? -1
   }
 
   return result
@@ -130,6 +146,8 @@ export const COMMUNITY_COLORS: Record<number, string> = {
   4: '#f97316', // orange
 }
 
-export function getCommunityColor(communityId: number): string {
-  return COMMUNITY_COLORS[communityId] ?? '#6b7280' // gray for 5+
+// Pass the stable display index (0,1,2...), not the raw Louvain ID
+export function getCommunityColor(displayIndex: number): string {
+  if (displayIndex < 0) return '#9ca3af' // gray for singletons
+  return COMMUNITY_COLORS[displayIndex] ?? '#6b7280'
 }

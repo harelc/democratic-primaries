@@ -46,21 +46,18 @@ export default function ForceDirectedGraph({
     const mainGroup = svg.append('g')
 
     // Place community centroids evenly around a circle, then scatter nodes near their centroid
-    const communityIds = snaData
-      ? Array.from(new Set(Object.values(snaData.communities))).sort()
-      : []
-    const numCommunities = communityIds.length || 1
-    const communityAngle = (commId: number) => {
-      const idx = communityIds.indexOf(commId)
-      return (idx / numCommunities) * 2 * Math.PI
-    }
+    const numCommunities = snaData
+      ? new Set(Object.values(snaData.communityDisplayIndex).filter(i => i >= 0)).size || 1
+      : 1
+    const communityAngle = (displayIdx: number) =>
+      (Math.max(0, displayIdx) / numCommunities) * 2 * Math.PI
     const radius = Math.min(width, height) * 0.3
 
     const nodes: any[] = candidates.map((c) => {
       let x = width / 2, y = height / 2
       if (snaData) {
-        const commId = snaData.communities[c.id] ?? 0
-        const angle = communityAngle(commId)
+        const displayIdx = snaData.communityDisplayIndex[c.id] ?? -1
+        const angle = communityAngle(displayIdx)
         const jitter = () => (Math.random() - 0.5) * 80
         x = width / 2 + Math.cos(angle) * radius + jitter()
         y = height / 2 + Math.sin(angle) * radius + jitter()
@@ -159,9 +156,8 @@ export default function ForceDirectedGraph({
 
     const getNodeColor = (d: any, dark = false): string => {
       if (colorMode === 'community' && snaData) {
-        const commId = snaData.communities[d.id] ?? 0
-        const color = getCommunityColor(commId)
-        return dark ? color : color
+        const displayIdx = snaData.communityDisplayIndex[d.id] ?? -1
+        return getCommunityColor(displayIdx)
       }
       return dark
         ? getGroupColorDark(d.candidate.group)

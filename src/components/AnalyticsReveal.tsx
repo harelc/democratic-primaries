@@ -10,8 +10,8 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData }: {
 }) {
   const ordered = snaData
     ? [...allCandidates].sort((a, b) => {
-        const ca = snaData.communities[a.id] ?? 99
-        const cb = snaData.communities[b.id] ?? 99
+        const ca = snaData.communityDisplayIndex[a.id] ?? 99
+        const cb = snaData.communityDisplayIndex[b.id] ?? 99
         if (ca !== cb) return ca - cb
         return (snaData.weightedDegree[b.id] ?? 0) - (snaData.weightedDegree[a.id] ?? 0)
       })
@@ -25,19 +25,19 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData }: {
           {ordered.map(c => (
             <div key={`h-${c.id}`} className="flex-shrink-0 flex items-center justify-center text-xs font-semibold bg-slate-50 border-r border-b border-slate-200 p-0.5"
               title={c.name} style={{ width: '60px', height: '60px', wordBreak: 'break-word', fontSize: '10px',
-                color: snaData ? getCommunityColor(snaData.communities[c.id] ?? 0) : '#475569' }}>
+                color: snaData ? getCommunityColor(snaData.communityDisplayIndex[c.id] ?? -1) : '#475569' }}>
               {c.name}
             </div>
           ))}
         </div>
         {ordered.map(c1 => {
-          const comm = snaData?.communities[c1.id] ?? null
+          const comm = snaData ? (snaData.communityDisplayIndex[c1.id] ?? -1) : null
           return (
             <div key={`r-${c1.id}`} className="flex mb-1">
               <div className="flex-shrink-0 text-xs font-semibold px-1 flex items-center justify-end border-r border-slate-200 truncate"
                 title={c1.name} style={{ width: '120px',
-                  color: comm !== null ? getCommunityColor(comm) : '#475569',
-                  backgroundColor: comm !== null ? `${getCommunityColor(comm)}15` : '#f8fafc' }}>
+                  color: (comm !== null && comm >= 0) ? getCommunityColor(comm) : '#475569',
+                  backgroundColor: (comm !== null && comm >= 0) ? `${getCommunityColor(comm)}15` : '#f8fafc' }}>
                 {c1.name}
               </div>
               {ordered.map(c2 => {
@@ -501,21 +501,12 @@ export default function AnalyticsReveal({
                         </div>
                       ))
                     ) : snaData ? (
-                      (() => {
-                        let idx = 0
-                        return Array.from(new Set(Object.values(snaData.communities))).sort().map(cId => {
-                          const members = allCandidates?.filter(c => snaData.communities[c.id] === cId) ?? []
-                          const hasEdges = members.some(c => (snaData.weightedDegree[c.id] ?? 0) > 0)
-                          if (!hasEdges) return null
-                          const color = getCommunityColor(idx++)
-                          return (
-                            <div key={cId} className="flex items-center gap-2">
-                              <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                              <span>קהילה {idx}</span>
-                            </div>
-                          )
-                        })
-                      })()
+                      Array.from(new Set(Object.values(snaData.communityDisplayIndex).filter(i => i >= 0))).sort().map(displayIdx => (
+                        <div key={displayIdx} className="flex items-center gap-2">
+                          <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: getCommunityColor(displayIdx) }} />
+                          <span>קהילה {displayIdx + 1}</span>
+                        </div>
+                      ))
                     ) : null}
                   </div>
                   <div className="pt-2 border-t border-blue-200 text-blue-500">
@@ -604,27 +595,24 @@ export default function AnalyticsReveal({
               <p className="text-xs text-slate-500 mb-4">קהילות שזוהו על ידי אלגוריתם Louvain — מועמדים שנבחרים ביחד בתדירות גבוהה</p>
               <div className="flex flex-wrap gap-4">
                 {(() => {
-                  const allIds = Array.from(new Set(Object.values(snaData.communities))).sort()
-                  // A candidate is isolated if they have no co-occurrence edges (weightedDegree = 0)
-                  const isIsolated = (c: Candidate) => (snaData.weightedDegree[c.id] ?? 0) === 0
-                  const singletons: Candidate[] = []
-                  let communityIdx = 0
-                  const blocks = allIds.map(communityId => {
-                    const members = allCandidates.filter(c => snaData.communities[c.id] === communityId)
-                    const realMembers = members.filter(c => !isIsolated(c))
-                    const isolatedMembers = members.filter(isIsolated)
-                    singletons.push(...isolatedMembers)
-                    if (realMembers.length < 1) return null
-                    const color = getCommunityColor(communityIdx++)
+                  // Use communityDisplayIndex — single source of truth
+                  const displayIds = Array.from(new Set(
+                    Object.values(snaData.communityDisplayIndex).filter(i => i >= 0)
+                  )).sort()
+                  const singletons = allCandidates.filter(c => (snaData.communityDisplayIndex[c.id] ?? -1) < 0)
+                  const blocks = displayIds.map(displayIdx => {
+                    const members = allCandidates.filter(c => snaData.communityDisplayIndex[c.id] === displayIdx)
+                    if (members.length < 1) return null
+                    const color = getCommunityColor(displayIdx)
                     return (
-                      <div key={communityId} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
+                      <div key={displayIdx} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                          <span className="font-semibold text-sm" style={{ color }}>קהילה {communityIdx}</span>
-                          <span className="text-xs text-slate-400">({realMembers.length} מועמדים)</span>
+                          <span className="font-semibold text-sm" style={{ color }}>קהילה {displayIdx + 1}</span>
+                          <span className="text-xs text-slate-400">({members.length} מועמדים)</span>
                         </div>
                         <div className="flex flex-wrap gap-1">
-                          {realMembers.map(c => (
+                          {members.map(c => (
                             <div key={c.id} className="flex items-center gap-1 bg-white rounded-full px-2 py-0.5 text-xs shadow-sm border border-slate-100">
                               <img src={c.photoUrl} alt={c.name} className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
                               <span className="text-slate-700">{c.name}</span>
@@ -680,7 +668,7 @@ export default function AnalyticsReveal({
                       .map(candidate => {
                         const bt = snaData.betweenness[candidate.id] ?? 0
                         const dg = snaData.degree[candidate.id] ?? 0
-                        const communityId = snaData.communities[candidate.id] ?? 0
+                        const communityId = snaData.communityDisplayIndex[candidate.id] ?? -1
                         const color = getCommunityColor(communityId)
                         return (
                           <tr key={candidate.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
@@ -709,7 +697,7 @@ export default function AnalyticsReveal({
                             <td className="px-4 py-2">
                               <div className="flex items-center gap-1.5">
                                 <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                                <span className="text-xs text-slate-500">{communityId + 1}</span>
+                                <span className="text-xs text-slate-500">{communityId >= 0 ? communityId + 1 : '—'}</span>
                               </div>
                             </td>
                           </tr>
