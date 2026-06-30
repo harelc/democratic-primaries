@@ -53,6 +53,12 @@ export default function AnalyticsReveal({
 }: AnalyticsRevealProps) {
   const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph'>('picks')
 
+  const LowVotesWarning = () => analytics && analytics.totalSubmissions < 10 ? (
+    <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4">
+      ⚠️ נאספו רק {analytics.totalSubmissions} הצבעות עד כה — הנתונים יהיו משמעותיים יותר עם יותר משתתפים
+    </p>
+  ) : null
+
   if (!analytics) {
     return (
       <div className="text-center py-12">
@@ -192,11 +198,7 @@ export default function AnalyticsReveal({
             <p className="text-slate-600 mb-2 text-sm">
               מטריצת השילובים - כל ריבוע מראה כמה פעמים בחרו בשני מועמדים ביחד
             </p>
-            {analytics.totalSubmissions < 10 && (
-              <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4">
-                ⚠️ נאספו רק {analytics.totalSubmissions} הצבעות עד כה — הנתונים יהיו משמעותיים יותר עם יותר משתתפים
-              </p>
-            )}
+            <LowVotesWarning />
 
             {/* Heatmap Matrix */}
             <div className="inline-block min-w-full">
@@ -288,7 +290,9 @@ export default function AnalyticsReveal({
         )}
 
         {activeTab === 'graph' && analytics && allCandidates && selectedIds && onSelect && (
-          <div className="flex gap-4" style={{ height: 'calc(100vh - 300px)' }}>
+          <div className="flex flex-col gap-2" style={{ height: 'calc(100vh - 300px)' }}>
+            <LowVotesWarning />
+            <div className="flex gap-4 flex-1 min-h-0">
             {/* Legend Sidebar */}
             <div className="w-56 bg-blue-50 border border-blue-200 rounded-lg p-4 overflow-y-auto flex-shrink-0">
               <h3 className="font-bold text-blue-900 mb-3 text-sm">📊 כיצד לקרוא את הגרף</h3>
@@ -324,14 +328,16 @@ export default function AnalyticsReveal({
                 analytics={analytics}
               />
             </div>
+            </div>
           </div>
         )}
 
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <p className="text-slate-600 mb-4 text-sm">
+            <p className="text-slate-600 mb-2 text-sm">
               מטריצת הדפוסים - שילובים של כל 51 המשתתפים
             </p>
+            <LowVotesWarning />
 
             {/* Full Matrix - Scrollable */}
             <div className="overflow-auto border border-slate-200 rounded" style={{ maxHeight: '600px' }}>
