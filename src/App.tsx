@@ -33,6 +33,9 @@ const generateSparseMatrix = (candidates: Candidate[], sparsity: number = 0.15) 
 }
 
 const isAdminMode = () => {
+  // Explicitly exited admin mode this session
+  if (sessionStorage.getItem('admin_exited') === 'true') return false
+
   // Auto-enable on localhost
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return true
@@ -48,17 +51,21 @@ const isAdminMode = () => {
   const nonce = params.get('admin')
 
   if (nonce) {
-    // Verify nonce against Netlify secret
     const expectedNonce = import.meta.env.VITE_ADMIN_NONCE
     if (nonce === expectedNonce && expectedNonce) {
       localStorage.setItem('admin_authenticated', 'true')
-      // Clean up URL
       window.history.replaceState({}, '', window.location.pathname)
       return true
     }
   }
 
   return false
+}
+
+const exitAdminMode = () => {
+  localStorage.removeItem('admin_authenticated')
+  sessionStorage.setItem('admin_exited', 'true')
+  window.location.reload()
 }
 
 export default function App() {
@@ -76,34 +83,22 @@ export default function App() {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
   const adminMode = isAdminMode()
 
-  // Load real analytics for admin without voting
-  useEffect(() => {
-    if (adminMode && phase === 'building') {
-      fetch('/.netlify/functions/analytics')
-        .then(r => r.json())
-        .then(data => {
-          setAnalytics({
-            candidatePickFrequency: data.candidatePickFrequency || {},
-            coOccurrenceMatrix: data.coOccurrenceMatrix || {},
-            totalSubmissions: data.totalSubmissions || 0,
-            allCandidates: candidates,
-          })
-          setPhase('analytics')
+  const handleViewAdminAnalytics = () => {
+    setLoading(true)
+    fetch('/.netlify/functions/analytics')
+      .then(r => r.json())
+      .then(data => {
+        setAnalytics({
+          candidatePickFrequency: data.candidatePickFrequency || {},
+          coOccurrenceMatrix: data.coOccurrenceMatrix || {},
+          totalSubmissions: data.totalSubmissions || 0,
+          allCandidates: candidates,
         })
-        .catch(() => {
-          // Fallback to sparse mock if API fails
-          const mockFrequency: Record<string, number> = {}
-          candidates.slice(0, 8).forEach(c => { mockFrequency[c.id] = Math.random() * 0.8 + 0.2 })
-          setAnalytics({
-            candidatePickFrequency: mockFrequency,
-            coOccurrenceMatrix: generateSparseMatrix(candidates, 0.12),
-            totalSubmissions: 0,
-            allCandidates: candidates,
-          })
-          setPhase('analytics')
-        })
-    }
-  }, [adminMode])
+        setPhase('analytics')
+      })
+      .catch(() => alert('שגיאה בטעינת הנתונים'))
+      .finally(() => setLoading(false))
+  }
 
   const handleRandomize = () => {
     const shuffled = [...candidatesData].sort(() => Math.random() - 0.5)
@@ -212,16 +207,20 @@ export default function App() {
               {adminMode && (
                 <div className="absolute top-2 right-4 flex gap-2 items-center">
                   <div className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">
-                    ADMIN MODE
+                    ADMIN
                   </div>
                   <button
-                    onClick={() => {
-                      localStorage.removeItem('admin_authenticated')
-                      window.location.reload()
-                    }}
+                    onClick={handleViewAdminAnalytics}
+                    disabled={loading}
+                    className="bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold px-2 py-1 rounded transition-colors"
+                  >
+                    {loading ? '...' : 'צפה בנתונים'}
+                  </button>
+                  <button
+                    onClick={exitAdminMode}
                     className="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-2 py-1 rounded transition-colors"
                   >
-                    Exit
+                    יציאה
                   </button>
                 </div>
               )}
