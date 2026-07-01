@@ -91,23 +91,18 @@ export default function App() {
     const statsUrl = window.location.port === '5173'
       ? 'http://localhost:8888/.netlify/functions/admin-stats'
       : '/.netlify/functions/admin-stats'
-    const analyticsUrl = window.location.port === '5173'
-      ? 'http://localhost:8888/.netlify/functions/analytics'
-      : '/.netlify/functions/analytics'
-
     const fetchStats = () =>
-      Promise.all([
-        fetch(statsUrl, { headers: { 'x-admin-nonce': nonce } }).then(r => r.json()),
-        fetch(analyticsUrl).then(r => r.json()),
-      ]).then(([stats, analytics]) => {
-        setAdminStats({
-          total: analytics.totalSubmissions || 0,
-          last10min: stats.last10min || 0,
-          last1h: stats.last1h || 0,
-          last6h: stats.last6h || 0,
-          last12h: stats.last12h || 0,
-        })
-      }).catch(() => {})
+      fetch(statsUrl, { headers: { 'x-admin-nonce': nonce } })
+        .then(r => r.json())
+        .then(stats => {
+          setAdminStats({
+            total: stats.total || 0,
+            last10min: stats.last10min || 0,
+            last1h: stats.last1h || 0,
+            last6h: stats.last6h || 0,
+            last12h: stats.last12h || 0,
+          })
+        }).catch(() => {})
 
     fetchStats()
     const interval = setInterval(fetchStats, 60_000)

@@ -19,6 +19,7 @@ const handler: Handler = async (event) => {
     headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       requests: [
+        { type: 'execute', stmt: { sql: "SELECT COUNT(*) as n FROM ballots" } },
         { type: 'execute', stmt: { sql: "SELECT COUNT(*) as n FROM ballots WHERE created_at > datetime('now', '-10 minutes')" } },
         { type: 'execute', stmt: { sql: "SELECT COUNT(*) as n FROM ballots WHERE created_at > datetime('now', '-1 hour')" } },
         { type: 'execute', stmt: { sql: "SELECT COUNT(*) as n FROM ballots WHERE created_at > datetime('now', '-6 hours')" } },
@@ -39,10 +40,11 @@ const handler: Handler = async (event) => {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      last10min: val(0),
-      last1h: val(1),
-      last6h: val(2),
-      last12h: val(3),
+      total: val(0),
+      last10min: val(1),
+      last1h: val(2),
+      last6h: val(3),
+      last12h: val(4),
     }),
   }
 }
