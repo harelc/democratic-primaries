@@ -12,6 +12,7 @@ function Tooltip({ term, children }: { term: string; children: React.ReactNode }
       <span
         ref={ref}
         className="border-b border-dotted border-slate-400 cursor-help"
+        style={{ fontFamily: 'inherit' }}
         onMouseEnter={() => setRect(ref.current?.getBoundingClientRect() ?? null)}
         onMouseLeave={() => setRect(null)}
       >
@@ -30,12 +31,13 @@ function Tooltip({ term, children }: { term: string; children: React.ReactNode }
   )
 }
 
-function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData }: {
+function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder }: {
   allCandidates: Candidate[]
   coOccurrenceMatrix: Record<string, number>
   snaData: ReturnType<typeof computeSNA> | null
+  matrixOrder: 'default' | 'louvain'
 }) {
-  const ordered = snaData
+  const ordered = (matrixOrder === 'louvain' && snaData)
     ? [...allCandidates].sort((a, b) => {
         const ca = snaData.communityDisplayIndex[a.id] ?? 99
         const cb = snaData.communityDisplayIndex[b.id] ?? 99
@@ -154,7 +156,7 @@ function ShareButton({ candidates }: { candidates: Candidate[] }) {
   return (
     <button
       onClick={handleShare}
-      className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-base transition-colors shadow-md hover:shadow-lg"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-blue-50 text-blue-700 rounded-xl font-bold text-base transition-colors shadow-lg hover:shadow-xl flex-shrink-0"
     >
       {copied ? '✓ הועתק!' : '📤 שתפו את הרשימה שלכם'}
     </button>
@@ -178,12 +180,13 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'cooccurrence' | 'fullmatrix' | 'graph' | 'leaderboard' | 'sna' | 'log'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'log'>('picks')
   const [ballotLog, setBallotLog] = useState<any[] | null>(null)
   const [ballotLogError, setBallotLogError] = useState<string | null>(null)
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
+  const [matrixOrder, setMatrixOrder] = useState<'default' | 'louvain'>('default')
 
   const snaData = useMemo(() => {
     if (!analytics || !allCandidates || allCandidates.length === 0) return null
@@ -244,21 +247,25 @@ export default function AnalyticsReveal({
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="space-y-6">
       <NewVoteToast totalSubmissions={analytics.totalSubmissions} />
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-500 rounded-2xl p-6 text-white shadow-lg">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="bg-gradient-to-br from-blue-800 via-blue-600 to-indigo-500 rounded-2xl px-6 py-5 text-white shadow-xl">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h2 className="text-2xl font-bold mb-1">ניתוח הצבעתך</h2>
-            <p className="text-blue-200 text-sm">
-              {analytics?.totalSubmissions ? `${analytics.totalSubmissions.toLocaleString('he-IL')} הצבעות נרשמו עד כה` : 'טוען נתונים...'}
-            </p>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-0.5">ניתוח הצבעתך</h2>
+            <p className="text-blue-200 text-sm font-medium">תוצאות בזמן אמת · מתעדכן אוטומטית</p>
           </div>
+          {analytics?.totalSubmissions ? (
+            <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3 text-center flex-shrink-0">
+              <p className="text-3xl font-extrabold leading-none">{analytics.totalSubmissions.toLocaleString('he-IL')}</p>
+              <p className="text-blue-200 text-xs mt-1 font-medium">הצבעות נרשמו</p>
+            </div>
+          ) : null}
         </div>
         {adminMode && (
-          <div className="mt-3 pt-3 border-t border-blue-400 text-xs text-blue-200">
+          <div className="mt-3 pt-3 border-t border-blue-400/50 text-xs text-blue-200">
             ADMIN · {selectedCandidates.length} נבחרו
           </div>
         )}
@@ -266,10 +273,10 @@ export default function AnalyticsReveal({
 
       {/* Share CTA */}
       {!adminMode && selectedCandidates.length > 0 && (
-        <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="bg-gradient-to-r from-indigo-600 to-blue-500 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap shadow-md">
           <div>
-            <p className="font-semibold text-slate-800 text-sm">רוצים להשפיע על התוצאות?</p>
-            <p className="text-slate-500 text-xs mt-0.5">שתפו את הרשימה שלכם עם חברים — ככל שיותר אנשים יצביעו, כך הניתוח יהיה משמעותי יותר</p>
+            <p className="font-bold text-white text-base">רוצים להשפיע על התוצאות?</p>
+            <p className="text-blue-100 text-sm mt-0.5">שתפו את הרשימה שלכם עם חברים — ככל שיותר אנשים יצביעו, כך הניתוח יהיה משמעותי יותר</p>
           </div>
           <ShareButton candidates={selectedCandidates} />
         </div>
@@ -279,7 +286,7 @@ export default function AnalyticsReveal({
         <div className="flex gap-1 mb-6 bg-slate-100 rounded-xl p-1 overflow-x-auto">
           <button
             onClick={() => setActiveTab('picks')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'picks'
                 ? 'bg-white text-blue-700 shadow-sm font-semibold'
                 : 'text-slate-500 hover:text-slate-800'
@@ -288,38 +295,8 @@ export default function AnalyticsReveal({
             הבחירות שלך
           </button>
           <button
-            onClick={() => setActiveTab('cooccurrence')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
-              activeTab === 'cooccurrence'
-                ? 'bg-white text-blue-700 shadow-sm font-semibold'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            השילובים שלך
-          </button>
-          <button
-            onClick={() => setActiveTab('fullmatrix')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
-              activeTab === 'fullmatrix'
-                ? 'bg-white text-blue-700 shadow-sm font-semibold'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            מטריצה מלאה
-          </button>
-          <button
-            onClick={() => setActiveTab('graph')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
-              activeTab === 'graph'
-                ? 'bg-white text-blue-700 shadow-sm font-semibold'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            גרף מועמדים
-          </button>
-          <button
             onClick={() => setActiveTab('leaderboard')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'leaderboard'
                 ? 'bg-white text-blue-700 shadow-sm font-semibold'
                 : 'text-slate-500 hover:text-slate-800'
@@ -328,8 +305,28 @@ export default function AnalyticsReveal({
             לוח מובילים
           </button>
           <button
+            onClick={() => setActiveTab('graph')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'graph'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            גרף מועמדים
+          </button>
+          <button
+            onClick={() => setActiveTab('cooccurrence')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'cooccurrence'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            השילובים שלך
+          </button>
+          <button
             onClick={() => setActiveTab('sna')}
-            className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'sna'
                 ? 'bg-white text-blue-700 shadow-sm font-semibold'
                 : 'text-slate-500 hover:text-slate-800'
@@ -337,10 +334,20 @@ export default function AnalyticsReveal({
           >
             ניתוח רשת
           </button>
+          <button
+            onClick={() => setActiveTab('fullmatrix')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'fullmatrix'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            מטריצה מלאה
+          </button>
           {adminMode && (
             <button
               onClick={() => setActiveTab('log')}
-              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
                 activeTab === 'log'
                   ? 'bg-white text-yellow-700 shadow-sm font-semibold'
                   : 'text-slate-500 hover:text-slate-800'
@@ -644,7 +651,7 @@ export default function AnalyticsReveal({
             <LowVotesWarning />
 
             {/* Community section */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
               <h3 className="font-bold text-slate-800 mb-3 text-base">קהילות הצבעה</h3>
               <p className="text-xs text-slate-500 mb-4">
                 קהילות שזוהו על ידי <Tooltip term="אלגוריתם Louvain">
@@ -705,7 +712,7 @@ export default function AnalyticsReveal({
             </div>
 
             {/* Metrics table */}
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
               <div className="px-4 py-3 border-b border-slate-100">
                 <h3 className="font-bold text-slate-800 text-base">מדדי רשת לפי מועמד</h3>
                 <p className="text-xs text-slate-500 mt-0.5">לחצו על כותרת עמודה למיון</p>
@@ -802,17 +809,38 @@ export default function AnalyticsReveal({
 
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <p className="text-slate-600 mb-2 text-sm">מטריצת הדפוסים - שילובים של כל 51 המשתתפים, מסודרת לפי קהילות הצבעה</p>
+            <p className="text-base font-bold text-slate-800 mb-1">מטריצת הדפוסים</p>
+            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המשתתפים</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
             </p>
 
-            {/* Full Matrix - Scrollable, sorted by community for block structure */}
+            {/* Matrix order toggle */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xs text-slate-500 font-medium">סדר:</span>
+              <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
+                <button
+                  onClick={() => setMatrixOrder('default')}
+                  className={`px-3 py-1.5 transition-colors ${matrixOrder === 'default' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                >
+                  סדר מקורי
+                </button>
+                <button
+                  onClick={() => setMatrixOrder('louvain')}
+                  className={`px-3 py-1.5 transition-colors ${matrixOrder === 'louvain' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                >
+                  לפי קהילות Louvain
+                </button>
+              </div>
+            </div>
+
+            {/* Full Matrix - Scrollable */}
             <FullMatrix
               allCandidates={analytics.allCandidates}
               coOccurrenceMatrix={analytics.coOccurrenceMatrix}
               snaData={snaData}
+              matrixOrder={matrixOrder}
             />
 
             {/* Legend */}
