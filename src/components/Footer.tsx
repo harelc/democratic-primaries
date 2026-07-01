@@ -81,10 +81,9 @@ export default function Footer() {
       <div className="px-3 md:px-6 py-2 md:py-2.5 flex flex-wrap justify-center items-center gap-2">
         <button
           onClick={() => setExpanded(e => !e)}
-          className="text-slate-400 hover:text-slate-600 transition-colors"
-          title={expanded ? 'סגור' : 'עוד'}
+          className="text-slate-500 hover:text-blue-600 transition-colors font-medium underline underline-offset-2"
         >
-          {expanded ? '▾' : '▸'}
+          {expanded ? 'פחות ▴' : 'עוד ▾'}
         </button>
         <span>© {new Date().getFullYear()} הראל קין</span>
         <span>|</span>
