@@ -189,7 +189,8 @@ export default function AnalyticsReveal({
   useEffect(() => {
     if (!adminMode) return
     const cached = sessionStorage.getItem('ballot-history')
-    if (cached) { setBallotHistory(JSON.parse(cached)); return }
+    const cachedAt = Number(sessionStorage.getItem('ballot-history-ts') || 0)
+    if (cached && Date.now() - cachedAt < 5 * 60 * 1000) { setBallotHistory(JSON.parse(cached)); return }
     const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
     const url = window.location.port === '5173'
       ? 'http://localhost:8888/.netlify/functions/ballot-history'
@@ -199,7 +200,10 @@ export default function AnalyticsReveal({
       .then(d => {
         const h = d.ballots || []
         setBallotHistory(h)
-        if (h.length > 0) sessionStorage.setItem('ballot-history', JSON.stringify(h))
+        if (h.length > 0) {
+          sessionStorage.setItem('ballot-history', JSON.stringify(h))
+          sessionStorage.setItem('ballot-history-ts', String(Date.now()))
+        }
       })
       .catch(() => setBallotHistory(null)) // null = failed, don't cache
   }, [adminMode])

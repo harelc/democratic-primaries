@@ -44,7 +44,7 @@ const handler: Handler = async (event) => {
     statusCode: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+      'Cache-Control': 'private, no-store',
     },
     body: JSON.stringify({ ballots }),
   }
