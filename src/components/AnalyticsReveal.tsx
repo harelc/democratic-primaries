@@ -189,14 +189,19 @@ export default function AnalyticsReveal({
   const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'log'>('picks')
   const [liveTotal, setLiveTotal] = useState<number | null>(null)
   const [ballotHistory, setBallotHistory] = useState<string[][] | null>(null)
+  const [ballotTimestamps, setBallotTimestamps] = useState<string[] | null>(null)
   const [bmcDismissed, setBmcDismissed] = useState(() => sessionStorage.getItem('bmc-dismissed') === 'true')
 
   // Fetch ballot history once per session (cached in sessionStorage)
   useEffect(() => {
     const cached = sessionStorage.getItem('ballot-history')
     const cachedAt = Number(sessionStorage.getItem('ballot-history-ts') || 0)
-    if (cached && Date.now() - cachedAt < 5 * 60 * 1000) { setBallotHistory(JSON.parse(cached)); return }
-    const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
+    if (cached && Date.now() - cachedAt < 5 * 60 * 1000) {
+      const parsed = JSON.parse(cached)
+      setBallotHistory(parsed.ballots ?? parsed) // support old cache format
+      setBallotTimestamps(parsed.timestamps ?? null)
+      return
+    }
     const url = window.location.port === '5173'
       ? 'http://localhost:8888/.netlify/functions/ballot-history'
       : '/.netlify/functions/ballot-history'
@@ -204,13 +209,15 @@ export default function AnalyticsReveal({
       .then(r => r.json())
       .then(d => {
         const h = d.ballots || []
+        const ts = d.timestamps || []
         setBallotHistory(h)
+        setBallotTimestamps(ts)
         if (h.length > 0) {
-          sessionStorage.setItem('ballot-history', JSON.stringify(h))
+          sessionStorage.setItem('ballot-history', JSON.stringify({ ballots: h, timestamps: ts }))
           sessionStorage.setItem('ballot-history-ts', String(Date.now()))
         }
       })
-      .catch(() => setBallotHistory(null)) // null = failed, don't cache
+      .catch(() => setBallotHistory(null))
   }, [adminMode])
   const [ballotLog, setBallotLog] = useState<any[] | null>(null)
   const [ballotLogError, setBallotLogError] = useState<string | null>(null)
@@ -1057,6 +1064,7 @@ export default function AnalyticsReveal({
             ) : (
               <ConvergenceChart
                 ballots={ballotHistory}
+                timestamps={ballotTimestamps ?? undefined}
                 candidates={allCandidates}
                 minBallots={75}
                 topN={20}

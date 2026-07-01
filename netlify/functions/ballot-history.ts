@@ -15,7 +15,7 @@ const handler: Handler = async (event) => {
       requests: [
         {
           type: 'execute',
-          stmt: { sql: 'SELECT selected_candidates FROM ballots ORDER BY created_at ASC' },
+          stmt: { sql: 'SELECT selected_candidates, created_at FROM ballots ORDER BY created_at ASC' },
         },
         { type: 'close' },
       ],
@@ -29,10 +29,17 @@ const handler: Handler = async (event) => {
   const data = await response.json()
   const rows = data.results?.[0]?.response?.result?.rows ?? []
 
-  const ballots = rows.map((row: any) => {
-    try { return JSON.parse(String(row[0]?.value ?? '[]')) }
-    catch { return [] }
-  })
+  const ballots: string[][] = []
+  const timestamps: string[] = []
+  for (const row of rows) {
+    try {
+      ballots.push(JSON.parse(String(row[0]?.value ?? '[]')))
+      timestamps.push(String(row[1]?.value ?? ''))
+    } catch {
+      ballots.push([])
+      timestamps.push('')
+    }
+  }
 
   return {
     statusCode: 200,
@@ -40,7 +47,7 @@ const handler: Handler = async (event) => {
       'Content-Type': 'application/json',
       'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
     },
-    body: JSON.stringify({ ballots }),
+    body: JSON.stringify({ ballots, timestamps }),
   }
 }
 
