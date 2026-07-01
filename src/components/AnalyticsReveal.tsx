@@ -359,25 +359,63 @@ export default function AnalyticsReveal({
         </div>
       )}
 
-      {/* BMC support banner */}
+      {/* Portfolio + BMC banner */}
       {!bmcDismissed && (
-        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-900">
-          <span className="text-lg flex-shrink-0">☕</span>
-          <p className="flex-1 leading-snug">הפעלת האתר כרוכה בעלויות כספיות. אם תעזרו בסכום נמוך של דולר או שניים זה יעזור לכסות אותן.</p>
-          <a
-            href="https://www.buymeacoffee.com/harelc"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-shrink-0 flex items-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-amber-900 font-semibold px-3 py-1.5 rounded-lg transition-colors text-xs"
-          >
-            <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="" className="h-3.5 w-3.5" />
-            תרמו
-          </a>
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-5 relative" dir="rtl">
           <button
             onClick={() => { sessionStorage.setItem('bmc-dismissed', 'true'); setBmcDismissed(true) }}
-            className="flex-shrink-0 text-amber-400 hover:text-amber-600 transition-colors text-lg leading-none"
+            className="absolute top-3 left-3 text-amber-300 hover:text-amber-500 transition-colors text-xl leading-none"
             aria-label="סגור"
           >×</button>
+
+          <p className="text-xs text-amber-700 mb-3">כלים נוספים שבניתי לקידום הדמוקרטיה הישראלית ולהנגשת מידע לתועלת הציבור.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            {[
+              {
+                href: 'https://kolot-nodedim.netlify.app/',
+                emoji: '🗳️',
+                name: 'קולות נודדים',
+                desc: 'איך עוברים הקולות בין מערכת בחירות אחת לבאה, ועוד שלל ניתוחים ייחודיים של תוצאות הבחירות לכנסת.',
+              },
+              {
+                href: 'https://bia-pia.netlify.app/',
+                emoji: '🎮',
+                name: 'ביע פיע',
+                desc: 'איזה ח״כ מצביע כמוך? משחק שמתאים אותך לנציגיך לפי הצבעות אמיתיות.',
+              },
+              {
+                href: 'https://local-patriot.netlify.app/',
+                emoji: '🏘️',
+                name: 'לוקאל פטריוט',
+                desc: 'נתוני הרשויות המקומיות בישראל — תקציבים, דמוגרפיה וביצועים בוויזואליזציה אינטראקטיבית.',
+              },
+            ].map(({ href, emoji, name, desc }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white hover:bg-amber-100 border border-amber-200 hover:border-amber-300 rounded-xl p-3 transition-all block"
+              >
+                <p className="font-bold text-sm text-amber-900 mb-1">{emoji} {name} <span className="opacity-0 group-hover:opacity-100 transition-opacity">↗</span></p>
+                <p className="text-xs text-amber-700/70 leading-relaxed">{desc}</p>
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3 pt-3 border-t border-amber-200">
+            <p className="text-xs text-amber-800 leading-snug">הפעלת האתר הזה והאחרים כרוכה בעלויות. בעלות של כוס קפה (לבחירתכם, אפשר גם $1) תוכלו לעזור לכסות אותן. תודה מראש ממני, הראל 🙏</p>
+            <a
+              href="https://www.buymeacoffee.com/harelc"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-shrink-0 flex items-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-amber-900 font-semibold px-3 py-1.5 rounded-lg transition-colors text-xs"
+            >
+              <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="" className="h-3.5 w-3.5" />
+              תרמו
+            </a>
+          </div>
         </div>
       )}
 

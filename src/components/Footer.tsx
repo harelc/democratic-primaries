@@ -29,7 +29,7 @@ export default function Footer() {
 
       {/* Expandable panel */}
       {expanded && (
-        <div className="border-b border-slate-200 bg-white px-4 md:px-8 py-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-right">
+        <div className="border-b border-slate-200 bg-white px-4 md:px-8 py-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-right">
 
           {/* BMC */}
           <div>
@@ -46,9 +46,9 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* Kolot Nodedim */}
+            {/* Kolot Nodedim */}
           <div>
-            <p className="font-semibold text-slate-600 mb-1">מתעניינים בפוליטיקה?</p>
+            <p className="font-semibold text-slate-600 mb-1">🗳️ נתוני בחירות</p>
             <a
               href="https://kolot-nodedim.netlify.app/"
               target="_blank"
@@ -57,12 +57,12 @@ export default function Footer() {
             >
               קולות נודדים ↗
             </a>
-            <p className="text-slate-500 leading-relaxed">נתוני הבחירות לכנסת — מאגר מקיף של תוצאות ומגמות.</p>
+            <p className="text-slate-500 leading-relaxed text-xs">מאגר מקיף של תוצאות הבחירות לכנסת ומגמות לאורך השנים.</p>
           </div>
 
           {/* Bia Pia */}
           <div>
-            <p className="font-semibold text-slate-600 mb-1">משחק מצביעים</p>
+            <p className="font-semibold text-slate-600 mb-1">🎮 משחק מצביעים</p>
             <a
               href="https://bia-pia.netlify.app/"
               target="_blank"
@@ -71,7 +71,21 @@ export default function Footer() {
             >
               ביע פיע ↗
             </a>
-            <p className="text-slate-500 leading-relaxed">המשחק שיגלה איזה ח״כים מצביעים כמוכם.</p>
+            <p className="text-slate-500 leading-relaxed text-xs">המשחק שיגלה איזה ח״כים מצביעים כמוכם לפי תוצאות אמיתיות.</p>
+          </div>
+
+          {/* Local Patriot */}
+          <div>
+            <p className="font-semibold text-slate-600 mb-1">🏘️ רשויות מקומיות</p>
+            <a
+              href="https://local-patriot.netlify.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 font-medium block mb-1 transition-colors"
+            >
+              לוקאל פטריוט ↗
+            </a>
+            <p className="text-slate-500 leading-relaxed text-xs">ויזואליזציה של נתוני הרשויות המקומיות בישראל — תקציבים, דמוגרפיה ועוד.</p>
           </div>
 
         </div>
