@@ -31,7 +31,7 @@ function Tooltip({ term, children }: { term: string; children: React.ReactNode }
   )
 }
 
-function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder }: {
+function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, candidatePickFrequency }: {
   allCandidates: Candidate[]
   coOccurrenceMatrix: Record<string, number>
   snaData: ReturnType<typeof computeSNA> | null
