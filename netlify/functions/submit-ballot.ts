@@ -1,5 +1,4 @@
 import { Handler } from '@netlify/functions'
-import { createClient } from '@libsql/client'
 import { createHash } from 'crypto'
 
 interface SubmissionBody {
@@ -17,21 +16,14 @@ const verifyCaptcha = async (token: string): Promise<boolean> => {
       console.warn('RECAPTCHA_SECRET_KEY not set, allowing submission')
       return true
     }
-
     const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
     })
     const data = await response.json()
-
     console.log('CAPTCHA verification:', { success: data.success, score: data.score, error: data['error-codes'] })
-
-    if (!data.success) {
-      console.error('CAPTCHA failed:', data['error-codes'])
-      return false
-    }
-
+    if (!data.success) { console.error('CAPTCHA failed:', data['error-codes']); return false }
     return data.score > 0.5
   } catch (error) {
     console.error('CAPTCHA verification error:', error)
@@ -39,7 +31,26 @@ const verifyCaptcha = async (token: string): Promise<boolean> => {
   }
 }
 
-const handler: Handler = async (event, context) => {
+const turso = async (dbUrl: string, authToken: string, requests: any[]) => {
+  const res = await fetch(`${dbUrl}/v2/pipeline`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requests: [...requests, { type: 'close' }] }),
+  })
+  if (!res.ok) throw new Error(`Turso HTTP error: ${res.status}`)
+  const data = await res.json()
+  // Check for statement-level errors (Turso returns 200 even for constraint violations)
+  for (const result of data.results ?? []) {
+    if (result.type === 'error') {
+      const err = new Error(result.error?.message || 'Turso statement error')
+      ;(err as any).code = result.error?.code || ''
+      throw err
+    }
+  }
+  return data
+}
+
+const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
@@ -59,49 +70,40 @@ const handler: Handler = async (event, context) => {
       }
     }
 
-    const client = createClient({
-      url: process.env.TURSO_DATABASE_URL || 'file:local.db',
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    })
+    const dbUrl = (process.env.TURSO_DATABASE_URL || '').replace('libsql://', 'https://')
+    const authToken = process.env.TURSO_AUTH_TOKEN || ''
 
-    // Hash the IP (GDPR-friendly — no raw IPs stored)
     const rawIp = event.headers['x-forwarded-for']?.split(',')[0].trim()
       || event.headers['client-ip']
       || 'unknown'
     const ipHash = rawIp === 'unknown' ? 'unknown' : hashIp(rawIp)
-
-    const candidatesJson = JSON.stringify(body.selectedCandidateIds)
+    const voteDate = new Date().toISOString().slice(0, 10)
 
     if (!isAdminToken) {
-      // Atomic rate limit: unique constraint on (ip_hash, vote_date) prevents concurrent dupes
-      const voteDate = new Date().toISOString().slice(0, 10) // YYYY-MM-DD
       try {
-        await client.execute({
-          sql: `INSERT INTO vote_locks (ip_hash, vote_date) VALUES (?, ?)`,
-          args: [ipHash, voteDate],
-        })
+        await turso(dbUrl, authToken, [
+          { type: 'execute', stmt: { sql: 'INSERT INTO vote_locks (ip_hash, vote_date) VALUES (?, ?)', args: [{ type: 'text', value: ipHash }, { type: 'text', value: voteDate }] } },
+        ])
       } catch (e: any) {
-        const msg = e?.message || ''
-        if (msg.includes('UNIQUE') || msg.includes('SQLITE_CONSTRAINT')) {
-          return {
-            statusCode: 429,
-            body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }),
-          }
+        const msg = (e?.message || '') + (e?.code || '')
+        if (msg.includes('UNIQUE') || msg.includes('SQLITE_CONSTRAINT') || msg.includes('2067')) {
+          return { statusCode: 429, body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }) }
         }
         console.error('vote_locks error:', msg)
-        throw e // propagate real errors (e.g. missing table)
+        throw e
       }
     }
 
-    const result = await client.execute({
-      sql: `INSERT INTO ballots (selected_candidates, time_to_complete, ip_hash, created_at)
-            VALUES (?, ?, ?, datetime('now'))`,
-      args: [candidatesJson, body.timeToComplete, ipHash],
-    })
+    const candidatesJson = JSON.stringify(body.selectedCandidateIds)
+    const result = await turso(dbUrl, authToken, [
+      { type: 'execute', stmt: { sql: `INSERT INTO ballots (selected_candidates, time_to_complete, ip_hash, created_at) VALUES (?, ?, ?, datetime('now'))`, args: [{ type: 'text', value: candidatesJson }, { type: 'integer', value: body.timeToComplete }, { type: 'text', value: ipHash }] } },
+    ])
+
+    const lastId = result.results?.[0]?.response?.result?.last_insert_rowid
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, ballotId: result.lastInsertRowid?.toString() }),
+      body: JSON.stringify({ success: true, ballotId: String(lastId ?? '') }),
     }
   } catch (error) {
     console.error('Submission error:', error)

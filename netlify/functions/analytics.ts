@@ -1,37 +1,41 @@
 import { Handler } from '@netlify/functions'
-import { createClient } from '@libsql/client'
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async (event) => {
   if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    }
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
 
   try {
-    const client = createClient({
-      url: process.env.TURSO_DATABASE_URL || 'file:local.db',
-      authToken: process.env.TURSO_AUTH_TOKEN,
+    const dbUrl = (process.env.TURSO_DATABASE_URL || '').replace('libsql://', 'https://')
+    const authToken = process.env.TURSO_AUTH_TOKEN || ''
+
+    const response = await fetch(`${dbUrl}/v2/pipeline`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requests: [
+          { type: 'execute', stmt: { sql: 'SELECT selected_candidates FROM ballots' } },
+          { type: 'close' },
+        ],
+      }),
     })
 
-    // Get all ballots
-    const ballots = await client.execute('SELECT selected_candidates FROM ballots')
+    if (!response.ok) throw new Error(`Turso error: ${response.status}`)
+
+    const data = await response.json()
+    const rows = data.results?.[0]?.response?.result?.rows ?? []
 
     const candidatePickFrequency: Record<string, number> = {}
     const coOccurrenceMatrix: Record<string, number> = {}
     const candidateCounts: Record<string, number> = {}
 
-    // Parse ballots and build analytics
-    for (const row of ballots.rows) {
-      const selectedIds = JSON.parse((row.selected_candidates as string) || '[]')
+    for (const row of rows) {
+      const selectedIds: string[] = JSON.parse(String(row[0]?.value ?? '[]'))
 
-      // Count frequency
-      selectedIds.forEach((id: string) => {
+      selectedIds.forEach(id => {
         candidateCounts[id] = (candidateCounts[id] || 0) + 1
       })
 
-      // Count co-occurrence
       for (let i = 0; i < selectedIds.length; i++) {
         for (let j = i + 1; j < selectedIds.length; j++) {
           const key = selectedIds[i] < selectedIds[j]
@@ -42,14 +46,11 @@ const handler: Handler = async (event, context) => {
       }
     }
 
-    const totalSubmissions = ballots.rows.length
+    const totalSubmissions = rows.length
 
-    // Normalize frequencies to 0-1
     Object.keys(candidateCounts).forEach(id => {
       candidatePickFrequency[id] = totalSubmissions > 0 ? candidateCounts[id] / totalSubmissions : 0
     })
-
-    // Normalize co-occurrence to 0-1
     Object.keys(coOccurrenceMatrix).forEach(key => {
       coOccurrenceMatrix[key] = totalSubmissions > 0 ? coOccurrenceMatrix[key] / totalSubmissions : 0
     })
@@ -60,18 +61,11 @@ const handler: Handler = async (event, context) => {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=30, stale-while-revalidate=15',
       },
-      body: JSON.stringify({
-        candidatePickFrequency,
-        coOccurrenceMatrix,
-        totalSubmissions,
-      }),
+      body: JSON.stringify({ candidatePickFrequency, coOccurrenceMatrix, totalSubmissions }),
     }
   } catch (error) {
     console.error('Analytics error:', error)
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch analytics' }),
-    }
+    return { statusCode: 500, body: JSON.stringify({ error: 'Failed to fetch analytics' }) }
   }
 }
 
