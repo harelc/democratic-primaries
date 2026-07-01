@@ -304,7 +304,12 @@ export default function AnalyticsReveal({
           {analytics?.totalSubmissions ? (
             <div className="flex gap-3 items-stretch flex-wrap justify-end">
               <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3 text-center flex-shrink-0">
-                <p className="text-3xl font-extrabold leading-none">{(liveTotal ?? analytics.totalSubmissions).toLocaleString('he-IL')}</p>
+                <p className="text-3xl font-extrabold leading-none">{(
+                  // ballot-history is uncached and most authoritative; fall back to polled or initial
+                  (ballotHistory && ballotHistory.length > analytics.totalSubmissions ? ballotHistory.length : null)
+                  ?? liveTotal
+                  ?? analytics.totalSubmissions
+                ).toLocaleString('he-IL')}</p>
                 <p className="text-blue-200 text-xs mt-1 font-medium">הצבעות נרשמו</p>
               </div>
               {adminMode && adminStats && (
