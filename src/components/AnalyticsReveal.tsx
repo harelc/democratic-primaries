@@ -1065,7 +1065,6 @@ export default function AnalyticsReveal({
             ) : (
               <ConvergenceChart
                 ballots={ballotHistory}
-                timestamps={ballotTimestamps ?? undefined}
                 candidates={allCandidates}
                 minBallots={75}
                 topN={20}
