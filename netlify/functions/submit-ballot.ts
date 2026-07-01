@@ -82,7 +82,7 @@ const handler: Handler = async (event) => {
     if (!isAdminToken) {
       try {
         await turso(dbUrl, authToken, [
-          { type: 'execute', stmt: { sql: 'INSERT INTO vote_locks (ip_hash, vote_date) VALUES (?, ?)', args: [{ type: 'text', value: ipHash }, { type: 'text', value: voteDate }] } },
+          { type: 'execute', stmt: { sql: `INSERT INTO vote_locks (ip_hash, vote_date) VALUES ('${ipHash}', '${voteDate}')` } },
         ])
       } catch (e: any) {
         const msg = (e?.message || '') + (e?.code || '')
@@ -95,8 +95,9 @@ const handler: Handler = async (event) => {
     }
 
     const candidatesJson = JSON.stringify(body.selectedCandidateIds)
+    const ttc = Number(body.timeToComplete) || 0
     const result = await turso(dbUrl, authToken, [
-      { type: 'execute', stmt: { sql: `INSERT INTO ballots (selected_candidates, time_to_complete, ip_hash, created_at) VALUES (?, ?, ?, datetime('now'))`, args: [{ type: 'text', value: candidatesJson }, { type: 'integer', value: body.timeToComplete }, { type: 'text', value: ipHash }] } },
+      { type: 'execute', stmt: { sql: `INSERT INTO ballots (selected_candidates, time_to_complete, ip_hash, created_at) VALUES (?, ${ttc}, ?, datetime('now'))`, args: [{ type: 'text', value: candidatesJson }, { type: 'text', value: ipHash }] } },
     ])
 
     const lastId = result.results?.[0]?.response?.result?.last_insert_rowid
