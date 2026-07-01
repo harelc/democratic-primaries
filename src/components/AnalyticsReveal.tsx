@@ -4,6 +4,7 @@ import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
 import ConvergenceChart from './ConvergenceChart'
 import VoteRateChart from './VoteRateChart'
+import CompetingPairs from './CompetingPairs'
 
 function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
   const [rect, setRect] = useState<DOMRect | null>(null)
@@ -1063,14 +1064,17 @@ export default function AnalyticsReveal({
             {ballotHistory === null ? (
               <div className="flex items-center justify-center h-64 text-slate-400">טוען...</div>
             ) : (
-              <ConvergenceChart
-                ballots={ballotHistory}
-                candidates={allCandidates}
-                minBallots={75}
-                topN={20}
-                colorMode={graphColorMode}
-                snaData={snaData}
-              />
+              <>
+                <ConvergenceChart
+                  ballots={ballotHistory}
+                  candidates={allCandidates}
+                  minBallots={75}
+                  topN={20}
+                  colorMode={graphColorMode}
+                  snaData={snaData}
+                />
+                <CompetingPairs ballots={ballotHistory} candidates={allCandidates} />
+              </>
             )}
           </div>
         )}
