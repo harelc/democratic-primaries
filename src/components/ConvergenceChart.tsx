@@ -10,6 +10,7 @@ interface ConvergenceChartProps {
   topN?: number
   colorMode?: 'group' | 'community'
   snaData?: SNAResult | null
+  windowSize?: number // if set, use rolling window instead of cumulative
 }
 
 const getGroupColor = (group: string | null | undefined) => {
@@ -27,6 +28,7 @@ export default function ConvergenceChart({
   topN = 20,
   colorMode = 'group',
   snaData,
+  windowSize,
 }: ConvergenceChartProps) {
   const svgRef = useRef<SVGSVGElement>(null)
 
@@ -64,20 +66,45 @@ export default function ConvergenceChart({
 
     const counts: Record<string, number[]> = {}
     candidates.forEach(c => { counts[c.id] = [] })
-    const running: Record<string, number> = {}
-    candidates.forEach(c => { running[c.id] = 0 })
 
-    ballots.forEach((ballot, i) => {
-      ballot.forEach(id => { if (running[id] !== undefined) running[id]++ })
-      const n = i + 1
-      candidates.forEach(c => { counts[c.id].push(running[c.id] / n) })
-    })
+    // xStart: first ballot index whose data is plotted (0-based)
+    const xStart = windowSize ? windowSize - 1 : 0
 
-    const finalProps = candidates.map(c => ({ c, final: counts[c.id][ballots.length - 1] ?? 0 }))
+    if (windowSize) {
+      // Rolling window: proportion of last W ballots that contain candidate
+      // Only emit values once the window is full (i >= W-1)
+      const W = windowSize
+      const presence: Record<string, number[]> = {}
+      candidates.forEach(c => { presence[c.id] = [] })
+      ballots.forEach(ballot => {
+        const picked = new Set(ballot)
+        candidates.forEach(c => { presence[c.id].push(picked.has(c.id) ? 1 : 0) })
+      })
+      candidates.forEach(c => {
+        const p = presence[c.id]
+        let windowSum = 0
+        for (let i = 0; i < p.length; i++) {
+          windowSum += p[i]
+          if (i >= W) windowSum -= p[i - W]
+          if (i >= W - 1) counts[c.id].push(windowSum / W)
+        }
+      })
+    } else {
+      // Cumulative proportion since ballot 0
+      const running: Record<string, number> = {}
+      candidates.forEach(c => { running[c.id] = 0 })
+      ballots.forEach((ballot, i) => {
+        ballot.forEach(id => { if (running[id] !== undefined) running[id]++ })
+        const n = i + 1
+        candidates.forEach(c => { counts[c.id].push(running[c.id] / n) })
+      })
+    }
+
+    const finalProps = candidates.map(c => ({ c, final: counts[c.id].at(-1) ?? 0 }))
     finalProps.sort((a, b) => b.final - a.final)
     const topCandidates = finalProps.slice(0, effectiveTopN).map(x => x.c)
 
-    const x = d3.scaleLinear().domain([1, ballots.length]).range([0, innerW])
+    const x = d3.scaleLinear().domain([xStart + 1, ballots.length]).range([0, innerW])
     const y = d3.scaleLinear().domain([0, d3.max(topCandidates, c => d3.max(counts[c.id]) ?? 0) ?? 1]).nice().range([innerH, 0])
 
     g.append('g').attr('class', 'grid')
@@ -101,12 +128,15 @@ export default function ConvergenceChart({
       .attr('x1', x(minBallots)).attr('x2', x(minBallots))
       .attr('y1', 0).attr('y2', innerH)
       .attr('stroke', '#94a3b8').attr('stroke-dasharray', '6 3').attr('stroke-width', 1.5)
-    g.append('text')
-      .attr('x', x(minBallots) + 4).attr('y', 14)
-      .attr('font-size', '11px').attr('fill', '#94a3b8').text(`n=${minBallots}`)
+      .attr('display', windowSize ? 'none' : null)
+    if (!windowSize) {
+      g.append('text')
+        .attr('x', x(minBallots) + 4).attr('y', 14)
+        .attr('font-size', '11px').attr('fill', '#94a3b8').text(`n=${minBallots}`)
+    }
 
     const makeLine = (xScale: d3.ScaleLinear<number, number>) =>
-      d3.line<number>().x((_, i) => xScale(i + 1)).y(d => y(d)).curve(d3.curveCatmullRom.alpha(0.5))
+      d3.line<number>().x((_, i) => xScale(xStart + i + 1)).y(d => y(d)).curve(d3.curveCatmullRom.alpha(0.5))
 
     const paths: Array<{ path: d3.Selection<SVGPathElement, number[], SVGGElement, unknown>; data: number[] }> = []
     const endLabelEls: Array<{ el: d3.Selection<SVGTextElement, unknown, null, undefined>; data: number[] }> = []
@@ -177,7 +207,7 @@ export default function ConvergenceChart({
         stableLine.attr('x1', newX(minBallots)).attr('x2', newX(minBallots))
         paths.forEach(({ path, data }) => {
           path.attr('d',
-            d3.line<number>().x((_, i) => newX(i + 1)).y(v => newY(v)).curve(d3.curveCatmullRom.alpha(0.5))(data) ?? ''
+            d3.line<number>().x((_, i) => newX(xStart + i + 1)).y(v => newY(v)).curve(d3.curveCatmullRom.alpha(0.5))(data) ?? ''
           )
         })
         spreadLabels(endLabelEls.map(({ el, data }) => ({
@@ -189,7 +219,7 @@ export default function ConvergenceChart({
 
     spreadLabels(endLabelEls.map(({ el, data }) => ({ el, y: y(data[data.length - 1] ?? 0) })))
 
-  }, [ballots, candidates, minBallots, topN, colorMode, snaData])
+  }, [ballots, candidates, minBallots, topN, colorMode, snaData, windowSize])
 
   if (ballots.length < minBallots) {
     return (

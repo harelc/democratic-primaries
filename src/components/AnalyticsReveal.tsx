@@ -224,6 +224,7 @@ export default function AnalyticsReveal({
   const [ballotLog, setBallotLog] = useState<any[] | null>(null)
   const [ballotLogError, setBallotLogError] = useState<string | null>(null)
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
+  const [windowSize, setWindowSize] = useState<number | null>(null) // null = cumulative mode
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
   const [matrixOrder, setMatrixOrder] = useState<'louvain' | 'votes'>('votes')
@@ -1024,17 +1025,47 @@ export default function AnalyticsReveal({
             <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
               <div>
                 <h3 className="font-bold text-slate-800 text-base mb-0.5">מגמת הצבעות</h3>
-                <p className="text-xs text-slate-500">שיעור מצטבר לפי סדר כניסת ההצבעות — קו מקווקו = n=75 (יציבות)</p>
+                <p className="text-xs text-slate-500">
+                  {windowSize === null
+                    ? 'שיעור מצטבר לפי סדר כניסת ההצבעות — קו מקווקו = n=75 (יציבות)'
+                    : `חלון נע של ${windowSize} הצבעות אחרונות`}
+                </p>
               </div>
-              <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
-                <button onClick={() => setGraphColorMode('group')}
-                  className={`px-3 py-1.5 transition-colors ${graphColorMode === 'group' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
-                  קבוצת ייצוג
-                </button>
-                <button onClick={() => setGraphColorMode('community')}
-                  className={`px-3 py-1.5 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
-                  קהילה
-                </button>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Cumulative / moving window toggle */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
+                    <button onClick={() => setWindowSize(null)}
+                      className={`px-3 py-1.5 transition-colors ${windowSize === null ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                      מצטבר
+                    </button>
+                    <button onClick={() => setWindowSize(w => w ?? 700)}
+                      className={`px-3 py-1.5 transition-colors ${windowSize !== null ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                      חלון נע
+                    </button>
+                  </div>
+                  {windowSize !== null && (
+                    <div className="flex items-center gap-2 text-xs text-slate-600">
+                      <input
+                        type="range" min={500} max={1000} step={50}
+                        value={windowSize}
+                        onChange={e => setWindowSize(Number(e.target.value))}
+                        className="w-28 accent-blue-600"
+                      />
+                      <span className="font-mono font-bold tabular-nums text-blue-600 w-12">{windowSize}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
+                  <button onClick={() => setGraphColorMode('group')}
+                    className={`px-3 py-1.5 transition-colors ${graphColorMode === 'group' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                    קבוצת ייצוג
+                  </button>
+                  <button onClick={() => setGraphColorMode('community')}
+                    className={`px-3 py-1.5 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                    קהילה
+                  </button>
+                </div>
               </div>
             </div>
             {/* Legend */}
@@ -1072,6 +1103,7 @@ export default function AnalyticsReveal({
                   topN={20}
                   colorMode={graphColorMode}
                   snaData={snaData}
+                  windowSize={windowSize ?? undefined}
                 />
                 <CompetingPairs ballots={ballotHistory} candidates={allCandidates} />
               </>
