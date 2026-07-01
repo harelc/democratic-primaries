@@ -623,7 +623,7 @@ export default function AnalyticsReveal({
         )}
 
         {activeTab === 'leaderboard' && allCandidates && (
-          <div className="space-y-2">
+          <div className="space-y-2 max-w-2xl mx-auto">
             {[...allCandidates]
               .sort((a, b) => {
                 const fa = analytics.candidatePickFrequency[a.id] || 0

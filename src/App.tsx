@@ -82,7 +82,31 @@ export default function App() {
   const [startTime] = useState(Date.now())
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null)
   const [hasVotedBefore] = useState(() => localStorage.getItem('has_voted') === 'true')
+  const [adminStats, setAdminStats] = useState<{ total: number; last10min: number; last1h: number; last6h: number; last12h: number } | null>(null)
   const adminMode = isAdminMode()
+
+  useEffect(() => {
+    if (!adminMode) return
+    const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
+    const statsUrl = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/admin-stats'
+      : '/.netlify/functions/admin-stats'
+    const analyticsUrl = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/analytics'
+      : '/.netlify/functions/analytics'
+    Promise.all([
+      fetch(statsUrl, { headers: { 'x-admin-nonce': nonce } }).then(r => r.json()),
+      fetch(analyticsUrl).then(r => r.json()),
+    ]).then(([stats, analytics]) => {
+      setAdminStats({
+        total: analytics.totalSubmissions || 0,
+        last10min: stats.last10min || 0,
+        last1h: stats.last1h || 0,
+        last6h: stats.last6h || 0,
+        last12h: stats.last12h || 0,
+      })
+    }).catch(() => {})
+  }, [adminMode])
 
   const handleViewAdminAnalytics = () => {
     setLoading(true)
@@ -230,6 +254,22 @@ export default function App() {
                   <h1 className="text-lg md:text-2xl font-bold tracking-tight leading-tight">🗳️ הרשימה שלי לפריימריז הדמוקרטים</h1>
                   <p className="text-blue-200 text-xs mt-0.5 hidden sm:block">בנו את הרשימה שלכם — בחרו 8-6 מועמדים וגלו דפוסי הצבעה</p>
                 </div>
+              {adminMode && adminStats && (
+                <div className="hidden md:flex items-center gap-2 text-xs bg-white/10 rounded-lg px-3 py-1.5 flex-shrink-0">
+                  {[
+                    { label: 'סה״כ', val: adminStats.total },
+                    { label: '10′', val: adminStats.last10min },
+                    { label: '1h', val: adminStats.last1h },
+                    { label: '6h', val: adminStats.last6h },
+                    { label: '12h', val: adminStats.last12h },
+                  ].map(({ label, val }) => (
+                    <span key={label} className="flex items-center gap-1">
+                      <span className="text-blue-200">{label}</span>
+                      <span className="font-bold tabular-nums">{val}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
               {adminMode && (
                 <div className="flex gap-1 items-center flex-shrink-0">
                   <div className="bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded">

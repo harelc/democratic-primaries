@@ -336,25 +336,51 @@ export function computeSNA(
     if (!(candidate.id in result.cosineSimTop3)) result.cosineSimTop3[candidate.id] = []
   }
 
-  // Build stable display index sorted by community size desc, then min candidateId as tiebreaker.
-  // Largest community = 0, second largest = 1, etc. Singletons = -1.
-  // This means even if Louvain reshuffles raw IDs, the biggest community keeps blue, etc.
+  // Build stable display index with two improvements:
+  // 1. Sort by total INTERNAL edge weight (cohesion), not member count — more stable across votes
+  // 2. Filter out statistically insignificant communities via modularity contribution Qc
+  //    Qc = Lc/m - (dc/2m)^2, where Lc = internal weight, dc = sum of degrees, m = total edge weight
+  //    Qc > 0 means more internal edges than expected in a random graph with the same degree sequence
+
+  const totalEdgeWeight = weightedDegreeRaw
+    ? Object.values(weightedDegreeRaw).reduce((s, v) => s + v, 0) / 2
+    : 0
+  const m2 = totalEdgeWeight * 2 // 2m for formula
+
   const rawIds = Array.from(new Set(Object.values(result.communities)))
   const communityMeta = rawIds.map(rawId => {
     const members = candidates.filter(c => result.communities[c.id] === rawId)
-    const connectedSize = members.filter(c => (result.weightedDegree[c.id] ?? 0) > 0).length
+    const memberIds = new Set(members.map(c => c.id))
+
+    // Internal edge weight Lc and sum of degrees dc
+    let lc = 0
+    let dc = 0
+    members.forEach(c => {
+      dc += weightedDegreeRaw[c.id] ?? 0
+      graph.forEachNeighbor(c.id, (neighbor, attrs) => {
+        if (memberIds.has(neighbor)) {
+          lc += (attrs.weight ?? 1) / 2 // divide by 2 since each edge counted twice
+        }
+      })
+    })
+
+    const qc = m2 > 0 ? (lc / totalEdgeWeight) - Math.pow(dc / m2, 2) : 0
+    const connectedSize = members.filter(c => (weightedDegreeRaw[c.id] ?? 0) > 0).length
     const minId = members.map(c => c.id).sort()[0] ?? ''
-    return { rawId, connectedSize, minId }
+    return { rawId, lc, qc, connectedSize, minId }
   })
+
+  // Sort by internal cohesion (Lc) desc — stable across small vote count changes
+  // Tiebreak by minId for full determinism
   communityMeta.sort((a, b) =>
-    b.connectedSize !== a.connectedSize
-      ? b.connectedSize - a.connectedSize
-      : a.minId < b.minId ? -1 : 1
+    b.lc !== a.lc ? b.lc - a.lc : a.minId < b.minId ? -1 : 1
   )
+
   let displayIdx = 0
   const rawToDisplay: Record<number, number> = {}
-  for (const { rawId, connectedSize } of communityMeta) {
-    if (connectedSize > 0) rawToDisplay[rawId] = displayIdx++
+  for (const { rawId, qc, connectedSize } of communityMeta) {
+    // Show community only if: has connected members AND Qc > 0 (statistically significant)
+    if (connectedSize > 0 && qc > 0) rawToDisplay[rawId] = displayIdx++
   }
   for (const candidate of candidates) {
     const rawId = result.communities[candidate.id]
