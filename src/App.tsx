@@ -217,9 +217,9 @@ export default function App() {
         throw new Error(`Submit failed: ${submitResponse.status}`)
       }
 
-      // Use analytics returned inline from submit (saves a second function call)
-      const submitData = await submitResponse.json()
-      const analyticsData = submitData.analytics || {}
+      // Fetch analytics separately (submit-ballot no longer returns them inline)
+      const analyticsResponse = await fetch('/.netlify/functions/analytics')
+      const analyticsData = analyticsResponse.ok ? await analyticsResponse.json() : {}
 
       setAnalytics({
         candidatePickFrequency: analyticsData.candidatePickFrequency || {},
