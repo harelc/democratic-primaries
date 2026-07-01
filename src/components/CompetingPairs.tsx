@@ -63,8 +63,8 @@ export default function CompetingPairs({ ballots, candidates, topK = 20 }: Compe
 
   if (ranked.length === 0) return null
 
-  const cellSize = Math.max(14, Math.min(22, Math.floor(320 / ranked.length)))
-  const labelW = 90
+  const cellSize = Math.max(18, Math.min(30, Math.floor(500 / ranked.length)))
+  const labelW = 110
 
   return (
     <div className="mt-6" dir="rtl">
@@ -75,10 +75,10 @@ export default function CompetingPairs({ ballots, candidates, topK = 20 }: Compe
         </p>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto flex justify-center">
         <div style={{ display: 'inline-block', direction: 'ltr' }}>
           {/* Column headers */}
-          <div style={{ display: 'flex', paddingRight: labelW }}>
+          <div style={{ display: 'flex', marginLeft: labelW }}>
             {ranked.map((c, j) => (
               <div
                 key={c.id}
@@ -145,7 +145,7 @@ export default function CompetingPairs({ ballots, candidates, topK = 20 }: Compe
           ))}
 
           {/* Legend */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, paddingRight: labelW, direction: 'rtl' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8, marginLeft: labelW, direction: 'rtl' }}>
             <span style={{ fontSize: 10, color: '#64748b' }}>תחרות −1</span>
             {[-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1].map(v => (
               <div key={v} style={{ width: 16, height: 10, background: corrColor(v), border: '1px solid #e2e8f0' }} />
