@@ -5,12 +5,6 @@ const handler: Handler = async (event) => {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
 
-  const nonce = event.headers['x-admin-nonce']
-  const expectedNonce = process.env.ADMIN_NONCE || process.env.VITE_ADMIN_NONCE
-  if (!nonce || !expectedNonce || nonce !== expectedNonce) {
-    return { statusCode: 403, body: JSON.stringify({ error: 'Forbidden' }) }
-  }
-
   const dbUrl = (process.env.TURSO_DATABASE_URL || '').replace('libsql://', 'https://')
   const authToken = process.env.TURSO_AUTH_TOKEN || ''
 
@@ -44,7 +38,7 @@ const handler: Handler = async (event) => {
     statusCode: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'private, no-store',
+      'Cache-Control': 'public, max-age=120, stale-while-revalidate=60',
     },
     body: JSON.stringify({ ballots }),
   }

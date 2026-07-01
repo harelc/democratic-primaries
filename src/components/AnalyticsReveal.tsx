@@ -93,7 +93,7 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
   )
 }
 
-function NewVoteToast({ totalSubmissions }: { totalSubmissions: number }) {
+function NewVoteToast({ totalSubmissions, onNewTotal }: { totalSubmissions: number; onNewTotal: (n: number) => void }) {
   const [toast, setToast] = useState<string | null>(null)
   const lastCount = useRef(totalSubmissions)
 
@@ -114,6 +114,7 @@ function NewVoteToast({ totalSubmissions }: { totalSubmissions: number }) {
           const diff = newCount - lastCount.current
           setToast(`🗳️ ${diff === 1 ? 'הצבעה חדשה נכנסה' : `${diff} הצבעות חדשות נכנסו`}!`)
           lastCount.current = newCount
+          onNewTotal(newCount)
           setTimeout(() => setToast(null), 4000)
         }
       } catch {}
@@ -183,11 +184,11 @@ export default function AnalyticsReveal({
   adminMode,
 }: AnalyticsRevealProps) {
   const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'log'>('picks')
+  const [liveTotal, setLiveTotal] = useState<number | null>(null)
   const [ballotHistory, setBallotHistory] = useState<string[][] | null>(null)
 
   // Fetch ballot history once per session (cached in sessionStorage)
   useEffect(() => {
-    if (!adminMode) return
     const cached = sessionStorage.getItem('ballot-history')
     const cachedAt = Number(sessionStorage.getItem('ballot-history-ts') || 0)
     if (cached && Date.now() - cachedAt < 5 * 60 * 1000) { setBallotHistory(JSON.parse(cached)); return }
@@ -195,7 +196,7 @@ export default function AnalyticsReveal({
     const url = window.location.port === '5173'
       ? 'http://localhost:8888/.netlify/functions/ballot-history'
       : '/.netlify/functions/ballot-history'
-    fetch(url, { headers: { 'x-admin-nonce': nonce } })
+    fetch(url)
       .then(r => r.json())
       .then(d => {
         const h = d.ballots || []
@@ -288,7 +289,7 @@ export default function AnalyticsReveal({
 
   return (
     <div className="space-y-6">
-      <NewVoteToast totalSubmissions={analytics.totalSubmissions} />
+      <NewVoteToast totalSubmissions={analytics.totalSubmissions} onNewTotal={setLiveTotal} />
 
       {/* Header */}
       <div className="bg-gradient-to-br from-blue-800 via-blue-600 to-indigo-500 rounded-2xl px-6 py-5 text-white shadow-xl">
@@ -300,7 +301,7 @@ export default function AnalyticsReveal({
           {analytics?.totalSubmissions ? (
             <div className="flex gap-3 items-stretch flex-wrap justify-end">
               <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3 text-center flex-shrink-0">
-                <p className="text-3xl font-extrabold leading-none">{analytics.totalSubmissions.toLocaleString('he-IL')}</p>
+                <p className="text-3xl font-extrabold leading-none">{(liveTotal ?? analytics.totalSubmissions).toLocaleString('he-IL')}</p>
                 <p className="text-blue-200 text-xs mt-1 font-medium">הצבעות נרשמו</p>
               </div>
               {adminMode && adminStats && (
@@ -361,18 +362,16 @@ export default function AnalyticsReveal({
           >
             לוח מובילים
           </button>
-          {adminMode && (
-            <button
-              onClick={() => setActiveTab('convergence')}
-              className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
-                activeTab === 'convergence'
-                  ? 'bg-white text-yellow-700 shadow-sm font-semibold'
-                  : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              מגמה
-            </button>
-          )}
+          <button
+            onClick={() => setActiveTab('convergence')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'convergence'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            מגמה
+          </button>
           <button
             onClick={() => setActiveTab('graph')}
             className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
@@ -735,7 +734,7 @@ export default function AnalyticsReveal({
                         {group}
                       </span>
                     )}
-                    {adminMode && sparkData[candidate.id] && (
+                    {sparkData[candidate.id] && (
                       <Sparkline candidateId={candidate.id} color={barClass.includes('red') ? '#dc2626' : barClass.includes('green') ? '#16a34a' : barClass.includes('purple') ? '#9333ea' : '#3b82f6'} />
                     )}
                     <div className="flex items-center gap-2 flex-shrink-0 w-28">
@@ -980,7 +979,7 @@ export default function AnalyticsReveal({
             </div>
           </div>
         )}
-        {activeTab === 'convergence' && adminMode && allCandidates && (
+        {activeTab === 'convergence' && allCandidates && (
           <div className="bg-white border border-slate-200 rounded-xl p-4">
             <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
               <div>
