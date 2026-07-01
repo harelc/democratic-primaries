@@ -35,19 +35,17 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
   allCandidates: Candidate[]
   coOccurrenceMatrix: Record<string, number>
   snaData: ReturnType<typeof computeSNA> | null
-  matrixOrder: 'default' | 'louvain' | 'votes'
+  matrixOrder: 'louvain' | 'votes'
   candidatePickFrequency: Record<string, number>
 }) {
-  const ordered = matrixOrder === 'votes'
-    ? [...allCandidates].sort((a, b) => (candidatePickFrequency[b.id] ?? 0) - (candidatePickFrequency[a.id] ?? 0))
-    : (matrixOrder === 'louvain' && snaData)
+  const ordered = matrixOrder === 'louvain' && snaData
     ? [...allCandidates].sort((a, b) => {
         const ca = snaData.communityDisplayIndex[a.id] ?? 99
         const cb = snaData.communityDisplayIndex[b.id] ?? 99
         if (ca !== cb) return ca - cb
         return (snaData.weightedDegree[b.id] ?? 0) - (snaData.weightedDegree[a.id] ?? 0)
       })
-    : allCandidates
+    : [...allCandidates].sort((a, b) => (candidatePickFrequency[b.id] ?? 0) - (candidatePickFrequency[a.id] ?? 0))
 
   return (
     <div className="overflow-auto border border-slate-200 rounded" style={{ maxHeight: '600px' }}>
@@ -189,7 +187,7 @@ export default function AnalyticsReveal({
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
-  const [matrixOrder, setMatrixOrder] = useState<'default' | 'louvain' | 'votes'>('default')
+  const [matrixOrder, setMatrixOrder] = useState<'louvain' | 'votes'>('votes')
   const [adminStats, setAdminStats] = useState<{ last10min: number; last1h: number; last6h: number; last12h: number } | null>(null)
 
   const snaData = useMemo(() => {
@@ -228,7 +226,7 @@ export default function AnalyticsReveal({
 
   const LowVotesWarning = () => analytics && analytics.totalSubmissions < 10 ? (
     <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4">
-      ⚠️ נאספו רק {analytics.totalSubmissions} הצבעות עד כה — הנתונים יהיו משמעותיים יותר עם יותר משתתפים
+      ⚠️ נאספו רק {analytics.totalSubmissions} הצבעות עד כה — הנתונים יהיו משמעותיים יותר עם יותר משיבים
     </p>
   ) : null
 
@@ -415,7 +413,7 @@ export default function AnalyticsReveal({
                       {percentage}% - {label}
                     </p>
                     <p className="text-xs text-slate-500 mt-2">
-                      נבחר על ידי {percentage}% מהמשתתפים
+                      נבחר על ידי {percentage}% מהמשיבים
                     </p>
                   </div>
                 </div>
@@ -843,7 +841,7 @@ export default function AnalyticsReveal({
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
             <p className="text-base font-bold text-slate-800 mb-1">מטריצת הדפוסים</p>
-            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המשתתפים</p>
+            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המשיבים</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
@@ -853,12 +851,6 @@ export default function AnalyticsReveal({
             <div className="flex items-center gap-2 mb-4">
               <span className="text-xs text-slate-500 font-medium">סדר:</span>
               <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
-                <button
-                  onClick={() => setMatrixOrder('default')}
-                  className={`px-3 py-1.5 transition-colors ${matrixOrder === 'default' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
-                >
-                  סדר מקורי
-                </button>
                 <button
                   onClick={() => setMatrixOrder('votes')}
                   className={`px-3 py-1.5 transition-colors ${matrixOrder === 'votes' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
