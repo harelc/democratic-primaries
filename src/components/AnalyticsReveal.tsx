@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
+import ConvergenceChart from './ConvergenceChart'
 
 function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
   const [rect, setRect] = useState<DOMRect | null>(null)
@@ -181,7 +182,27 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'log'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'log'>('picks')
+  const [ballotHistory, setBallotHistory] = useState<string[][] | null>(null)
+
+  // Fetch ballot history once per session (cached in sessionStorage)
+  useEffect(() => {
+    if (!adminMode) return
+    const cached = sessionStorage.getItem('ballot-history')
+    if (cached) { setBallotHistory(JSON.parse(cached)); return }
+    const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
+    const url = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/ballot-history'
+      : '/.netlify/functions/ballot-history'
+    fetch(url, { headers: { 'x-admin-nonce': nonce } })
+      .then(r => r.json())
+      .then(d => {
+        const h = d.ballots || []
+        setBallotHistory(h)
+        if (h.length > 0) sessionStorage.setItem('ballot-history', JSON.stringify(h))
+      })
+      .catch(() => setBallotHistory(null)) // null = failed, don't cache
+  }, [adminMode])
   const [ballotLog, setBallotLog] = useState<any[] | null>(null)
   const [ballotLogError, setBallotLogError] = useState<string | null>(null)
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
@@ -206,6 +227,7 @@ export default function AnalyticsReveal({
       .then(d => setAdminStats(d))
       .catch(() => {})
   }, [adminMode])
+
 
   useEffect(() => {
     if (!adminMode || activeTab !== 'log') return
@@ -335,6 +357,18 @@ export default function AnalyticsReveal({
           >
             לוח מובילים
           </button>
+          {adminMode && (
+            <button
+              onClick={() => setActiveTab('convergence')}
+              className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+                activeTab === 'convergence'
+                  ? 'bg-white text-yellow-700 shadow-sm font-semibold'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              מגמה
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('graph')}
             className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
@@ -375,7 +409,7 @@ export default function AnalyticsReveal({
           >
             מטריצה מלאה
           </button>
-          {adminMode && (
+          {adminMode && (<>
             <button
               onClick={() => setActiveTab('log')}
               className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
@@ -386,7 +420,7 @@ export default function AnalyticsReveal({
             >
               🔧 יומן הצבעות
             </button>
-          )}
+          </>)}
         </div>
 
         {activeTab === 'picks' && (
@@ -624,7 +658,42 @@ export default function AnalyticsReveal({
 
         {activeTab === 'leaderboard' && allCandidates && (
           <div className="space-y-2 max-w-2xl mx-auto">
-            {[...allCandidates]
+            {(() => {
+              // Precompute sparkline data per candidate from cached ballot history
+              const sparkData: Record<string, number[]> = {}
+              if (ballotHistory && ballotHistory.length >= 75) {
+                const running: Record<string, number> = {}
+                allCandidates.forEach(c => { running[c.id] = 0 })
+                ballotHistory.forEach((ballot, i) => {
+                  ballot.forEach(id => { if (id in running) running[id]++ })
+                  const n = i + 1
+                  if (n >= 75 && (n % Math.max(1, Math.floor(ballotHistory.length / 40)) === 0 || n === ballotHistory.length)) {
+                    allCandidates.forEach(c => {
+                      if (!sparkData[c.id]) sparkData[c.id] = []
+                      sparkData[c.id].push(running[c.id] / n)
+                    })
+                  }
+                })
+              }
+
+              // Shared absolute max so all sparklines are on same scale
+              const globalMax = Math.max(...Object.values(sparkData).flat(), 0.01)
+
+              const Sparkline = ({ candidateId, color }: { candidateId: string, color: string }) => {
+                const data = sparkData[candidateId]
+                if (!data || data.length < 3) return null
+                const w = 72, h = 24, pad = 2
+                const xs = data.map((_, i) => pad + (i / (data.length - 1)) * (w - pad * 2))
+                const ys = data.map(v => h - pad - (v / globalMax) * (h - pad * 2))
+                const path = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ')
+                return (
+                  <svg width={w} height={h} className="flex-shrink-0 opacity-70">
+                    <path d={path} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )
+              }
+
+              return [...allCandidates]
               .sort((a, b) => {
                 const fa = analytics.candidatePickFrequency[a.id] || 0
                 const fb = analytics.candidatePickFrequency[b.id] || 0
@@ -662,7 +731,10 @@ export default function AnalyticsReveal({
                         {group}
                       </span>
                     )}
-                    <div className="flex items-center gap-2 flex-shrink-0 w-32">
+                    {adminMode && sparkData[candidate.id] && (
+                      <Sparkline candidateId={candidate.id} color={barClass.includes('red') ? '#dc2626' : barClass.includes('green') ? '#16a34a' : barClass.includes('purple') ? '#9333ea' : '#3b82f6'} />
+                    )}
+                    <div className="flex items-center gap-2 flex-shrink-0 w-28">
                       <div className="flex-1 bg-slate-100 rounded-full h-2 overflow-hidden">
                         <div
                           className={`h-2 rounded-full ${barClass}`}
@@ -673,7 +745,8 @@ export default function AnalyticsReveal({
                     </div>
                   </div>
                 )
-              })}
+              })
+            })()}
           </div>
         )}
 
@@ -903,6 +976,63 @@ export default function AnalyticsReveal({
             </div>
           </div>
         )}
+        {activeTab === 'convergence' && adminMode && allCandidates && (
+          <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
+              <div>
+                <h3 className="font-bold text-slate-800 text-base mb-0.5">מגמת הצבעות</h3>
+                <p className="text-xs text-slate-500">שיעור מצטבר לפי סדר כניסת ההצבעות — קו מקווקו = n=75 (יציבות)</p>
+              </div>
+              <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
+                <button onClick={() => setGraphColorMode('group')}
+                  className={`px-3 py-1.5 transition-colors ${graphColorMode === 'group' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                  קבוצת ייצוג
+                </button>
+                <button onClick={() => setGraphColorMode('community')}
+                  className={`px-3 py-1.5 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
+                  קהילה
+                </button>
+              </div>
+            </div>
+            {/* Legend */}
+            <div className="flex flex-wrap gap-3 mb-3 text-xs">
+              {graphColorMode === 'group' ? (
+                [
+                  { color: '#dc2626', label: 'מרצ' },
+                  { color: '#16a34a', label: 'כפרי' },
+                  { color: '#9333ea', label: 'מיעוטים' },
+                  { color: '#3b82f6', label: 'אחר' },
+                ].map(({ color, label }) => (
+                  <div key={label} className="flex items-center gap-1.5">
+                    <span className="inline-block w-6 h-2 rounded-full" style={{ background: color }} />
+                    <span className="text-slate-600">{label}</span>
+                  </div>
+                ))
+              ) : snaData ? (
+                Array.from(new Set(Object.values(snaData.communityDisplayIndex).filter(i => i >= 0))).sort().map(idx => (
+                  <div key={idx} className="flex items-center gap-1.5">
+                    <span className="inline-block w-6 h-2 rounded-full" style={{ background: getCommunityColor(idx) }} />
+                    <span className="text-slate-600">קהילה {idx + 1}</span>
+                  </div>
+                ))
+              ) : null}
+            </div>
+
+            {ballotHistory === null ? (
+              <div className="flex items-center justify-center h-64 text-slate-400">טוען...</div>
+            ) : (
+              <ConvergenceChart
+                ballots={ballotHistory}
+                candidates={allCandidates}
+                minBallots={75}
+                topN={20}
+                colorMode={graphColorMode}
+                snaData={snaData}
+              />
+            )}
+          </div>
+        )}
+
         {activeTab === 'log' && adminMode && (
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
             <table className="w-full text-sm text-right">
