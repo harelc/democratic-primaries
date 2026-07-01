@@ -35,9 +35,12 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder }:
   allCandidates: Candidate[]
   coOccurrenceMatrix: Record<string, number>
   snaData: ReturnType<typeof computeSNA> | null
-  matrixOrder: 'default' | 'louvain'
+  matrixOrder: 'default' | 'louvain' | 'votes'
+  candidatePickFrequency: Record<string, number>
 }) {
-  const ordered = (matrixOrder === 'louvain' && snaData)
+  const ordered = matrixOrder === 'votes'
+    ? [...allCandidates].sort((a, b) => (candidatePickFrequency[b.id] ?? 0) - (candidatePickFrequency[a.id] ?? 0))
+    : (matrixOrder === 'louvain' && snaData)
     ? [...allCandidates].sort((a, b) => {
         const ca = snaData.communityDisplayIndex[a.id] ?? 99
         const cb = snaData.communityDisplayIndex[b.id] ?? 99
@@ -186,7 +189,7 @@ export default function AnalyticsReveal({
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
-  const [matrixOrder, setMatrixOrder] = useState<'default' | 'louvain'>('default')
+  const [matrixOrder, setMatrixOrder] = useState<'default' | 'louvain' | 'votes'>('default')
 
   const snaData = useMemo(() => {
     if (!analytics || !allCandidates || allCandidates.length === 0) return null
@@ -827,6 +830,12 @@ export default function AnalyticsReveal({
                   סדר מקורי
                 </button>
                 <button
+                  onClick={() => setMatrixOrder('votes')}
+                  className={`px-3 py-1.5 transition-colors ${matrixOrder === 'votes' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
+                >
+                  לפי הצבעות
+                </button>
+                <button
                   onClick={() => setMatrixOrder('louvain')}
                   className={`px-3 py-1.5 transition-colors ${matrixOrder === 'louvain' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                 >
@@ -841,6 +850,7 @@ export default function AnalyticsReveal({
               coOccurrenceMatrix={analytics.coOccurrenceMatrix}
               snaData={snaData}
               matrixOrder={matrixOrder}
+              candidatePickFrequency={analytics.candidatePickFrequency}
             />
 
             {/* Legend */}
