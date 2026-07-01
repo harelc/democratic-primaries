@@ -12,7 +12,7 @@ function Tooltip({ term, children }: { term: string; children: React.ReactNode }
       <span
         ref={ref}
         className="border-b border-dotted border-slate-400 cursor-help"
-        style={{ fontFamily: 'inherit' }}
+        style={{ fontFamily: 'inherit', fontWeight: 'inherit', fontSize: 'inherit', color: 'inherit', lineHeight: 'inherit' }}
         onMouseEnter={() => setRect(ref.current?.getBoundingClientRect() ?? null)}
         onMouseLeave={() => setRect(null)}
       >
