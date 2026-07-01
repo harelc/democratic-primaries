@@ -3,6 +3,7 @@ import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
 import ConvergenceChart from './ConvergenceChart'
+import VoteRateChart from './VoteRateChart'
 
 function Tooltip({ term, children }: { term: string; children: React.ReactNode }) {
   const [rect, setRect] = useState<DOMRect | null>(null)
@@ -194,8 +195,8 @@ export default function AnalyticsReveal({
 
   // Fetch ballot history once per session (cached in sessionStorage)
   useEffect(() => {
-    const cached = sessionStorage.getItem('ballot-history')
-    const cachedAt = Number(sessionStorage.getItem('ballot-history-ts') || 0)
+    const cached = sessionStorage.getItem('ballot-history-v2')
+    const cachedAt = Number(sessionStorage.getItem('ballot-history-v2-ts') || 0)
     if (cached && Date.now() - cachedAt < 5 * 60 * 1000) {
       const parsed = JSON.parse(cached)
       setBallotHistory(parsed.ballots ?? parsed) // support old cache format
@@ -203,8 +204,8 @@ export default function AnalyticsReveal({
       return
     }
     const url = window.location.port === '5173'
-      ? 'http://localhost:8888/.netlify/functions/ballot-history'
-      : '/.netlify/functions/ballot-history'
+      ? 'http://localhost:8888/.netlify/functions/ballot-history-v2'
+      : '/.netlify/functions/ballot-history-v2'
     fetch(url)
       .then(r => r.json())
       .then(d => {
@@ -213,8 +214,8 @@ export default function AnalyticsReveal({
         setBallotHistory(h)
         setBallotTimestamps(ts)
         if (h.length > 0) {
-          sessionStorage.setItem('ballot-history', JSON.stringify({ ballots: h, timestamps: ts }))
-          sessionStorage.setItem('ballot-history-ts', String(Date.now()))
+          sessionStorage.setItem('ballot-history-v2', JSON.stringify({ ballots: h, timestamps: ts }))
+          sessionStorage.setItem('ballot-history-v2-ts', String(Date.now()))
         }
       })
       .catch(() => setBallotHistory(null))
@@ -313,7 +314,7 @@ export default function AnalyticsReveal({
             <div className="flex gap-3 items-stretch flex-wrap justify-end">
               <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3 text-center flex-shrink-0">
                 <p className="text-3xl font-extrabold leading-none">{(
-                  // ballot-history is uncached and most authoritative; fall back to polled or initial
+                  // ballot-history-v2 is uncached and most authoritative; fall back to polled or initial
                   (ballotHistory && ballotHistory.length > analytics.totalSubmissions ? ballotHistory.length : null)
                   ?? liveTotal
                   ?? analytics.totalSubmissions
@@ -1076,6 +1077,12 @@ export default function AnalyticsReveal({
         )}
 
         {activeTab === 'log' && adminMode && (
+          <>
+          {ballotTimestamps && ballotTimestamps.length > 0 && (
+            <div className="bg-white border border-slate-200 rounded-lg p-4 mb-4">
+              <VoteRateChart timestamps={ballotTimestamps} bucketMinutes={10} />
+            </div>
+          )}
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
             <table className="w-full text-sm text-right">
               <thead className="bg-slate-50 border-b border-slate-200">
@@ -1106,6 +1113,7 @@ export default function AnalyticsReveal({
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 

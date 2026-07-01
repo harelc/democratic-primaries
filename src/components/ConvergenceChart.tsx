@@ -233,12 +233,21 @@ export default function ConvergenceChart({
       const highlight = () => {
         chartArea.selectAll('path[class^="line-"]').attr('opacity', 0.1).attr('stroke-width', 1.5)
         g.selectAll('text[class^="label-"]').attr('opacity', 0.15)
+        chartArea.selectAll('rect.spike-band').attr('opacity', 0.03)
+        g.selectAll('path.spike-tri').attr('opacity', 0.15)
+        chartArea.selectAll('path[class^="anomaly-"]').attr('opacity', 0.05)
         path.attr('opacity', 1).attr('stroke-width', 3)
         el.attr('opacity', 1)
+        chartArea.selectAll(`path.anomaly-band-${ci}`).attr('opacity', 1)
+        chartArea.selectAll(`path.anomaly-glow-${ci}`).attr('opacity', 0.18)
       }
       const unhighlight = () => {
         chartArea.selectAll('path[class^="line-"]').attr('opacity', 0.7).attr('stroke-width', 2)
         g.selectAll('text[class^="label-"]').attr('opacity', 0.7)
+        chartArea.selectAll('rect.spike-band').attr('opacity', 0.07)
+        g.selectAll('path.spike-tri').attr('opacity', 0.8)
+        chartArea.selectAll('path[class^="anomaly-band-"]').attr('opacity', 1)
+        chartArea.selectAll('path[class^="anomaly-glow-"]').attr('opacity', 0.18)
       }
 
       el.on('mouseenter', highlight).on('mouseleave', unhighlight)
@@ -256,7 +265,7 @@ export default function ConvergenceChart({
     // --- Rate spike markers (drawn before zoom so refs exist) ---
     type BandRef = { el: d3.Selection<SVGRectElement, unknown, null, undefined>; runStart: number; runEnd: number }
     type TriRef  = { el: d3.Selection<SVGPathElement, unknown, null, undefined>; mid: number }
-    type AnomalyBandRef = { glow: d3.Selection<SVGPathElement, unknown, null, undefined>; el: d3.Selection<SVGPathElement, unknown, null, undefined>; slice: number[]; burstStart: number }
+    type AnomalyBandRef = { glow: d3.Selection<SVGPathElement, unknown, null, undefined>; el: d3.Selection<SVGPathElement, unknown, null, undefined>; slice: number[]; burstStart: number; ci: number }
 
     const spikeBandRefs: BandRef[] = []
     const spikeTriRefs: TriRef[] = []
@@ -279,12 +288,14 @@ export default function ConvergenceChart({
         const runW = Math.max(4, x(runEnd + 1) - x(runStart + 1))
 
         const band = chartArea.append<SVGRectElement>('rect')
+          .attr('class', 'spike-band')
           .attr('x', x(runStart + 1)).attr('y', 0)
           .attr('width', runW).attr('height', innerH)
           .attr('fill', '#f97316').attr('opacity', 0.07)
         spikeBandRefs.push({ el: band, runStart, runEnd })
 
         const tri = spikesG.append<SVGPathElement>('path')
+          .attr('class', 'spike-tri')
           .attr('d', `M${px - 5},${innerH + 6} L${px + 5},${innerH + 6} L${px},${innerH + 1} Z`)
           .attr('fill', '#f97316').attr('opacity', 0.8)
         spikeTriRefs.push({ el: tri, mid })
@@ -296,13 +307,12 @@ export default function ConvergenceChart({
       // Collect burst ranges from spikeBandRefs (already computed above)
       const burstRanges = spikeBandRefs.map(b => [b.runStart, b.runEnd] as [number, number])
 
-      topCandidates.forEach((candidate) => {
+      topCandidates.forEach((candidate, ci) => {
         const cAnomalies = anomalies.get(candidate.id)
         if (!cAnomalies) return
         const color = getColor(candidate)
         const propData = counts[candidate.id]
 
-        // One band per burst this candidate is anomalous in
         for (const [burstStart, burstEnd] of burstRanges) {
           const mid = Math.round((burstStart + burstEnd) / 2)
           if (!cAnomalies.has(mid)) continue
@@ -315,6 +325,7 @@ export default function ConvergenceChart({
               .curve(d3.curveCatmullRom.alpha(0.5))(slice) ?? ''
 
           const glow = chartArea.append<SVGPathElement>('path')
+            .attr('class', `anomaly-glow-${ci}`)
             .attr('fill', 'none')
             .attr('stroke', color).attr('stroke-width', 10).attr('opacity', 0.18)
             .attr('stroke-linecap', 'round')
@@ -322,13 +333,14 @@ export default function ConvergenceChart({
             .attr('d', makeSegment(x))
 
           const el = chartArea.append<SVGPathElement>('path')
+            .attr('class', `anomaly-band-${ci}`)
             .attr('fill', 'none')
             .attr('stroke', color).attr('stroke-width', 3.5).attr('opacity', 1)
             .attr('stroke-linecap', 'round')
             .style('pointer-events', 'none')
             .attr('d', makeSegment(x))
 
-          anomalyBandRefs.push({ glow, el, slice, burstStart })
+          anomalyBandRefs.push({ glow, el, slice, burstStart, ci })
         }
       })
     }
