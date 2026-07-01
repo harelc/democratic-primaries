@@ -189,6 +189,7 @@ export default function AnalyticsReveal({
   const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'log'>('picks')
   const [liveTotal, setLiveTotal] = useState<number | null>(null)
   const [ballotHistory, setBallotHistory] = useState<string[][] | null>(null)
+  const [bmcDismissed, setBmcDismissed] = useState(() => sessionStorage.getItem('bmc-dismissed') === 'true')
 
   // Fetch ballot history once per session (cached in sessionStorage)
   useEffect(() => {
@@ -345,6 +346,28 @@ export default function AnalyticsReveal({
             <p className="text-blue-100 text-sm mt-0.5">שתפו את הרשימה שלכם עם חברים — ככל שיותר אנשים יצביעו, כך הניתוח יהיה משמעותי יותר</p>
           </div>
           <ShareButton candidates={selectedCandidates} />
+        </div>
+      )}
+
+      {/* BMC support banner */}
+      {!bmcDismissed && (
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-900">
+          <span className="text-lg flex-shrink-0">☕</span>
+          <p className="flex-1 leading-snug">הפעלת האתר כרוכה בעלויות כספיות. אם תעזרו בסכום נמוך של דולר או שניים זה יעזור לכסות אותן.</p>
+          <a
+            href="https://www.buymeacoffee.com/harelc"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-shrink-0 flex items-center gap-1.5 bg-amber-400 hover:bg-amber-500 text-amber-900 font-semibold px-3 py-1.5 rounded-lg transition-colors text-xs"
+          >
+            <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="" className="h-3.5 w-3.5" />
+            תרמו
+          </a>
+          <button
+            onClick={() => { sessionStorage.setItem('bmc-dismissed', 'true'); setBmcDismissed(true) }}
+            className="flex-shrink-0 text-amber-400 hover:text-amber-600 transition-colors text-lg leading-none"
+            aria-label="סגור"
+          >×</button>
         </div>
       )}
 
