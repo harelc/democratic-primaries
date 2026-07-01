@@ -305,7 +305,7 @@ export default function AnalyticsReveal({
       </div>
 
       {/* Share CTA */}
-      {!adminMode && selectedCandidates.length > 0 && (
+      {selectedCandidates.length > 0 && (
         <div className="bg-gradient-to-r from-indigo-600 to-blue-500 rounded-2xl p-5 flex items-center justify-between gap-4 flex-wrap shadow-md">
           <div>
             <p className="font-bold text-white text-base">רוצים להשפיע על התוצאות?</p>
