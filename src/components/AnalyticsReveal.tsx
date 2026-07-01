@@ -204,8 +204,8 @@ export default function AnalyticsReveal({
       return
     }
     const url = window.location.port === '5173'
-      ? 'http://localhost:8888/.netlify/functions/ballot-history-v2'
-      : '/.netlify/functions/ballot-history-v2'
+      ? 'http://localhost:8888/.netlify/functions/ballot-history'
+      : '/.netlify/functions/ballot-history'
     fetch(url)
       .then(r => r.json())
       .then(d => {
