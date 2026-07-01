@@ -42,9 +42,16 @@ export default function ConvergenceChart({
 
     const width = svgRef.current.clientWidth || 800
     const height = svgRef.current.clientHeight || 400
-    const margin = { top: 20, right: 220, bottom: 40, left: 50 }
+    const isMobile = width < 500
+    const margin = {
+      top: 20,
+      right: isMobile ? 110 : 220,
+      bottom: isMobile ? 30 : 40,
+      left: isMobile ? 36 : 50,
+    }
     const innerW = width - margin.left - margin.right
     const innerH = height - margin.top - margin.bottom
+    const effectiveTopN = isMobile ? Math.min(topN, 10) : topN
 
     d3.select(svgRef.current).selectAll('*').remove()
     const svg = d3.select(svgRef.current)
@@ -72,7 +79,7 @@ export default function ConvergenceChart({
     // Pick top N by final proportion
     const finalProps = candidates.map(c => ({ c, final: counts[c.id][ballots.length - 1] ?? 0 }))
     finalProps.sort((a, b) => b.final - a.final)
-    const topCandidates = finalProps.slice(0, topN).map(x => x.c)
+    const topCandidates = finalProps.slice(0, effectiveTopN).map(x => x.c)
 
     // Scales
     const x = d3.scaleLinear().domain([1, ballots.length]).range([0, innerW])
@@ -92,10 +99,12 @@ export default function ConvergenceChart({
       .call(d3.axisBottom(x).ticks(8).tickFormat(d => `${d}`))
 
     // Axis labels
-    g.append('text').attr('x', innerW / 2).attr('y', innerH + 35).attr('text-anchor', 'middle')
-      .attr('font-size', '11px').attr('fill', '#64748b').text('מספר הצבעה')
-    g.append('text').attr('transform', 'rotate(-90)').attr('x', -innerH / 2).attr('y', -40)
-      .attr('text-anchor', 'middle').attr('font-size', '11px').attr('fill', '#64748b').text('שיעור הצבעות')
+    g.append('text').attr('x', innerW / 2).attr('y', innerH + (isMobile ? 24 : 35)).attr('text-anchor', 'middle')
+      .attr('font-size', isMobile ? '9px' : '11px').attr('fill', '#64748b').text('מספר הצבעה')
+    if (!isMobile) {
+      g.append('text').attr('transform', 'rotate(-90)').attr('x', -innerH / 2).attr('y', -40)
+        .attr('text-anchor', 'middle').attr('font-size', '11px').attr('fill', '#64748b').text('שיעור הצבעות')
+    }
 
     // N=75 stable line (inside chart area, zooms with x)
     const stableLine = chartArea.append('line')
@@ -139,12 +148,15 @@ export default function ConvergenceChart({
         .attr('d', makeLine(x))
       paths.push({ path, data })
 
+      const labelName = isMobile
+        ? (candidate.name.split(' ')[0] ?? candidate.name)
+        : candidate.name
       const el = g.append<SVGTextElement>('text')
-        .attr('x', innerW + 8).attr('y', y(data[data.length - 1] ?? 0) + 4)
-        .attr('font-size', '12px').attr('fill', color).attr('font-weight', '600').attr('opacity', 0.7)
+        .attr('x', innerW + 6).attr('y', y(data[data.length - 1] ?? 0) + 4)
+        .attr('font-size', isMobile ? '10px' : '12px').attr('fill', color).attr('font-weight', '600').attr('opacity', 0.7)
         .attr('class', `label-${ci}`)
         .style('cursor', 'pointer')
-        .text(`${candidate.name} ${Math.round((data[data.length - 1] ?? 0) * 100)}%`)
+        .text(`${labelName} ${Math.round((data[data.length - 1] ?? 0) * 100)}%`)
       endLabelEls.push({ el, data })
 
       const highlight = () => {
@@ -217,6 +229,6 @@ export default function ConvergenceChart({
   }
 
   return (
-    <svg ref={svgRef} className="w-full" style={{ height: '620px' }} />
+    <svg ref={svgRef} className="w-full" style={{ height: 'clamp(300px, 85vw, 620px)' }} />
   )
 }
