@@ -1082,7 +1082,7 @@ export default function AnalyticsReveal({
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="font-bold text-lg mb-2">סה"כ הצבעות</h3>
           <p className="text-2xl font-bold text-blue-600">
-            {analytics.totalSubmissions}
+            {(ballotHistory && ballotHistory.length > analytics.totalSubmissions ? ballotHistory.length : null) ?? liveTotal ?? analytics.totalSubmissions}
           </p>
         </div>
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
