@@ -192,7 +192,7 @@ export default function AnalyticsReveal({
 
   const snaData = useMemo(() => {
     if (!analytics || !allCandidates || allCandidates.length === 0) return null
-    return computeSNA(allCandidates, analytics.coOccurrenceMatrix)
+    return computeSNA(allCandidates, analytics.coOccurrenceMatrix, analytics.candidatePickFrequency)
   }, [analytics, allCandidates])
 
   useEffect(() => {

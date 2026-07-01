@@ -245,7 +245,8 @@ export function computeSpectralEmbedding(
 
 export function computeSNA(
   candidates: Candidate[],
-  coOccurrenceMatrix: Record<string, number>
+  coOccurrenceMatrix: Record<string, number>,
+  candidatePickFrequency: Record<string, number> = {}
 ): SNAResult {
   const graph = new Graph({ type: 'undirected', multi: false })
 
@@ -370,11 +371,14 @@ export function computeSNA(
     return { rawId, lc, qc, connectedSize, minId }
   })
 
-  // Sort by internal cohesion (Lc) desc — stable across small vote count changes
-  // Tiebreak by minId for full determinism
-  communityMeta.sort((a, b) =>
-    b.lc !== a.lc ? b.lc - a.lc : a.minId < b.minId ? -1 : 1
-  )
+  // Sort by sum of vote share of members — stable and directly interpretable
+  communityMeta.sort((a, b) => {
+    const sumA = candidates.filter(c => result.communities[c.id] === a.rawId)
+      .reduce((s, c) => s + (candidatePickFrequency[c.id] ?? 0), 0)
+    const sumB = candidates.filter(c => result.communities[c.id] === b.rawId)
+      .reduce((s, c) => s + (candidatePickFrequency[c.id] ?? 0), 0)
+    return sumB !== sumA ? sumB - sumA : a.minId < b.minId ? -1 : 1
+  })
 
   let displayIdx = 0
   const rawToDisplay: Record<number, number> = {}
