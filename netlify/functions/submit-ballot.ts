@@ -62,7 +62,9 @@ const handler: Handler = async (event) => {
       return { statusCode: 400, body: JSON.stringify({ error: 'No candidates selected' }) }
     }
 
-    const isAdminToken = body.captchaToken?.startsWith('dev-token-')
+    const expectedNonce = process.env.ADMIN_NONCE || process.env.VITE_ADMIN_NONCE
+    const isAdminToken = body.captchaToken?.startsWith('dev-token-') &&
+      body.adminNonce === expectedNonce
     if (!isAdminToken) {
       const isValidCaptcha = await verifyCaptcha(body.captchaToken)
       if (!isValidCaptcha) {
@@ -77,17 +79,16 @@ const handler: Handler = async (event) => {
       || event.headers['client-ip']
       || 'unknown'
     const ipHash = rawIp === 'unknown' ? 'unknown' : hashIp(rawIp)
-    const voteDate = new Date().toISOString().slice(0, 10)
-
     if (!isAdminToken) {
       try {
+        // One vote per IP ever — use fixed vote_date so UNIQUE(ip_hash, vote_date) blocks re-voting
         await turso(dbUrl, authToken, [
-          { type: 'execute', stmt: { sql: `INSERT INTO vote_locks (ip_hash, vote_date) VALUES ('${ipHash}', '${voteDate}')` } },
+          { type: 'execute', stmt: { sql: `INSERT INTO vote_locks (ip_hash, vote_date) VALUES ('${ipHash}', 'primaries-2026')` } },
         ])
       } catch (e: any) {
         const msg = (e?.message || '') + (e?.code || '')
         if (msg.includes('UNIQUE') || msg.includes('SQLITE_CONSTRAINT') || msg.includes('2067')) {
-          return { statusCode: 429, body: JSON.stringify({ error: 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.' }) }
+          return { statusCode: 429, body: JSON.stringify({ error: 'כבר הצבעת. ניתן להצביע פעם אחת בלבד.' }) }
         }
         console.error('vote_locks error:', msg)
         throw e

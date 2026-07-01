@@ -203,13 +203,14 @@ export default function App() {
           selectedCandidateIds: selectedArray,
           timeToComplete,
           captchaToken: token,
+          ...(adminMode && { adminNonce: import.meta.env.VITE_ADMIN_NONCE }),
         }),
       })
 
       if (!submitResponse.ok) {
         const errData = await submitResponse.json().catch(() => ({}))
         if (submitResponse.status === 429) {
-          alert(errData.error || 'כבר הצבעת היום. ניתן להצביע פעם אחת בכל 24 שעות.')
+          alert(errData.error || 'כבר הצבעת. ניתן להצביע פעם אחת בלבד.')
           setPhase('building')
           return
         }
