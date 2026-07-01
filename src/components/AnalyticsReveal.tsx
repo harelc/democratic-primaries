@@ -106,19 +106,22 @@ function NewVoteToast({ totalSubmissions, onNewTotal }: { totalSubmissions: numb
       ? 'http://localhost:8888/.netlify/functions/analytics'
       : '/.netlify/functions/analytics'
 
-    const interval = setInterval(async () => {
+    const poll = async () => {
       try {
         const data = await fetch(url).then(r => r.json())
         const newCount = data.totalSubmissions || 0
+        onNewTotal(newCount) // always update the displayed total
         if (newCount > lastCount.current) {
           const diff = newCount - lastCount.current
           setToast(`🗳️ ${diff === 1 ? 'הצבעה חדשה נכנסה' : `${diff} הצבעות חדשות נכנסו`}!`)
           lastCount.current = newCount
-          onNewTotal(newCount)
           setTimeout(() => setToast(null), 4000)
         }
       } catch {}
-    }, 120000)
+    }
+
+    poll() // fetch immediately on mount
+    const interval = setInterval(poll, 120000)
 
     return () => clearInterval(interval)
   }, [])
