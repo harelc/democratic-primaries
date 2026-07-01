@@ -190,11 +190,24 @@ export default function AnalyticsReveal({
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
   const [matrixOrder, setMatrixOrder] = useState<'default' | 'louvain' | 'votes'>('default')
+  const [adminStats, setAdminStats] = useState<{ last10min: number; last1h: number; last6h: number; last12h: number } | null>(null)
 
   const snaData = useMemo(() => {
     if (!analytics || !allCandidates || allCandidates.length === 0) return null
     return computeSNA(allCandidates, analytics.coOccurrenceMatrix)
   }, [analytics, allCandidates])
+
+  useEffect(() => {
+    if (!adminMode) return
+    const nonce = import.meta.env.VITE_ADMIN_NONCE || ''
+    const url = window.location.port === '5173'
+      ? 'http://localhost:8888/.netlify/functions/admin-stats'
+      : '/.netlify/functions/admin-stats'
+    fetch(url, { headers: { 'x-admin-nonce': nonce } })
+      .then(r => r.json())
+      .then(d => setAdminStats(d))
+      .catch(() => {})
+  }, [adminMode])
 
   useEffect(() => {
     if (!adminMode || activeTab !== 'log') return
@@ -261,9 +274,26 @@ export default function AnalyticsReveal({
             <p className="text-blue-200 text-sm font-medium">תוצאות בזמן אמת · מתעדכן אוטומטית</p>
           </div>
           {analytics?.totalSubmissions ? (
-            <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3 text-center flex-shrink-0">
-              <p className="text-3xl font-extrabold leading-none">{analytics.totalSubmissions.toLocaleString('he-IL')}</p>
-              <p className="text-blue-200 text-xs mt-1 font-medium">הצבעות נרשמו</p>
+            <div className="flex gap-3 items-stretch flex-wrap justify-end">
+              <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3 text-center flex-shrink-0">
+                <p className="text-3xl font-extrabold leading-none">{analytics.totalSubmissions.toLocaleString('he-IL')}</p>
+                <p className="text-blue-200 text-xs mt-1 font-medium">הצבעות נרשמו</p>
+              </div>
+              {adminMode && adminStats && (
+                <div className="bg-white/10 backdrop-blur rounded-xl px-4 py-3 text-xs flex flex-col gap-1 justify-center flex-shrink-0">
+                  {[
+                    { label: '10 דק׳', val: adminStats.last10min },
+                    { label: 'שעה', val: adminStats.last1h },
+                    { label: '6 שעות', val: adminStats.last6h },
+                    { label: '12 שעות', val: adminStats.last12h },
+                  ].map(({ label, val }) => (
+                    <div key={label} className="flex justify-between gap-3">
+                      <span className="text-blue-300">{label}</span>
+                      <span className="font-bold tabular-nums">{val}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : null}
         </div>
