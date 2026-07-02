@@ -283,7 +283,7 @@ export function computeSNA(
 
   // Spectral clustering: eigengap selects k, k-means on top-k eigenvectors
   const k = eigengapK(sorted, 2, 8)
-  const embeddingCols = sorted.slice(1, k + 1).map(s => s.idx)
+  const embeddingCols = sorted.slice(1, k).map(s => s.idx)
   const points = ids.map((_, i) => embeddingCols.map(col => eigenvectors.get(i, col)))
   // Row-normalize for k-means stability
   const normPoints = points.map(p => {
@@ -336,25 +336,12 @@ export function computeSNA(
     if (!(c.id in result.cosineSimTop3)) result.cosineSimTop3[c.id] = []
   }
 
-  // Build display index: filter communities by Qc > 0, sort by total vote share
-  const totalEdgeWeight = Object.values(weightedDegreeRaw).reduce((s, v) => s + v, 0) / 2
-  const m2 = totalEdgeWeight * 2
-
+  // Build display index: spectral clusters with ≥ 2 members, sorted by total vote share
   const rawIds = Array.from(new Set(Object.values(result.communities)))
   const communityMeta = rawIds.map(rawId => {
     const members = candidates.filter(c => result.communities[c.id] === rawId)
-    const memberIds = new Set(members.map(c => c.id))
-    let lc = 0, dc = 0
-    members.forEach(c => {
-      dc += weightedDegreeRaw[c.id] ?? 0
-      graph.forEachNeighbor(c.id, (neighbor, attrs) => {
-        if (memberIds.has(neighbor)) lc += (attrs.weight ?? 1) / 2
-      })
-    })
-    const qc = m2 > 0 ? (lc / totalEdgeWeight) - Math.pow(dc / m2, 2) : 0
-    const connectedSize = members.filter(c => (weightedDegreeRaw[c.id] ?? 0) > 0).length
     const minId = members.map(c => c.id).sort()[0] ?? ''
-    return { rawId, lc, qc, connectedSize, minId }
+    return { rawId, memberCount: members.length, minId }
   })
 
   communityMeta.sort((a, b) => {
@@ -367,8 +354,8 @@ export function computeSNA(
 
   let displayIdx = 0
   const rawToDisplay: Record<number, number> = {}
-  for (const { rawId, qc, connectedSize } of communityMeta)
-    if (connectedSize > 0 && qc > 0) rawToDisplay[rawId] = displayIdx++
+  for (const { rawId, memberCount } of communityMeta)
+    if (memberCount >= 2) rawToDisplay[rawId] = displayIdx++
 
   for (const c of candidates) {
     const rawId = result.communities[c.id]
