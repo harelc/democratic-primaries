@@ -526,6 +526,16 @@ export default function AnalyticsReveal({
             לוח מובילים
           </button>
           <button
+            onClick={() => setActiveTab('sna')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'sna'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            מפת הקהילות
+          </button>
+          <button
             onClick={() => setActiveTab('convergence')}
             className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'convergence'
@@ -554,16 +564,6 @@ export default function AnalyticsReveal({
             }`}
           >
             השילובים שלך
-          </button>
-          <button
-            onClick={() => setActiveTab('sna')}
-            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
-              activeTab === 'sna'
-                ? 'bg-white text-blue-700 shadow-sm font-semibold'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            ניתוח רשת
           </button>
           <button
             onClick={() => setActiveTab('fullmatrix')}
@@ -900,9 +900,9 @@ export default function AnalyticsReveal({
             <div className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
               <h3 className="font-bold text-slate-800 mb-3 text-base">קהילות הצבעה</h3>
               <p className="text-xs text-slate-500 mb-4">
-                קהילות שזוהו על ידי <Tooltip term="אלגוריתם Louvain">
-                  ממקסם מודולריות Q = (1/2m)Σᵢⱼ[Aᵢⱼ − kᵢkⱼ/2m]δ(cᵢ,cⱼ) — ההפרש בין צפיפות הקשרים הנצפית לצפויה בגרף אקראי עם אותם דרגות.{'\n\n'}אם ממש מעניין אותך: שני שלבים — (1) Greedy local: כל קודקוד עובר לקהילה השכנה שממקסמת ΔQ; (2) Compression: כל קהילה מתכווצת לקודקוד יחיד וחוזר חלילה. מורכבות O(n log n). אופטימום גלובלי אינו מובטח — NP-hard.
-                </Tooltip> — מועמדים שנבחרים ביחד בתדירות גבוהה
+                קהילות שזוהו על ידי <Tooltip term="אשכול ספקטרלי על מטריצת φ">
+                  בונה מטריצת קורלציה φ בין כל זוג מועמדים (מבטלת השפעת פופולריות), מפעילה פירוק ספקטרלי של לפלסיאן מנורמל, ומשתמשת ב-eigengap heuristic לבחירת מספר האשכולות k. ואז k-means על וקטורי הייצוג הספקטרלי. שיטה זו מוצאת חתכים מאוזנים גלובלית.
+                </Tooltip> — מועמדים שנבחרים יחד יותר מהצפוי
               </p>
               <div className="flex flex-wrap gap-4">
                 {(() => {
@@ -1080,7 +1080,7 @@ export default function AnalyticsReveal({
                   onClick={() => setMatrixOrder('louvain')}
                   className={`px-3 py-1.5 transition-colors ${matrixOrder === 'louvain' ? 'bg-blue-600 text-white font-semibold' : 'bg-white text-slate-600 hover:bg-slate-50'}`}
                 >
-                  לפי קהילות Louvain
+                  לפי אשכולות ספקטרליים
                 </button>
               </div>
             </div>
