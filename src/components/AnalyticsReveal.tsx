@@ -88,7 +88,7 @@ function matrixTextColor(v: number, view: MatrixView, maxAbs: number): string {
 
 function MatrixViewToggle({ view, onChange }: { view: MatrixView; onChange: (v: MatrixView) => void }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-2" dir="ltr">
+    <div className="flex flex-wrap items-center gap-2 mb-2">
       <span className="text-xs text-slate-400 mr-1">תצוגה:</span>
       {MATRIX_VIEWS.map(({ key, label }) => (
         <button key={key} onClick={() => onChange(key)}
@@ -1056,8 +1056,7 @@ export default function AnalyticsReveal({
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
             <p className="text-base font-bold text-slate-800 mb-1">מטריצת הדפוסים</p>
-            <p className="text-slate-500 text-sm mb-1">שילובים של כל 51 המועמדים</p>
-            <p className="text-xs text-slate-400 mb-3">כל תא מראה: מבין כל מי שבחרו במועמד <strong>בשורה</strong>, כמה אחוז בחרו גם במועמד <strong>בעמודה</strong>. הסתברות מותנית — לא סימטרית.</p>
+            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המועמדים</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
