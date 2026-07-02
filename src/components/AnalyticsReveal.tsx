@@ -34,12 +34,83 @@ function Tooltip({ term, children }: { term: string; children: React.ReactNode }
   )
 }
 
-function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, candidatePickFrequency }: {
+// ── Matrix view helpers ────────────────────────────────────────────────────
+
+type MatrixView = 'joint' | 'conditional' | 'covariance' | 'phi'
+
+const MATRIX_VIEWS: { key: MatrixView; label: string; desc: string }[] = [
+  { key: 'joint',       label: 'P(A∩B)',  desc: 'ההסתברות שמצביע אקראי בחר גם ב-A (שורה) וגם ב-B (עמודה). סימטרית — תא (A,B) = תא (B,A).' },
+  { key: 'conditional', label: 'P(B|A)',  desc: 'מבין מי שבחרו ב-A (שורה), כמה אחוז בחרו גם ב-B (עמודה). לא סימטרית.' },
+  { key: 'covariance',  label: 'Cov',     desc: 'P(A∩B) − P(A)·P(B) — עודף מעל הצפוי בהיעדר קשר. חיובי = שיתוף פעולה, שלילי = תחרות. ביחידות נקודות אחוז.' },
+  { key: 'phi',         label: 'φ',       desc: 'קורלציה של פירסון על וקטורי 0/1: φ = Cov / √(P(A)·(1−P(A))·P(B)·(1−P(B))). מנורמל ל[−1,1], מבטל השפעת פופולריות.' },
+]
+
+function getJointProb(a: string, b: string, m: Record<string, number>): number {
+  return m[a < b ? `${a}:${b}` : `${b}:${a}`] ?? 0
+}
+
+function calcMatrixValue(c1: string, c2: string, m: Record<string, number>, freq: Record<string, number>, view: MatrixView): number {
+  const pA = freq[c1] ?? 0, pB = freq[c2] ?? 0
+  if (c1 === c2) {
+    if (view === 'joint') return pA
+    if (view === 'conditional') return 1
+    if (view === 'covariance') return pA * (1 - pA)
+    return 1
+  }
+  const pAB = getJointProb(c1, c2, m)
+  if (view === 'joint') return pAB
+  if (view === 'conditional') return pA > 0 ? pAB / pA : 0
+  const cov = pAB - pA * pB
+  if (view === 'covariance') return cov
+  const denom = Math.sqrt(pA * (1 - pA) * pB * (1 - pB))
+  return denom > 0 ? cov / denom : 0
+}
+
+function matrixCellColor(v: number, view: MatrixView, maxAbs: number): string {
+  if (view === 'joint' || view === 'conditional')
+    return `hsl(210, 100%, ${Math.round(100 - Math.min(v, 1) * 80)}%)`
+  if (maxAbs === 0) return '#f8fafc'
+  const t = Math.min(Math.abs(v) / maxAbs, 1)
+  const ch = Math.round(255 - t * 180)
+  return v < -0.001 ? `rgb(255,${ch},${ch})` : v > 0.001 ? `rgb(${ch},${ch},255)` : '#f8fafc'
+}
+
+function formatMatrixVal(v: number, view: MatrixView): string {
+  if (view === 'joint' || view === 'conditional') return `${Math.round(v * 100)}%`
+  if (view === 'covariance') return `${(v * 100).toFixed(1)}`
+  return v.toFixed(2)
+}
+
+function matrixTextColor(v: number, view: MatrixView, maxAbs: number): string {
+  if (view === 'joint' || view === 'conditional') return v > 0.5 ? 'white' : '#475569'
+  return maxAbs > 0 && Math.abs(v) / maxAbs > 0.5 ? 'white' : '#475569'
+}
+
+function MatrixViewToggle({ view, onChange }: { view: MatrixView; onChange: (v: MatrixView) => void }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 mb-2" dir="ltr">
+      <span className="text-xs text-slate-400 mr-1">תצוגה:</span>
+      {MATRIX_VIEWS.map(({ key, label }) => (
+        <button key={key} onClick={() => onChange(key)}
+          className={`px-2.5 py-1 rounded text-xs font-mono font-semibold transition-colors ${
+            view === key ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          }`}>
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, candidatePickFrequency, matrixView }: {
   allCandidates: Candidate[]
   coOccurrenceMatrix: Record<string, number>
   snaData: ReturnType<typeof computeSNA> | null
   matrixOrder: 'louvain' | 'votes'
   candidatePickFrequency: Record<string, number>
+  matrixView: MatrixView
 }) {
   const ordered = matrixOrder === 'louvain' && snaData
     ? [...allCandidates].sort((a, b) => {
@@ -65,6 +136,14 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
         </div>
         {ordered.map(c1 => {
           const comm = snaData ? (snaData.communityDisplayIndex[c1.id] ?? -1) : null
+          const maxAbs = (() => {
+            if (matrixView === 'joint' || matrixView === 'conditional') return 1
+            let m = 0
+            for (const c2 of ordered) {
+              if (c1.id !== c2.id) m = Math.max(m, Math.abs(calcMatrixValue(c1.id, c2.id, coOccurrenceMatrix, candidatePickFrequency, matrixView)))
+            }
+            return m
+          })()
           return (
             <div key={`r-${c1.id}`} className="flex mb-1">
               <div className="flex-shrink-0 text-xs font-semibold px-1 flex items-center justify-end border-r border-slate-200 truncate"
@@ -74,15 +153,20 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
                 {c1.name}
               </div>
               {ordered.map(c2 => {
-                const self = c1.id === c2.id
-                const v = self ? 1 : (coOccurrenceMatrix[`${c1.id}:${c2.id}`] || 0)
-                const bg = self ? '#2563eb' : `hsl(210, 100%, ${100 - v * 80}%)`
+                const v = calcMatrixValue(c1.id, c2.id, coOccurrenceMatrix, candidatePickFrequency, matrixView)
+                const bg = matrixCellColor(v, matrixView, maxAbs)
+                const fg = matrixTextColor(v, matrixView, maxAbs)
+                const tip = c1.id === c2.id ? c1.name
+                  : matrixView === 'joint' ? `P(${c1.name}∩${c2.name}) = ${formatMatrixVal(v, matrixView)}`
+                  : matrixView === 'conditional' ? `מבוחרי ${c1.name}: ${formatMatrixVal(v, matrixView)} בחרו גם ב${c2.name}`
+                  : matrixView === 'covariance' ? `Cov(${c1.name}, ${c2.name}) = ${formatMatrixVal(v, matrixView)}`
+                  : `φ(${c1.name}, ${c2.name}) = ${formatMatrixVal(v, matrixView)}`
                 return (
                   <div key={`c-${c1.id}-${c2.id}`}
                     className="flex-shrink-0 flex items-center justify-center text-xs font-bold border-r border-b border-slate-200"
-                    style={{ width: '60px', height: '60px', backgroundColor: bg, color: v > 0.5 ? 'white' : '#475569' }}
-                    title={self ? c1.name : `מבוחרי ${c1.name}: ${Math.round(v * 100)}% בחרו גם ב${c2.name}`}>
-                    {Math.round(v * 100)}
+                    style={{ width: '60px', height: '60px', backgroundColor: bg, color: fg }}
+                    title={tip}>
+                    {formatMatrixVal(v, matrixView)}
                   </div>
                 )
               })}
@@ -227,6 +311,7 @@ export default function AnalyticsReveal({
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
   const [matrixOrder, setMatrixOrder] = useState<'louvain' | 'votes'>('votes')
+  const [matrixView, setMatrixView] = useState<MatrixView>('joint')
   const [adminStats, setAdminStats] = useState<{ last10min: number; last1h: number; last6h: number; last12h: number } | null>(null)
 
   const snaData = useMemo(() => {
@@ -539,89 +624,72 @@ export default function AnalyticsReveal({
 
         {activeTab === 'cooccurrence' && (
           <div className="bg-white border border-slate-200 rounded-lg p-4 overflow-auto">
-            <p className="text-slate-600 mb-2 text-sm">
-              מטריצת השילובים — מכל מועמד בשורה: כמה אחוז מבוחריו בחרו גם במועמד בעמודה
+            <MatrixViewToggle view={matrixView} onChange={setMatrixView} />
+            <p className="text-xs text-slate-500 bg-slate-50 rounded px-3 py-1.5 mb-3 leading-relaxed">
+              {MATRIX_VIEWS.find(v => v.key === matrixView)?.desc}
             </p>
             <LowVotesWarning />
 
             {/* Heatmap Matrix */}
             <div className="inline-block min-w-full">
-              {/* Header row with candidate names */}
               <div className="flex mb-2">
-                <div style={{ width: '80px' }} className="flex-shrink-0" /> {/* Corner spacer */}
-                {selectedCandidates.map(candidate => (
-                  <div
-                    key={`header-${candidate.id}`}
+                <div style={{ width: '80px' }} className="flex-shrink-0" />
+                {selectedCandidates.map(c => (
+                  <div key={`header-${c.id}`}
                     className="flex-shrink-0 flex items-center justify-center text-xs font-semibold text-slate-700 text-center p-1"
                     style={{ width: '80px', height: '80px', wordBreak: 'break-word' }}
-                    title={candidate.name}
-                  >
-                    {candidate.name}
+                    title={c.name}>
+                    {c.name}
                   </div>
                 ))}
               </div>
 
-              {/* Matrix rows */}
-              {selectedCandidates.map((c1, i) => (
-                <div key={`row-${c1.id}`} className="flex mb-1">
-                  {/* Row label */}
-                  <div style={{ width: '80px' }} className="flex-shrink-0 text-xs font-semibold text-slate-700 px-1 flex items-center justify-end" title={c1.name}>
-                    <span className="truncate">{c1.name}</span>
+              {selectedCandidates.map(c1 => {
+                const maxAbs = (() => {
+                  if (matrixView === 'joint' || matrixView === 'conditional') return 1
+                  return Math.max(...selectedCandidates.filter(c2 => c2.id !== c1.id).map(c2 =>
+                    Math.abs(calcMatrixValue(c1.id, c2.id, analytics.coOccurrenceMatrix, analytics.candidatePickFrequency, matrixView))
+                  ), 0.001)
+                })()
+                return (
+                  <div key={`row-${c1.id}`} className="flex mb-1">
+                    <div style={{ width: '80px' }} className="flex-shrink-0 text-xs font-semibold text-slate-700 px-1 flex items-center justify-end" title={c1.name}>
+                      <span className="truncate">{c1.name}</span>
+                    </div>
+                    {selectedCandidates.map(c2 => {
+                      const v = calcMatrixValue(c1.id, c2.id, analytics.coOccurrenceMatrix, analytics.candidatePickFrequency, matrixView)
+                      const bg = matrixCellColor(v, matrixView, maxAbs)
+                      const fg = matrixTextColor(v, matrixView, maxAbs)
+                      const tip = c1.id === c2.id ? c1.name
+                        : matrixView === 'joint' ? `P(${c1.name}∩${c2.name}) = ${formatMatrixVal(v, matrixView)}`
+                        : matrixView === 'conditional' ? `מבוחרי ${c1.name}: ${formatMatrixVal(v, matrixView)} בחרו גם ב${c2.name}`
+                        : matrixView === 'covariance' ? `Cov(${c1.name}, ${c2.name}) = ${formatMatrixVal(v, matrixView)}`
+                        : `φ(${c1.name}, ${c2.name}) = ${formatMatrixVal(v, matrixView)}`
+                      return (
+                        <div key={`cell-${c1.id}-${c2.id}`}
+                          className="flex-shrink-0 flex items-center justify-center text-xs font-bold transition-all cursor-help"
+                          style={{ width: '80px', height: '80px', backgroundColor: bg, color: fg }}
+                          title={tip}>
+                          {formatMatrixVal(v, matrixView)}
+                        </div>
+                      )
+                    })}
                   </div>
-
-                  {/* Matrix cells */}
-                  {selectedCandidates.map((c2, j) => {
-                    let cooccurrence = 0
-                    let cellClass = 'hsl(210, 100%, 95%)'
-
-                    if (i === j) {
-                      cellClass = '#2563eb'
-                      cooccurrence = 1
-                    } else {
-                      cooccurrence = analytics.coOccurrenceMatrix[`${c1.id}:${c2.id}`] || 0
-                      cellClass = getHeatColor(cooccurrence)
-                    }
-
-                    const percentage = Math.round(cooccurrence * 100)
-
-                    return (
-                      <div
-                        key={`cell-${i}-${j}`}
-                        className="flex-shrink-0 flex items-center justify-center text-xs font-bold transition-all cursor-help"
-                        style={{ width: '80px', height: '80px', backgroundColor: cellClass }}
-                        title={i === j ? c1.name : `מבוחרי ${c1.name}: ${percentage}% בחרו גם ב${c2.name}`}
-                      >
-                        {i === j ? (
-                          <span className="text-white">100</span>
-                        ) : (
-                          <span className={percentage > 50 ? 'text-white' : 'text-slate-700'}>
-                            {percentage}
-                          </span>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Legend */}
-            <div className="mt-6 pt-4 border-t border-slate-200">
-              <p className="text-xs text-slate-600 mb-2 font-semibold">מפתח הצבעים:</p>
-              <div className="flex gap-4 flex-wrap text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 rounded" style={{ backgroundColor: '#2563eb' }} />
-                  <span>100% (עצמי)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-0.5">
-                    {[0.2, 0.4, 0.6, 0.8, 1.0].map(v => (
-                      <div key={v} className="w-4 h-4 rounded-sm" style={{ backgroundColor: `hsl(210, 100%, ${100 - v * 80}%)` }} />
-                    ))}
-                  </div>
-                  <span>נמוך → גבוה</span>
-                </div>
-              </div>
+            <div className="mt-4 pt-3 border-t border-slate-200 flex gap-4 flex-wrap text-xs">
+              {(matrixView === 'joint' || matrixView === 'conditional') ? <>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-600 rounded" /><span>גבוה</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4" style={{backgroundColor:'hsl(210,100%,50%)'}} /><span>בינוני</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-white border border-slate-300 rounded" /><span>0</span></div>
+              </> : <>
+                <div className="flex items-center gap-2"><div className="w-4 h-4" style={{backgroundColor:'rgb(75,75,255)'}} /><span>חיובי — שיתוף פעולה</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-white border border-slate-300 rounded" /><span>0</span></div>
+                <div className="flex items-center gap-2"><div className="w-4 h-4" style={{backgroundColor:'rgb(255,75,75)'}} /><span>שלילי — תחרות</span></div>
+              </>}
             </div>
           </div>
         )}
@@ -995,7 +1063,11 @@ export default function AnalyticsReveal({
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
             </p>
 
-            {/* Matrix order toggle */}
+            {/* Matrix view + order toggles */}
+            <MatrixViewToggle view={matrixView} onChange={setMatrixView} />
+            <p className="text-xs text-slate-500 bg-slate-50 rounded px-3 py-1.5 mb-4 leading-relaxed">
+              {MATRIX_VIEWS.find(v => v.key === matrixView)?.desc}
+            </p>
             <div className="flex items-center gap-2 mb-4">
               <span className="text-xs text-slate-500 font-medium">סדר:</span>
               <div className="flex rounded-lg overflow-hidden border border-slate-200 text-xs">
@@ -1021,28 +1093,22 @@ export default function AnalyticsReveal({
               snaData={snaData}
               matrixOrder={matrixOrder}
               candidatePickFrequency={analytics.candidatePickFrequency}
+              matrixView={matrixView}
             />
 
             {/* Legend */}
             <div className="mt-6 pt-4 border-t border-slate-200">
               <p className="text-xs text-slate-600 mb-2 font-semibold">מפתח הצבעים:</p>
               <div className="flex gap-4 flex-wrap text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-600 rounded" />
-                  <span>100% (עצמי)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4" style={{backgroundColor: 'hsl(210, 100%, 30%)'}} />
-                  <span>גבוה (80%+)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4" style={{backgroundColor: 'hsl(210, 100%, 50%)'}} />
-                  <span>בינוני (50%)</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4" style={{backgroundColor: 'hsl(210, 100%, 75%)'}} />
-                  <span>נמוך (20%)</span>
-                </div>
+                {(matrixView === 'joint' || matrixView === 'conditional') ? <>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-600 rounded" /><span>גבוה</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4" style={{backgroundColor: 'hsl(210,100%,50%)'}} /><span>בינוני</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-white border border-slate-300 rounded" /><span>0</span></div>
+                </> : <>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4" style={{backgroundColor: 'rgb(75,75,255)'}} /><span>חיובי — שיתוף פעולה</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4 bg-white border border-slate-300 rounded" /><span>0 — ללא קשר</span></div>
+                  <div className="flex items-center gap-2"><div className="w-4 h-4" style={{backgroundColor: 'rgb(255,75,75)'}} /><span>שלילי — תחרות</span></div>
+                </>}
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 bg-white border border-slate-300 rounded" />
                   <span>0%</span>

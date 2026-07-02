@@ -51,13 +51,10 @@ const handler: Handler = async (event) => {
       candidatePickFrequency[id] = totalSubmissions > 0 ? candidateCounts[id] / totalSubmissions : 0
     })
 
-    // Conditional probability: P(B|A) = count(A∩B) / count(A), stored as "A:B"
+    // Joint probability P(A∩B) = count(A,B) / N, symmetric canonical key min:max
     const coOccurrenceMatrix: Record<string, number> = {}
     Object.entries(rawPairs).forEach(([key, count]) => {
-      const sep = key.indexOf(':')
-      const a = key.slice(0, sep), b = key.slice(sep + 1)
-      if (candidateCounts[a]) coOccurrenceMatrix[`${a}:${b}`] = count / candidateCounts[a]
-      if (candidateCounts[b]) coOccurrenceMatrix[`${b}:${a}`] = count / candidateCounts[b]
+      coOccurrenceMatrix[key] = totalSubmissions > 0 ? count / totalSubmissions : 0
     })
 
     return {
