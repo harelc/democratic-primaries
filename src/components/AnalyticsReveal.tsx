@@ -311,7 +311,7 @@ export default function AnalyticsReveal({
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
   const [matrixOrder, setMatrixOrder] = useState<'louvain' | 'votes'>('votes')
-  const [matrixView, setMatrixView] = useState<MatrixView>('joint')
+  const [matrixView, setMatrixView] = useState<MatrixView>('phi')
   const [adminStats, setAdminStats] = useState<{ last10min: number; last1h: number; last6h: number; last12h: number } | null>(null)
 
   const snaData = useMemo(() => {
@@ -533,7 +533,7 @@ export default function AnalyticsReveal({
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            מטריצה מלאה
+            מטריצת זוגות
           </button>
           <button
             onClick={() => setActiveTab('sna')}
@@ -1055,7 +1055,6 @@ export default function AnalyticsReveal({
 
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
-            <p className="text-base font-bold text-slate-800 mb-1">מטריצת הדפוסים</p>
             <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המועמדים</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
