@@ -164,7 +164,7 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
                 return (
                   <div key={`c-${c1.id}-${c2.id}`}
                     className="flex-shrink-0 flex items-center justify-center text-xs font-bold border-r border-b border-slate-200"
-                    style={{ width: '60px', height: '60px', backgroundColor: bg, color: fg }}
+                    style={{ width: '60px', height: '60px', backgroundColor: bg, color: fg, direction: 'ltr' }}
                     title={tip}>
                     {formatMatrixVal(v, matrixView)}
                   </div>
@@ -668,7 +668,7 @@ export default function AnalyticsReveal({
                       return (
                         <div key={`cell-${c1.id}-${c2.id}`}
                           className="flex-shrink-0 flex items-center justify-center text-xs font-bold transition-all cursor-help"
-                          style={{ width: '80px', height: '80px', backgroundColor: bg, color: fg }}
+                          style={{ width: '80px', height: '80px', backgroundColor: bg, color: fg, direction: 'ltr' }}
                           title={tip}>
                           {formatMatrixVal(v, matrixView)}
                         </div>
