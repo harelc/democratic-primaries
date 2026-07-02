@@ -101,9 +101,8 @@ export default function ForceDirectedGraph({
 
     for (let i = 0; i < candidates.length; i++) {
       for (let j = i + 1; j < candidates.length; j++) {
-        const key = `${candidates[i].id}_${candidates[j].id}`
-        const key2 = `${candidates[j].id}_${candidates[i].id}`
-        const coOcc = analytics.coOccurrenceMatrix[key] || analytics.coOccurrenceMatrix[key2] || 0
+        const a = candidates[i].id, b = candidates[j].id
+        const coOcc = analytics.coOccurrenceMatrix[a < b ? `${a}:${b}` : `${b}:${a}`] || 0
 
         if (coOcc >= threshold && coOcc > 0) {
           edges.push({
