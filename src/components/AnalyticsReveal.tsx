@@ -526,6 +526,16 @@ export default function AnalyticsReveal({
             לוח מובילים
           </button>
           <button
+            onClick={() => setActiveTab('fullmatrix')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'fullmatrix'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            מטריצה מלאה
+          </button>
+          <button
             onClick={() => setActiveTab('sna')}
             className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
               activeTab === 'sna'
@@ -533,7 +543,7 @@ export default function AnalyticsReveal({
                 : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            מפת הקהילות
+            ניתוח רשת
           </button>
           <button
             onClick={() => setActiveTab('convergence')}
@@ -564,16 +574,6 @@ export default function AnalyticsReveal({
             }`}
           >
             השילובים שלך
-          </button>
-          <button
-            onClick={() => setActiveTab('fullmatrix')}
-            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
-              activeTab === 'fullmatrix'
-                ? 'bg-white text-blue-700 shadow-sm font-semibold'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            מטריצה מלאה
           </button>
           {adminMode && (<>
             <button
@@ -716,7 +716,7 @@ export default function AnalyticsReveal({
                 </button>
                 <button onClick={() => setGraphColorMode('community')}
                   className={`px-3 py-1.5 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
-                  קהילה
+                  אשכול
                 </button>
               </div>
               <Tooltip term="מה זה?">
@@ -770,7 +770,7 @@ export default function AnalyticsReveal({
                       Array.from(new Set(Object.values(snaData.communityDisplayIndex).filter(i => i >= 0))).sort().map(displayIdx => (
                         <div key={displayIdx} className="flex items-center gap-2">
                           <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: getCommunityColor(displayIdx) }} />
-                          <span>קהילה {displayIdx + 1}</span>
+                          <span>אשכול {displayIdx + 1}</span>
                         </div>
                       ))
                     ) : null}
@@ -919,7 +919,7 @@ export default function AnalyticsReveal({
                       <div key={displayIdx} className="flex-1 min-w-[180px] rounded-xl border-2 p-3" style={{ borderColor: color, background: `${color}12` }}>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="inline-block w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                          <span className="font-semibold text-sm" style={{ color }}>קהילה {displayIdx + 1}</span>
+                          <span className="font-semibold text-sm" style={{ color }}>אשכול {displayIdx + 1}</span>
                           <span className="text-xs text-slate-400">({members.length} מועמדים)</span>
                         </div>
                         <div className="flex flex-wrap gap-1">
@@ -938,7 +938,7 @@ export default function AnalyticsReveal({
                       <div key="singletons" className="flex-1 min-w-[180px] rounded-xl border-2 p-3 border-slate-200 bg-slate-50">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="inline-block w-3 h-3 rounded-full flex-shrink-0 bg-slate-400" />
-                          <span className="font-semibold text-sm text-slate-500">ללא קהילה</span>
+                          <span className="font-semibold text-sm text-slate-500">ללא אשכול</span>
                           <span className="text-xs text-slate-400">({singletons.length} מועמדים)</span>
                         </div>
                         <div className="flex flex-wrap gap-1">
@@ -988,7 +988,7 @@ export default function AnalyticsReveal({
                       <SortTh col="eigenvector" label={<Tooltip term="Eigenvector">פתרון Ax = λx כאשר A מטריצת הסמיכות המשוקללת, λ הערך העצמי הדומיננטי. xᵢ = (1/λ)Σⱼ∈N(i) xⱼ. גבוה = נבחר עם מועמדים מרכזיים.</Tooltip>} className="w-36" />
                       <SortTh col="pagerank" label={<Tooltip term="PageRank">הסתברות שמצביע אקראי יבחר מועמד זה — לוקח בחשבון לא רק פופולריות אלא גם למי מצביעים ביחד איתו.</Tooltip>} className="w-36" />
                       <SortTh col="degree" label="Degree" className="w-32" />
-                      <th className="px-4 py-2 text-right font-semibold w-20">קהילה</th>
+                      <th className="px-4 py-2 text-right font-semibold w-20">אשכול</th>
                       <th className="px-4 py-2 text-right font-semibold">
                         <Tooltip term="דומים (CF)">מועמדים עם פרופיל co-occurrence דומה — לא בהכרח אלה שנבחרים הכי הרבה ביחד, אלא אלה שנבחרים יחד עם אותם מועמדים אחרים. חישוב: sim(i,j) = (vᵢ·vⱼ)/(‖vᵢ‖·‖vⱼ‖) כאשר vᵢ ∈ ℝ⁵¹ הוא וקטור ה-co-occurrence של מועמד i עם כל שאר המועמדים.</Tooltip>
                       </th>
@@ -1159,7 +1159,7 @@ export default function AnalyticsReveal({
                   </button>
                   <button onClick={() => setGraphColorMode('community')}
                     className={`px-3 py-1.5 transition-colors ${graphColorMode === 'community' ? 'bg-blue-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-50'}`}>
-                    קהילה
+                    אשכול
                   </button>
                 </div>
               </div>
@@ -1182,7 +1182,7 @@ export default function AnalyticsReveal({
                 Array.from(new Set(Object.values(snaData.communityDisplayIndex).filter(i => i >= 0))).sort().map(idx => (
                   <div key={idx} className="flex items-center gap-1.5">
                     <span className="inline-block w-6 h-2 rounded-full" style={{ background: getCommunityColor(idx) }} />
-                    <span className="text-slate-600">קהילה {idx + 1}</span>
+                    <span className="text-slate-600">אשכול {idx + 1}</span>
                   </div>
                 ))
               ) : null}
