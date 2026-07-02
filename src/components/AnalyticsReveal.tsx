@@ -81,7 +81,7 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
                   <div key={`c-${c1.id}-${c2.id}`}
                     className="flex-shrink-0 flex items-center justify-center text-xs font-bold border-r border-b border-slate-200"
                     style={{ width: '60px', height: '60px', backgroundColor: bg, color: v > 0.5 ? 'white' : '#475569' }}
-                    title={`${c1.name} & ${c2.name}: ${Math.round(v * 100)}%`}>
+                    title={self ? c1.name : `מבוחרי ${c1.name}: ${Math.round(v * 100)}% בחרו גם ב${c2.name}`}>
                     {Math.round(v * 100)}
                   </div>
                 )
@@ -988,7 +988,8 @@ export default function AnalyticsReveal({
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
             <p className="text-base font-bold text-slate-800 mb-1">מטריצת הדפוסים</p>
-            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המועמדים</p>
+            <p className="text-slate-500 text-sm mb-1">שילובים של כל 51 המועמדים</p>
+            <p className="text-xs text-slate-400 mb-3">כל תא מראה: מבין כל מי שבחרו במועמד <strong>בשורה</strong>, כמה אחוז בחרו גם במועמד <strong>בעמודה</strong>. הסתברות מותנית — לא סימטרית.</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר
