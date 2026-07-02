@@ -75,8 +75,7 @@ function FullMatrix({ allCandidates, coOccurrenceMatrix, snaData, matrixOrder, c
               </div>
               {ordered.map(c2 => {
                 const self = c1.id === c2.id
-                const key = c1.id < c2.id ? `${c1.id}_${c2.id}` : `${c2.id}_${c1.id}`
-                const v = self ? 1 : (coOccurrenceMatrix[key] || 0)
+                const v = self ? 1 : (coOccurrenceMatrix[`${c1.id}:${c2.id}`] || 0)
                 const bg = self ? '#2563eb' : `hsl(210, 100%, ${100 - v * 80}%)`
                 return (
                   <div key={`c-${c1.id}-${c2.id}`}
@@ -541,7 +540,7 @@ export default function AnalyticsReveal({
         {activeTab === 'cooccurrence' && (
           <div className="bg-white border border-slate-200 rounded-lg p-4 overflow-auto">
             <p className="text-slate-600 mb-2 text-sm">
-              מטריצת השילובים - כל ריבוע מראה כמה פעמים בחרו בשני מועמדים ביחד
+              מטריצת השילובים — מכל מועמד בשורה: כמה אחוז מבוחריו בחרו גם במועמד בעמודה
             </p>
             <LowVotesWarning />
 
@@ -576,17 +575,10 @@ export default function AnalyticsReveal({
                     let cellClass = 'hsl(210, 100%, 95%)'
 
                     if (i === j) {
-                      // Diagonal - self is always 100%
-                      cooccurrence = 1
                       cellClass = '#2563eb'
-                    } else if (i < j) {
-                      const key = `${c1.id}_${c2.id}`
-                      cooccurrence = analytics.coOccurrenceMatrix[key] || 0
-                      cellClass = getHeatColor(cooccurrence)
+                      cooccurrence = 1
                     } else {
-                      // Mirror: use the same value from the upper triangle
-                      const key = `${c2.id}_${c1.id}`
-                      cooccurrence = analytics.coOccurrenceMatrix[key] || 0
+                      cooccurrence = analytics.coOccurrenceMatrix[`${c1.id}:${c2.id}`] || 0
                       cellClass = getHeatColor(cooccurrence)
                     }
 
@@ -597,7 +589,7 @@ export default function AnalyticsReveal({
                         key={`cell-${i}-${j}`}
                         className="flex-shrink-0 flex items-center justify-center text-xs font-bold transition-all cursor-help"
                         style={{ width: '80px', height: '80px', backgroundColor: cellClass }}
-                        title={`${c1.name} & ${c2.name}: ${percentage}%`}
+                        title={i === j ? c1.name : `מבוחרי ${c1.name}: ${percentage}% בחרו גם ב${c2.name}`}
                       >
                         {i === j ? (
                           <span className="text-white">100</span>
@@ -996,7 +988,7 @@ export default function AnalyticsReveal({
         {activeTab === 'fullmatrix' && analytics.allCandidates && (
           <div className="bg-white border border-slate-200 rounded-lg p-4">
             <p className="text-base font-bold text-slate-800 mb-1">מטריצת הדפוסים</p>
-            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המשיבים</p>
+            <p className="text-slate-500 text-sm mb-3">שילובים של כל 51 המועמדים</p>
             <LowVotesWarning />
             <p className="text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2 text-xs mb-4 md:hidden">
               📱 המטריצה המלאה מתאימה לצפייה במסך רחב יותר

@@ -54,8 +54,7 @@ function computeCosineSimilarityTop3(
 
   // Build vector for each candidate: v_i[j] = coOccurrence(i,j)
   const getCoOcc = (a: string, b: string): number => {
-    const key = a < b ? `${a}_${b}` : `${b}_${a}`
-    return coOccurrenceMatrix[key] ?? 0
+    return coOccurrenceMatrix[`${a}:${b}`] ?? coOccurrenceMatrix[`${b}:${a}`] ?? 0
   }
 
   const result: Record<string, string[]> = {}
@@ -124,8 +123,7 @@ export function computeGroupAssortativity(
   for (let i = 0; i < candidateIds.length; i++) {
     for (let j = i + 1; j < candidateIds.length; j++) {
       const a = candidateIds[i], b = candidateIds[j]
-      const key = a < b ? `${a}_${b}` : `${b}_${a}`
-      const w = coOccurrenceMatrix[key] ?? 0
+      const w = coOccurrenceMatrix[`${a}:${b}`] ?? coOccurrenceMatrix[`${b}:${a}`] ?? 0
       if (w > 0) edges.push({ a, b, w })
     }
   }
@@ -190,8 +188,7 @@ export function computeSpectralEmbedding(
   const W = Matrix.zeros(n, n)
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
-      const key = ids[i] < ids[j] ? `${ids[i]}_${ids[j]}` : `${ids[j]}_${ids[i]}`
-      const w = coOccurrenceMatrix[key] ?? 0
+      const w = coOccurrenceMatrix[`${ids[i]}:${ids[j]}`] ?? coOccurrenceMatrix[`${ids[j]}:${ids[i]}`] ?? 0
       if (w > 0) {
         W.set(i, j, w)
         W.set(j, i, w)
@@ -260,9 +257,7 @@ export function computeSNA(
     for (let j = i + 1; j < candidates.length; j++) {
       const a = candidates[i].id
       const b = candidates[j].id
-      const key = `${a}_${b}`
-      const key2 = `${b}_${a}`
-      const weight = coOccurrenceMatrix[key] ?? coOccurrenceMatrix[key2] ?? 0
+      const weight = coOccurrenceMatrix[`${a}:${b}`] ?? coOccurrenceMatrix[`${b}:${a}`] ?? 0
       if (weight > 0) {
         graph.addEdge(a, b, { weight })
       }

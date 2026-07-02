@@ -26,7 +26,7 @@ const handler: Handler = async (event) => {
     const rows = data.results?.[0]?.response?.result?.rows ?? []
 
     const candidatePickFrequency: Record<string, number> = {}
-    const coOccurrenceMatrix: Record<string, number> = {}
+    const rawPairs: Record<string, number> = {}
     const candidateCounts: Record<string, number> = {}
 
     for (const row of rows) {
@@ -38,10 +38,9 @@ const handler: Handler = async (event) => {
 
       for (let i = 0; i < selectedIds.length; i++) {
         for (let j = i + 1; j < selectedIds.length; j++) {
-          const key = selectedIds[i] < selectedIds[j]
-            ? `${selectedIds[i]}_${selectedIds[j]}`
-            : `${selectedIds[j]}_${selectedIds[i]}`
-          coOccurrenceMatrix[key] = (coOccurrenceMatrix[key] || 0) + 1
+          const a = selectedIds[i], b = selectedIds[j]
+          const key = a < b ? `${a}:${b}` : `${b}:${a}`
+          rawPairs[key] = (rawPairs[key] || 0) + 1
         }
       }
     }
@@ -51,8 +50,14 @@ const handler: Handler = async (event) => {
     Object.keys(candidateCounts).forEach(id => {
       candidatePickFrequency[id] = totalSubmissions > 0 ? candidateCounts[id] / totalSubmissions : 0
     })
-    Object.keys(coOccurrenceMatrix).forEach(key => {
-      coOccurrenceMatrix[key] = totalSubmissions > 0 ? coOccurrenceMatrix[key] / totalSubmissions : 0
+
+    // Conditional probability: P(B|A) = count(A∩B) / count(A), stored as "A:B"
+    const coOccurrenceMatrix: Record<string, number> = {}
+    Object.entries(rawPairs).forEach(([key, count]) => {
+      const sep = key.indexOf(':')
+      const a = key.slice(0, sep), b = key.slice(sep + 1)
+      if (candidateCounts[a]) coOccurrenceMatrix[`${a}:${b}`] = count / candidateCounts[a]
+      if (candidateCounts[b]) coOccurrenceMatrix[`${b}:${a}`] = count / candidateCounts[b]
     })
 
     return {
