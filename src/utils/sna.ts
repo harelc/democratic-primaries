@@ -40,7 +40,7 @@ function buildPhiAffinity(
   const A: number[][] = Array.from({ length: n }, () => new Array(n).fill(0))
   for (let i = 0; i < n; i++)
     for (let j = i + 1; j < n; j++) {
-      const v = Math.max(0, getPhi(ids[i], ids[j], coOccurrenceMatrix, freq))
+      const v = (getPhi(ids[i], ids[j], coOccurrenceMatrix, freq) + 1) / 2
       A[i][j] = A[j][i] = v
     }
   return A
