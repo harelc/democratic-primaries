@@ -831,7 +831,7 @@ export default function AnalyticsReveal({
                     className="w-24 accent-amber-500" dir="ltr" />
                   <span className="font-mono w-8">{robustTrimPct}%</span>
                 </label>
-                <span className="text-xs text-amber-600">{Math.max(0, ballotHistory.length - robustWindowSize)} מדידות</span>
+                <span className="text-xs text-amber-600">{(() => { const nw = Math.max(0, ballotHistory.length - robustWindowSize + 1); const trimK = Math.floor(nw * robustTrimPct / 100); return nw - 2 * trimK })()} מדידות בשימוש</span>
               </div>
             )}
             {(() => {
