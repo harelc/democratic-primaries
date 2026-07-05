@@ -19,18 +19,25 @@ interface BoxStats {
 }
 
 function computeBoxStats(ballots: string[][], candidates: Candidate[], windowSize: number): BoxStats[] {
-  if (ballots.length < windowSize * 2) return []
+  if (ballots.length < windowSize + 1) return []
 
-  const numWindows = Math.floor(ballots.length / windowSize)
-  const windows = Array.from({ length: numWindows }, (_, w) =>
-    ballots.slice(w * windowSize, (w + 1) * windowSize)
-  )
+  const n = ballots.length
+  const numWindows = n - windowSize + 1
 
+  // Precompute per-candidate presence as 0/1 array, then use a sliding sum
   return candidates.map(c => {
-    const rates = windows.map(win => {
-      const count = win.filter(b => b.includes(c.id)).length
-      return count / windowSize
-    })
+    const presence = ballots.map(b => b.includes(c.id) ? 1 : 0)
+
+    // Seed first window sum
+    let windowSum = 0
+    for (let i = 0; i < windowSize; i++) windowSum += presence[i]
+
+    const rates: number[] = [windowSum / windowSize]
+    for (let i = 1; i < numWindows; i++) {
+      windowSum += presence[i + windowSize - 1] - presence[i - 1]
+      rates.push(windowSum / windowSize)
+    }
+
     rates.sort(d3.ascending)
     return {
       id: c.id,
@@ -50,8 +57,8 @@ export default function BoxplotChart({ ballots, candidates }: BoxplotChartProps)
   const [windowSize, setWindowSize] = useState(50)
 
   const minWindow = 20
-  const maxWindow = Math.max(20, Math.floor(ballots.length / 3))
-  const numWindows = Math.floor(ballots.length / windowSize)
+  const maxWindow = Math.max(20, Math.floor(ballots.length / 2))
+  const numWindows = Math.max(0, ballots.length - windowSize + 1)
 
   useEffect(() => {
     if (!svgRef.current || ballots.length < windowSize * 2) return
@@ -61,7 +68,7 @@ export default function BoxplotChart({ ballots, candidates }: BoxplotChartProps)
 
     const container = svgRef.current.parentElement
     const width = container?.clientWidth || 900
-    const margin = { top: 20, right: 16, bottom: 90, left: 44 }
+    const margin = { top: 20, right: 16, bottom: 110, left: 44 }
     const height = 340
     const innerW = width - margin.left - margin.right
     const innerH = height - margin.top - margin.bottom
@@ -103,12 +110,14 @@ export default function BoxplotChart({ ballots, candidates }: BoxplotChartProps)
 
     stats.forEach(s => {
       const cx = (x(s.id) ?? 0) + x.bandwidth() / 2
+      const parts = s.name.split(' ')
+      const label = parts.length >= 2 ? `${parts[0]} ${parts[parts.length - 1]}` : s.name
       g.append('text')
         .attr('transform', `translate(${cx},${innerH + 6}) rotate(55)`)
         .attr('text-anchor', 'start')
         .attr('font-size', '9px')
         .attr('fill', '#64748b')
-        .text(s.name.split(' ')[0])
+        .text(label)
     })
 
     const bw = x.bandwidth()
@@ -193,7 +202,7 @@ export default function BoxplotChart({ ballots, candidates }: BoxplotChartProps)
       <div className="flex items-center gap-4 mb-4 flex-wrap">
         <label className="text-sm text-slate-600 font-medium">
           גודל חלון: <span className="text-blue-700 font-semibold">{windowSize} הצבעות</span>
-          <span className="text-slate-400 font-normal mr-2">({numWindows} קטעים)</span>
+          <span className="text-slate-400 font-normal mr-2">({numWindows} מדידות)</span>
         </label>
         <input
           type="range"
