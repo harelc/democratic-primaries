@@ -4,6 +4,7 @@ import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
 import ConvergenceChart from './ConvergenceChart'
 import BoxplotChart from './BoxplotChart'
+import KnessetListView from './KnessetListView'
 import VoteRateChart from './VoteRateChart'
 import CompetingPairs from './CompetingPairs'
 
@@ -272,7 +273,7 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'boxplot' | 'log'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'knesset' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'boxplot' | 'log'>('picks')
   const [liveTotal, setLiveTotal] = useState<number | null>(null)
   const [ballotHistory, setBallotHistory] = useState<string[][] | null>(null)
   const [ballotTimestamps, setBallotTimestamps] = useState<string[] | null>(null)
@@ -527,6 +528,16 @@ export default function AnalyticsReveal({
             }`}
           >
             לוח מובילים
+          </button>
+          <button
+            onClick={() => setActiveTab('knesset')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'knesset'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            רשימה לכנסת
           </button>
           <button
             onClick={() => setActiveTab('fullmatrix')}
@@ -954,6 +965,10 @@ export default function AnalyticsReveal({
               })
             })()}
           </div>
+        )}
+
+        {activeTab === 'knesset' && allCandidates && (
+          <KnessetListView candidates={allCandidates} pickFrequency={analytics.candidatePickFrequency} />
         )}
 
         {activeTab === 'sna' && snaData && allCandidates && (

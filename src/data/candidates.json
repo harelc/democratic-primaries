@@ -12,7 +12,8 @@
       "instagram": "https://www.instagram.com/inbal_shoham",
       "twitter": "https://x.com/inbalshohamv"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "F"
   },
   {
     "id": "candidate_002",
@@ -24,7 +25,8 @@
     "socialLinks": {
       "facebook": "https://www.facebook.com/yoav.agami1"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_003",
@@ -40,7 +42,8 @@
       "twitter": "https://x.com/eranetzion",
       "linkedin": "https://www.linkedin.com/in/eran-ערן-etzion-עציון-2843a822"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "M"
   },
   {
     "id": "candidate_004",
@@ -55,7 +58,8 @@
       "twitter": "https://x.com/Itai_Leshem",
       "linkedin": "https://il.linkedin.com/in/ileshem"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_005",
@@ -71,7 +75,8 @@
       "twitter": "https://x.com/DrRotemSivan",
       "linkedin": "https://www.linkedin.com/in/rotem-sivan-hoffmann-43937639"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "F"
   },
   {
     "id": "candidate_006",
@@ -86,7 +91,8 @@
       "instagram": "https://www.instagram.com/omrironenn",
       "twitter": "https://x.com/omrironen24"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_007",
@@ -101,7 +107,8 @@
       "instagram": "https://www.instagram.com/chenarieli?utm_source=qr&igsh=MWNhMGZyY3plc2Zkbg==",
       "twitter": "https://x.com/ArieliChen"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_008",
@@ -113,7 +120,8 @@
     "socialLinks": {
       "website": "https://www.amirkhnifess.co.il/"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "M"
   },
   {
     "id": "candidate_009",
@@ -128,7 +136,8 @@
       "instagram": "https://www.instagram.com/nimrodsheffer_?igsh=MTdqMjg5eDQ1N29sOQ==",
       "twitter": "https://x.com/nimrodsheffer?s=21"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_010",
@@ -138,7 +147,8 @@
     "background": "",
     "photoUrl": "https://democrats.org.il/wp-content/uploads/2026/06/311892749_%D7%90%D7%95%D7%9C%D7%99%D7%91%D7%99%D7%94_%D7%A2%D7%9E%D7%A0%D7%95%D7%90%D7%9C_%D7%93%D7%94_%D7%9C%D7%9D_candidatePhoto_20260624_142532_ViolonPerroquet.jpg",
     "socialLinks": {},
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_011",
@@ -154,7 +164,8 @@
       "twitter": "https://x.com/yarivop",
       "linkedin": "https://il.linkedin.com/in/yariv-oppenheimer-26569167"
     },
-    "group": "מרצ"
+    "group": "מרצ",
+    "gender": "M"
   },
   {
     "id": "candidate_012",
@@ -169,7 +180,8 @@
       "instagram": "https://www.instagram.com/dany_elgarat",
       "twitter": "https://x.com/elgarat_dani"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_013",
@@ -185,7 +197,8 @@
       "twitter": "https://x.com/leehoffmannagiv",
       "linkedin": "https://www.linkedin.com/in/lee-hoffmann-agiv-8b046b195"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_014",
@@ -198,7 +211,8 @@
       "facebook": "https://www.facebook.com/share/1EgQ2ieqiq/?mibextid=wwXIfr",
       "instagram": "https://www.instagram.com/ehsankhlaily?igsh=aGxnbGt6dXI1aHRk"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "M"
   },
   {
     "id": "candidate_015",
@@ -212,7 +226,8 @@
       "instagram": "https://www.instagram.com/gabylasky/",
       "twitter": "https://x.com/gaby_lasky"
     },
-    "group": "מרצ"
+    "group": "מרצ",
+    "gender": "F"
   },
   {
     "id": "candidate_016",
@@ -227,7 +242,8 @@
       "instagram": "https://www.instagram.com/dabushavi?igsh=N3d4eXNxY3J4aHBw&utm_source=qr",
       "twitter": "https://x.com/avidabush"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "M"
   },
   {
     "id": "candidate_017",
@@ -242,7 +258,8 @@
       "instagram": "https://www.instagram.com/emiliemoatti?igsh=NDZhMDVzNW83MmM5",
       "twitter": "https://x.com/EmilieMoatti"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_018",
@@ -254,7 +271,8 @@
     "socialLinks": {
       "website": "https://linktr.ee/AaedBader"
     },
-    "group": "מיעוטים, מרצ"
+    "group": "מיעוטים, מרצ",
+    "gender": "M"
   },
   {
     "id": "candidate_019",
@@ -269,7 +287,8 @@
       "instagram": "https://www.instagram.com/naamalazimi",
       "twitter": "https://x.com/naamalazimi?s=20"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_020",
@@ -284,7 +303,8 @@
       "instagram": "https://www.instagram.com/efratrayten?utm_source=qr",
       "twitter": "https://x.com/efratrayten1?s=11"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_021",
@@ -298,7 +318,8 @@
       "instagram": "https://www.instagram.com/slamna_ghaleb_adv",
       "twitter": "https://x.com/Ghaleb_salamna"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "M"
   },
   {
     "id": "candidate_022",
@@ -313,7 +334,8 @@
       "instagram": "https://www.instagram.com/bashirsomaya?igsh=cW5wbjhqazV5NTYx",
       "twitter": "https://x.com/bashsomaya"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "F"
   },
   {
     "id": "candidate_023",
@@ -325,7 +347,8 @@
     "socialLinks": {
       "facebook": "https://www.facebook.com/share/1H96TWaH4e/"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "M"
   },
   {
     "id": "candidate_024",
@@ -341,7 +364,8 @@
       "twitter": "https://x.com/eran_nissan",
       "linkedin": "https://il.linkedin.com/in/eran-nissan-39b863188"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_025",
@@ -355,7 +379,8 @@
       "instagram": "https://www.instagram.com/nedal_massalha",
       "twitter": "https://x.com/nmassalha70106"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "M"
   },
   {
     "id": "candidate_026",
@@ -370,7 +395,8 @@
       "instagram": "https://www.instagram.com/yayafink/?hl=en",
       "twitter": "https://x.com/yayafink"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_027",
@@ -386,7 +412,8 @@
       "twitter": "https://x.com/RadmanMoshe",
       "linkedin": "https://www.linkedin.com/in/moshe-radman-abutbul-משה-רדמן-אבוטבול-🇮🇱-8a628260/"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_028",
@@ -399,7 +426,8 @@
       "facebook": "https://www.facebook.com/evyatar.najimov/",
       "instagram": "https://www.instagram.com/evyatarbeer"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "M"
   },
   {
     "id": "candidate_029",
@@ -414,7 +442,8 @@
       "instagram": "https://www.instagram.com/mehereta.baruch.ron/",
       "linkedin": "https://www.linkedin.com/in/mehereta-baruch-ron-71bb4525a/"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_030",
@@ -429,7 +458,8 @@
       "instagram": "https://www.instagram.com/yair.rubinstein/",
       "twitter": "https://x.com/YairRubinstein"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_031",
@@ -445,7 +475,8 @@
       "twitter": "https://x.com/InbarBezek",
       "linkedin": "https://il.linkedin.com/in/inbarbezek"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "F"
   },
   {
     "id": "candidate_032",
@@ -460,7 +491,8 @@
       "instagram": "https://www.instagram.com/alidemocrats/",
       "twitter": "https://x.com/AliSalalha"
     },
-    "group": "מיעוטים, מרצ"
+    "group": "מיעוטים, מרצ",
+    "gender": "M"
   },
   {
     "id": "candidate_033",
@@ -476,7 +508,8 @@
       "twitter": "https://x.com/NaorNarkis",
       "linkedin": "https://www.linkedin.com/in/naornarkis/"
     },
-    "group": "מרצ"
+    "group": "מרצ",
+    "gender": "M"
   },
   {
     "id": "candidate_034",
@@ -492,7 +525,8 @@
       "twitter": "https://x.com/zermoran",
       "linkedin": "https://www.linkedin.com/in/moran-zer-katzenstein-90b62a18"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_035",
@@ -507,7 +541,8 @@
       "instagram": "https://www.instagram.com/dima.shapira.9",
       "twitter": "https://x.com/ShapiraDima"
     },
-    "group": "מרצ"
+    "group": "מרצ",
+    "gender": "M"
   },
   {
     "id": "candidate_036",
@@ -519,7 +554,8 @@
     "socialLinks": {
       "facebook": "https://www.facebook.com/yaron.niv"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_037",
@@ -535,7 +571,8 @@
       "twitter": "https://x.com/YaelCohenParan",
       "linkedin": "https://www.linkedin.com/in/yael-cohen-paran/"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_038",
@@ -549,7 +586,8 @@
       "instagram": "https://www.instagram.com/mossi_raz",
       "twitter": "https://x.com/mossi_raz"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_039",
@@ -565,7 +603,8 @@
       "twitter": "https://x.com/Kati_Piasecki",
       "linkedin": "https://www.linkedin.com/in/kati-piasecki-72b930119/"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_040",
@@ -578,7 +617,8 @@
       "website": "https://he.wikipedia.org/wiki/%D7%90%D7%9C%D7%99%D7%A1_%D7%92%D7%95%D7%9C%D7%93%D7%9E%D7%9F",
       "facebook": "https://www.facebook.com/elis.goldman"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_041",
@@ -593,7 +633,8 @@
       "instagram": "https://www.instagram.com/ramshefa?igsh=dXc4b3JwN2h2OHJj",
       "twitter": "https://x.com/ramshefa"
     },
-    "group": "כפרי"
+    "group": "כפרי",
+    "gender": "M"
   },
   {
     "id": "candidate_042",
@@ -607,7 +648,8 @@
       "instagram": "https://www.instagram.com/bennyminich/",
       "twitter": "https://x.com/bennyminich/"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_043",
@@ -619,7 +661,8 @@
     "socialLinks": {
       "facebook": "https://www.facebook.com/avishai.lichtensztein"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_044",
@@ -635,7 +678,8 @@
       "twitter": "https://x.com/hragolsky?s=21",
       "linkedin": "https://www.linkedin.com/in/hadas-ragolsky-0ab73491/"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_045",
@@ -651,7 +695,8 @@
       "twitter": "https://x.com/ihab_shlayan",
       "linkedin": "https://www.linkedin.com/in/ihab-shlayan-a862654b"
     },
-    "group": "מיעוטים"
+    "group": "מיעוטים",
+    "gender": "M"
   },
   {
     "id": "candidate_046",
@@ -666,7 +711,8 @@
       "instagram": "http://instagram.com/michal_rozin",
       "twitter": "https://x.com/Michal_Rozin"
     },
-    "group": "מרצ"
+    "group": "מרצ",
+    "gender": "F"
   },
   {
     "id": "candidate_047",
@@ -682,7 +728,8 @@
       "twitter": "https://x.com/TomerAvital1",
       "linkedin": "https://www.linkedin.com/in/tomer-avital-52795315/"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_048",
@@ -697,7 +744,8 @@
       "instagram": "https://www.instagram.com/moranmichel/",
       "twitter": "https://x.com/moranmichel3"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_049",
@@ -712,7 +760,8 @@
       "instagram": "https://www.instagram.com/gilad.kariv/",
       "twitter": "https://x.com/KarivGilad?s=20"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   },
   {
     "id": "candidate_050",
@@ -728,7 +777,8 @@
       "twitter": "https://x.com/rozolyo",
       "linkedin": "https://www.linkedin.com/in/nava-rozolyo-70abb072"
     },
-    "group": null
+    "group": null,
+    "gender": "F"
   },
   {
     "id": "candidate_051",
@@ -742,6 +792,7 @@
       "facebook": "https://www.facebook.com/GilBeilin?locale=he_IL",
       "instagram": "https://www.instagram.com/gil_beilin?igsh=Nndld2E3dXN3YzJq"
     },
-    "group": null
+    "group": null,
+    "gender": "M"
   }
 ]

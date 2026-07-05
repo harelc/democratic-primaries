@@ -6,6 +6,7 @@ export interface Candidate {
   background: string
   photoUrl: string
   group?: string | null
+  gender?: 'F' | 'M'
   socialLinks?: Record<string, string>
 }
 
