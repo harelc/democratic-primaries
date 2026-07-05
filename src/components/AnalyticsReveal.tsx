@@ -944,9 +944,10 @@ export default function AnalyticsReveal({
                       <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
                     </div>
                     {trimmedMeans[candidate.id] !== undefined && (
-                      <Tooltip term={`≈${Math.round(trimmedMeans[candidate.id] * 100)}%`}>
-                        תמיכה מתוקנת: ממוצע מקוצץ ({robustTrimPct}% קיצוץ, חלון {robustWindowSize} הצבעות). עמיד לגלי הצבעה חולפים של פעילים — קוצץ את הקצוות לפני הממוצוע.
-                      </Tooltip>
+                      <span className="text-xs font-mono text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 flex-shrink-0 w-14 text-center"
+                        title={`תמיכה מתוקנת: ממוצע מקוצץ (${robustTrimPct}% קיצוץ, חלון ${robustWindowSize} הצבעות). עמיד לגלי הצבעה חולפים של פעילים.`}>
+                        ≈{Math.round(trimmedMeans[candidate.id] * 100)}%
+                      </span>
                     )}
                   </div>
                 )
