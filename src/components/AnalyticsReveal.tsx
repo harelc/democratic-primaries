@@ -816,7 +816,7 @@ export default function AnalyticsReveal({
             {/* Robust estimator controls */}
             {ballotHistory && ballotHistory.length >= robustWindowSize + 1 && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex flex-wrap gap-4 items-center text-sm" dir="rtl">
-                <span className="font-semibold text-amber-800">תמיכה מתוקנת</span>
+                <Tooltip term="תמיכה מתוקנת">ממוצע מקוצץ של שיעורי הבחירה בחלונות גולשים — עמיד לגלי הצבעה אקטיביסטיים חולפים. קוצצים את X% הגבוהים והנמוכים ביותר של החלונות לפני הממוצוע, כך שבאסט שגורם לעלייה חדה בתמיכה בחלון אחד לא ישפיע על ההערכה הכוללת. כשהמספר המתוקן שונה מהממוצע הגולמי — סימן שהתמיכה לא הייתה יציבה לאורך הזמן.</Tooltip>
                 <label className="flex items-center gap-2 text-amber-700">
                   חלון:
                   <input type="range" min={20} max={Math.min(200, Math.floor(ballotHistory.length / 2))} step={10}
@@ -944,10 +944,9 @@ export default function AnalyticsReveal({
                       <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
                     </div>
                     {trimmedMeans[candidate.id] !== undefined && (
-                      <span className="text-xs font-mono text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 flex-shrink-0 w-14 text-center"
-                        title={`ממוצע מקוצץ (${robustTrimPct}% קיצוץ, חלון ${robustWindowSize})`}>
-                        ≈{Math.round(trimmedMeans[candidate.id] * 100)}%
-                      </span>
+                      <Tooltip term={`≈${Math.round(trimmedMeans[candidate.id] * 100)}%`}>
+                        תמיכה מתוקנת: ממוצע מקוצץ ({robustTrimPct}% קיצוץ, חלון {robustWindowSize} הצבעות). עמיד לגלי הצבעה חולפים — קוצץ את הקצוות לפני הממוצוע.
+                      </Tooltip>
                     )}
                   </div>
                 )
