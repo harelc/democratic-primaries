@@ -309,6 +309,8 @@ export default function AnalyticsReveal({
   const [ballotLogError, setBallotLogError] = useState<string | null>(null)
   const [graphColorMode, setGraphColorMode] = useState<'group' | 'community'>('group')
   const [windowSize, setWindowSize] = useState<number | null>(null) // null = cumulative mode
+  const [robustWindowSize, setRobustWindowSize] = useState(50)
+  const [robustTrimPct, setRobustTrimPct] = useState(10)
   const [graphLayout, setGraphLayout] = useState<'force' | 'spectral'>('force')
   const [snaSort, setSnaSort] = useState<'eigenvector' | 'pagerank' | 'degree' | 'votes'>('eigenvector')
   const [matrixOrder, setMatrixOrder] = useState<'louvain' | 'votes'>('votes')
@@ -810,8 +812,53 @@ export default function AnalyticsReveal({
         )}
 
         {activeTab === 'leaderboard' && allCandidates && (
-          <div className="space-y-2 max-w-2xl mx-auto">
+          <div className="space-y-3 max-w-2xl mx-auto">
+            {/* Robust estimator controls */}
+            {ballotHistory && ballotHistory.length >= robustWindowSize + 1 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex flex-wrap gap-4 items-center text-sm" dir="rtl">
+                <span className="font-semibold text-amber-800">תמיכה מתוקנת</span>
+                <label className="flex items-center gap-2 text-amber-700">
+                  חלון:
+                  <input type="range" min={20} max={Math.min(200, Math.floor(ballotHistory.length / 2))} step={10}
+                    value={robustWindowSize} onChange={e => setRobustWindowSize(Number(e.target.value))}
+                    className="w-24 accent-amber-500" dir="ltr" />
+                  <span className="font-mono w-8">{robustWindowSize}</span>
+                </label>
+                <label className="flex items-center gap-2 text-amber-700">
+                  קיצוץ:
+                  <input type="range" min={0} max={40} step={5}
+                    value={robustTrimPct} onChange={e => setRobustTrimPct(Number(e.target.value))}
+                    className="w-24 accent-amber-500" dir="ltr" />
+                  <span className="font-mono w-8">{robustTrimPct}%</span>
+                </label>
+                <span className="text-xs text-amber-600">{Math.max(0, ballotHistory.length - robustWindowSize)} מדידות</span>
+              </div>
+            )}
             {(() => {
+              // Compute trimmed mean of sliding window rates per candidate
+              const trimmedMeans: Record<string, number> = {}
+              if (ballotHistory && ballotHistory.length >= robustWindowSize + 1) {
+                const W = robustWindowSize
+                const n = ballotHistory.length
+                const numWindows = n - W + 1
+                const trimK = Math.floor(numWindows * robustTrimPct / 100)
+                allCandidates.forEach(c => {
+                  const presence = ballotHistory.map(b => b.includes(c.id) ? 1 : 0)
+                  let sum = 0
+                  for (let i = 0; i < W; i++) sum += presence[i]
+                  const rates: number[] = [sum / W]
+                  for (let i = 1; i < numWindows; i++) {
+                    sum += presence[i + W - 1] - presence[i - 1]
+                    rates.push(sum / W)
+                  }
+                  rates.sort((a, b) => a - b)
+                  const trimmed = rates.slice(trimK, numWindows - trimK)
+                  trimmedMeans[c.id] = trimmed.length > 0
+                    ? trimmed.reduce((s, v) => s + v, 0) / trimmed.length
+                    : rates.reduce((s, v) => s + v, 0) / rates.length
+                })
+              }
+
               // Precompute sparkline data per candidate from cached ballot history
               const sparkData: Record<string, number[]> = {}
               if (ballotHistory && ballotHistory.length >= 75) {
@@ -896,6 +943,12 @@ export default function AnalyticsReveal({
                       </div>
                       <span className="text-xs text-slate-600 font-mono w-8 text-right">{percentage}%</span>
                     </div>
+                    {trimmedMeans[candidate.id] !== undefined && (
+                      <span className="text-xs font-mono text-amber-700 bg-amber-50 border border-amber-200 rounded px-1.5 py-0.5 flex-shrink-0 w-14 text-center"
+                        title={`ממוצע מקוצץ (${robustTrimPct}% קיצוץ, חלון ${robustWindowSize})`}>
+                        ≈{Math.round(trimmedMeans[candidate.id] * 100)}%
+                      </span>
+                    )}
                   </div>
                 )
               })
