@@ -69,7 +69,7 @@ export default function BoxplotChart({ ballots, candidates }: BoxplotChartProps)
     const container = svgRef.current.parentElement
     const width = container?.clientWidth || 900
     const margin = { top: 20, right: 16, bottom: 110, left: 44 }
-    const height = 340
+    const height = 560
     const innerW = width - margin.left - margin.right
     const innerH = height - margin.top - margin.bottom
 
