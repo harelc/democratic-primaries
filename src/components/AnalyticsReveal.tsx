@@ -3,6 +3,7 @@ import { Candidate, Analytics } from '../types'
 import ForceDirectedGraph from './ForceDirectedGraph'
 import { computeSNA, getCommunityColor } from '../utils/sna'
 import ConvergenceChart from './ConvergenceChart'
+import BoxplotChart from './BoxplotChart'
 import VoteRateChart from './VoteRateChart'
 import CompetingPairs from './CompetingPairs'
 
@@ -271,7 +272,7 @@ export default function AnalyticsReveal({
   onSelect,
   adminMode,
 }: AnalyticsRevealProps) {
-  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'log'>('picks')
+  const [activeTab, setActiveTab] = useState<'picks' | 'leaderboard' | 'graph' | 'cooccurrence' | 'sna' | 'fullmatrix' | 'convergence' | 'boxplot' | 'log'>('picks')
   const [liveTotal, setLiveTotal] = useState<number | null>(null)
   const [ballotHistory, setBallotHistory] = useState<string[][] | null>(null)
   const [ballotTimestamps, setBallotTimestamps] = useState<string[] | null>(null)
@@ -554,6 +555,16 @@ export default function AnalyticsReveal({
             }`}
           >
             מגמה
+          </button>
+          <button
+            onClick={() => setActiveTab('boxplot')}
+            className={`px-5 py-2 rounded-lg font-medium whitespace-nowrap transition-all text-sm ${
+              activeTab === 'boxplot'
+                ? 'bg-white text-blue-700 shadow-sm font-semibold'
+                : 'text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            פיזור תמיכה
           </button>
           <button
             onClick={() => setActiveTab('graph')}
@@ -1202,6 +1213,16 @@ export default function AnalyticsReveal({
                 />
                 <CompetingPairs ballots={ballotHistory} candidates={allCandidates} />
               </>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'boxplot' && allCandidates && (
+          <div className="bg-white border border-slate-200 rounded-lg p-4">
+            {ballotHistory === null ? (
+              <div className="flex items-center justify-center h-48 text-slate-400">טוען...</div>
+            ) : (
+              <BoxplotChart ballots={ballotHistory} candidates={allCandidates} />
             )}
           </div>
         )}
