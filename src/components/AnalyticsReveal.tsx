@@ -816,7 +816,7 @@ export default function AnalyticsReveal({
             {/* Robust estimator controls */}
             {ballotHistory && ballotHistory.length >= robustWindowSize + 1 && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex flex-wrap gap-4 items-center text-sm" dir="rtl">
-                <Tooltip term="תמיכה מתוקנת">ממוצע מקוצץ של שיעורי הבחירה בחלונות גולשים — עמיד לגלי הצבעה אקטיביסטיים חולפים. קוצצים את X% הגבוהים והנמוכים ביותר של החלונות לפני הממוצוע, כך שבאסט שגורם לעלייה חדה בתמיכה בחלון אחד לא ישפיע על ההערכה הכוללת. כשהמספר המתוקן שונה מהממוצע הגולמי — סימן שהתמיכה לא הייתה יציבה לאורך הזמן.</Tooltip>
+                <Tooltip term="תמיכה מתוקנת">ממוצע מקוצץ של שיעורי הבחירה בחלונות זמן של הצבעות — עמיד לגלי הצבעה אקטיביסטיים חולפים. קוצצים את X% הגבוהים והנמוכים ביותר של החלונות לפני הממוצוע, כך ששינוי פתאומי בתמיכה בחלון אחד לא ישפיע על ההערכה הכוללת. כשהמספר המתוקן שונה מהממוצע הגולמי — סימן שהתמיכה לא הייתה יציבה לאורך הזמן.</Tooltip>
                 <label className="flex items-center gap-2 text-amber-700">
                   חלון:
                   <input type="range" min={20} max={Math.min(200, Math.floor(ballotHistory.length / 2))} step={10}
