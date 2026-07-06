@@ -22,7 +22,7 @@ export default function KnessetListView({ candidates, pickFrequency }: KnessetLi
     <div className="max-w-2xl mx-auto">
       <p className="text-xs text-slate-500 mb-4 leading-relaxed bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
         סימולציה של הרשימה הסופית לכנסת: יו״ר המפלגה במקום הראשון, ולאחריו חלוקה מתחלפת בין נשים וגברים לפי תוצאות הפריימריז,
-        עם מקומות שמורים לנציגי מרצ (6, 8, 14) ולנציגי כפרי/מיעוטים (12, 13). מקום שמור שמופר את סדר ההתחלפות ״מתוקן״
+        עם מקומות שמורים לנציגי מרצ (6, 8, 14) ולדירוג המשותף של נציגי כפרי/מיעוטים (12, 13, 18, 23, 27). מקום שמור שמופר את סדר ההתחלפות ״מתוקן״
         על ידי שני מקומות רצופים של המגדר הנגדי מיד לאחריו.
       </p>
       <div className="space-y-2">

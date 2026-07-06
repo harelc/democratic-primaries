@@ -24,22 +24,17 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   const ranked = [...candidates].sort((a, b) => (pickFrequency[b.id] || 0) - (pickFrequency[a.id] || 0))
 
   const isMeretz = (c: Candidate) => (c.group || '').includes('מרצ')
-  const isKfari = (c: Candidate) => (c.group || '').includes('כפרי')
-  const isMiutim = (c: Candidate) => (c.group || '').includes('מיעוטים')
+  const isKfariOrMiutim = (c: Candidate) => (c.group || '').includes('כפרי') || (c.group || '').includes('מיעוטים')
 
   const [meretz1, meretz2, meretz3] = ranked.filter(isMeretz)
-  const kfariTop = ranked.find(isKfari)
-  const miutimTop = ranked.find(isMiutim)
 
-  // Whichever of the two ranks higher takes slot 12, the other takes slot 13
-  let slot12: Candidate | undefined
-  let slot13: Candidate | undefined
-  if (kfariTop && miutimTop) {
-    if (ranked.indexOf(kfariTop) <= ranked.indexOf(miutimTop)) { slot12 = kfariTop; slot13 = miutimTop }
-    else { slot12 = miutimTop; slot13 = kfariTop }
-  } else {
-    slot12 = kfariTop || miutimTop
-  }
+  // Joint כפרי + מיעוטים ranking: top 5 fill positions 12, 13, 18, 23, 27 in rank order
+  const jointRanked = ranked.filter(isKfariOrMiutim)
+  const JOINT_POSITIONS = [12, 13, 18, 23, 27]
+  const jointSlots = new Map<number, Candidate>()
+  JOINT_POSITIONS.forEach((pos, i) => {
+    if (jointRanked[i]) jointSlots.set(pos, jointRanked[i])
+  })
 
   const queueF = ranked.filter(c => c.gender === 'F')
   const queueM = ranked.filter(c => c.gender === 'M')
@@ -70,8 +65,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
     if (p === 6 && meretz1 && !placed.has(meretz1.id)) reserved = { candidate: meretz1, label: 'שריון: נציג/ת מרצ המוביל/ה' }
     else if (p === 8 && meretz2 && !placed.has(meretz2.id)) reserved = { candidate: meretz2, label: 'שריון: נציג/ת מרצ השני/ה' }
     else if (p === 14 && meretz3 && !placed.has(meretz3.id)) reserved = { candidate: meretz3, label: 'שריון: נציג/ת מרצ השלישי/ת' }
-    else if (p === 12 && slot12 && !placed.has(slot12.id)) reserved = { candidate: slot12, label: 'שריון: נציג/ת כפרי / מיעוטים' }
-    else if (p === 13 && slot13 && !placed.has(slot13.id)) reserved = { candidate: slot13, label: 'שריון: נציג/ת כפרי / מיעוטים' }
+    else if (jointSlots.has(p) && !placed.has(jointSlots.get(p)!.id)) reserved = { candidate: jointSlots.get(p)!, label: 'שריון: דירוג משותף כפרי / מיעוטים' }
 
     const expected: 'F' | 'M' = catchup && catchup.remaining > 0 ? catchup.gender : stateNext
 
