@@ -24,12 +24,15 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   const ranked = [...candidates].sort((a, b) => (pickFrequency[b.id] || 0) - (pickFrequency[a.id] || 0))
 
   const isMeretz = (c: Candidate) => (c.group || '').includes('מרצ')
-  const isKfariOrMiutim = (c: Candidate) => (c.group || '').includes('כפרי') || (c.group || '').includes('מיעוטים')
+  const isKfari = (c: Candidate) => (c.group || '').includes('כפרי')
+  const isMiutim = (c: Candidate) => (c.group || '').includes('מיעוטים')
 
   const [meretz1, meretz2, meretz3] = ranked.filter(isMeretz)
 
-  // Joint כפרי + מיעוטים ranking: top 5 fill positions 12, 13, 18, 23, 27 in rank order
-  const jointRanked = ranked.filter(isKfariOrMiutim)
+  // Top 4 מיעוטים + top 1 כפרי, then re-ranked together to fill positions 12, 13, 18, 23, 27
+  const top4Miutim = ranked.filter(isMiutim).slice(0, 4)
+  const top1Kfari = ranked.filter(isKfari).slice(0, 1)
+  const jointRanked = [...top4Miutim, ...top1Kfari].sort((a, b) => ranked.indexOf(a) - ranked.indexOf(b))
   const JOINT_POSITIONS = [12, 13, 18, 23, 27]
   const jointSlots = new Map<number, Candidate>()
   JOINT_POSITIONS.forEach((pos, i) => {
@@ -65,7 +68,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
     if (p === 6 && meretz1 && !placed.has(meretz1.id)) reserved = { candidate: meretz1, label: 'שריון: נציג/ת מרצ המוביל/ה' }
     else if (p === 8 && meretz2 && !placed.has(meretz2.id)) reserved = { candidate: meretz2, label: 'שריון: נציג/ת מרצ השני/ה' }
     else if (p === 14 && meretz3 && !placed.has(meretz3.id)) reserved = { candidate: meretz3, label: 'שריון: נציג/ת מרצ השלישי/ת' }
-    else if (jointSlots.has(p) && !placed.has(jointSlots.get(p)!.id)) reserved = { candidate: jointSlots.get(p)!, label: 'שריון: דירוג משותף כפרי / מיעוטים' }
+    else if (jointSlots.has(p) && !placed.has(jointSlots.get(p)!.id)) reserved = { candidate: jointSlots.get(p)!, label: 'שריון: 4 מיעוטים + 1 כפרי' }
 
     const expected: 'F' | 'M' = catchup && catchup.remaining > 0 ? catchup.gender : stateNext
 
