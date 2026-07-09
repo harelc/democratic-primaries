@@ -8,6 +8,7 @@ import AnalyticsReveal from './components/AnalyticsReveal'
 import CaptchaVerification from './components/CaptchaVerification'
 import CandidateModal from './components/CandidateModal'
 import Footer from './components/Footer'
+import MemberCounter from './components/MemberCounter'
 
 const MIN_CANDIDATES = 6
 const MAX_CANDIDATES = 8
@@ -256,6 +257,7 @@ export default function App() {
                   <h1 className="text-lg md:text-2xl font-bold tracking-tight leading-tight">🗳️ הרשימה שלי לפריימריז הדמוקרטים</h1>
                   <p className="text-blue-200 text-xs mt-0.5 hidden sm:block">בנו את הרשימה שלכם — בחרו 8-6 מועמדים וגלו דפוסי הצבעה</p>
                 </div>
+              <MemberCounter />
               {adminMode && adminStats && (
                 <div className="hidden md:flex items-center gap-2 text-xs bg-white/10 rounded-lg px-3 py-1.5 flex-shrink-0">
                   {[
