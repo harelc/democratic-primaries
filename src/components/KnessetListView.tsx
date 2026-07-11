@@ -60,6 +60,11 @@ export default function KnessetListView({ candidates, pickFrequency }: KnessetLi
                   {entry.reservedLabel}
                 </span>
               )}
+              {entry.placedAboveReservedSeat && (
+                <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-sky-100 text-sky-800">
+                  שיבוץ במקום גבוה מהמקום המשוריין
+                </span>
+              )}
             </div>
           )
         })}
