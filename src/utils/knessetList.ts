@@ -88,6 +88,10 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   let stateNext: 'F' | 'M' = 'F'
   let meretzPlacedCount = 0
   let sectorPlacedCount = 0
+  let placedMaleCount = 0
+  let placedFemaleCount = 0
+  let balanceCorrection: { gender: 'F' | 'M'; remaining: number } | null = null
+  let balanceChecked = false
 
   const totalPositions = 1 + candidates.length
   for (let p = 2; p <= totalPositions; p++) {
@@ -104,7 +108,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
       if (candidate) reserved = { candidate, label: sectorLabels.get(candidate.id) || 'שריון מגזרים' }
     }
 
-    const expected: 'F' | 'M' = stateNext
+    const expected: 'F' | 'M' = balanceCorrection && balanceCorrection.remaining > 0 ? balanceCorrection.gender : stateNext
 
     let candidate: Candidate
     let actualGender: 'F' | 'M'
@@ -133,6 +137,21 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
     placed.add(candidate.id)
     if (isMeretz(candidate)) meretzPlacedCount++
     if (sectorPoolIds.has(candidate.id)) sectorPlacedCount++
+    if (actualGender === 'F') placedFemaleCount++
+    else placedMaleCount++
+
+    if (balanceCorrection) {
+      if (actualGender === balanceCorrection.gender) balanceCorrection.remaining--
+      if (balanceCorrection.remaining <= 0) balanceCorrection = null
+    }
+
+    // One-time gender-balance check right after position 15: top up the
+    // missing gender in the following seats until positions 2-15 are even.
+    if (!balanceChecked && p === 15) {
+      balanceChecked = true
+      const diff = placedMaleCount - placedFemaleCount
+      if (diff !== 0) balanceCorrection = { gender: diff > 0 ? 'F' : 'M', remaining: Math.abs(diff) }
+    }
 
     stateNext = opposite(actualGender)
 
