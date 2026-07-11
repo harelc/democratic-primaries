@@ -86,7 +86,6 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   ]
 
   let stateNext: 'F' | 'M' = 'F'
-  let catchup: { gender: 'F' | 'M'; remaining: number } | null = null
   let meretzPlacedCount = 0
   let sectorPlacedCount = 0
 
@@ -105,7 +104,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
       if (candidate) reserved = { candidate, label: sectorLabels.get(candidate.id) || 'שריון מגזרים' }
     }
 
-    const expected: 'F' | 'M' = catchup && catchup.remaining > 0 ? catchup.gender : stateNext
+    const expected: 'F' | 'M' = stateNext
 
     let candidate: Candidate
     let actualGender: 'F' | 'M'
@@ -135,16 +134,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
     if (isMeretz(candidate)) meretzPlacedCount++
     if (sectorPoolIds.has(candidate.id)) sectorPlacedCount++
 
-    if (actualGender === expected) {
-      if (catchup && catchup.remaining > 0) {
-        catchup.remaining--
-        if (catchup.remaining === 0) catchup = null
-      }
-      stateNext = opposite(actualGender)
-    } else {
-      catchup = { gender: opposite(actualGender), remaining: 2 }
-      stateNext = opposite(actualGender)
-    }
+    stateNext = opposite(actualGender)
 
     result.push({ position: p, candidate, isReserved, reservedLabel: reserved?.label, placedAboveReservedSeat, quotaLabel })
   }
