@@ -32,6 +32,9 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   // Top 4 מיעוטים + top 1 כפרי, then re-ranked together to fill positions 12, 13, 18, 23, 27
   const top4Miutim = ranked.filter(isMiutim).slice(0, 4)
   const top1Kfari = ranked.filter(isKfari).slice(0, 1)
+  const jointLabels = new Map<string, string>()
+  top4Miutim.forEach((c, i) => jointLabels.set(c.id, `שריון מיעוטים #${i + 1}`))
+  top1Kfari.forEach(c => jointLabels.set(c.id, 'שריון כפרי'))
   const jointRanked = [...top4Miutim, ...top1Kfari].sort((a, b) => ranked.indexOf(a) - ranked.indexOf(b))
   const JOINT_POSITIONS = [12, 13, 18, 23, 27]
   const jointSlots = new Map<number, Candidate>()
@@ -65,10 +68,13 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   const totalPositions = 1 + candidates.length
   for (let p = 2; p <= totalPositions; p++) {
     let reserved: { candidate: Candidate; label: string } | null = null
-    if (p === 6 && meretz1 && !placed.has(meretz1.id)) reserved = { candidate: meretz1, label: 'שריון: נציג/ת מרצ המוביל/ה' }
-    else if (p === 8 && meretz2 && !placed.has(meretz2.id)) reserved = { candidate: meretz2, label: 'שריון: נציג/ת מרצ השני/ה' }
-    else if (p === 14 && meretz3 && !placed.has(meretz3.id)) reserved = { candidate: meretz3, label: 'שריון: נציג/ת מרצ השלישי/ת' }
-    else if (jointSlots.has(p) && !placed.has(jointSlots.get(p)!.id)) reserved = { candidate: jointSlots.get(p)!, label: 'שריון: 4 מיעוטים + 1 כפרי' }
+    if (p === 6 && meretz1 && !placed.has(meretz1.id)) reserved = { candidate: meretz1, label: 'שריון מרצ #1' }
+    else if (p === 8 && meretz2 && !placed.has(meretz2.id)) reserved = { candidate: meretz2, label: 'שריון מרצ #2' }
+    else if (p === 14 && meretz3 && !placed.has(meretz3.id)) reserved = { candidate: meretz3, label: 'שריון מרצ #3' }
+    else if (jointSlots.has(p) && !placed.has(jointSlots.get(p)!.id)) {
+      const c = jointSlots.get(p)!
+      reserved = { candidate: c, label: jointLabels.get(c.id) || 'שריון כפרי/מיעוטים' }
+    }
 
     const expected: 'F' | 'M' = catchup && catchup.remaining > 0 ? catchup.gender : stateNext
 

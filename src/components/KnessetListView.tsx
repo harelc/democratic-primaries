@@ -56,11 +56,8 @@ export default function KnessetListView({ candidates, pickFrequency }: KnessetLi
                 </span>
               )}
               {entry.isReserved && (
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-amber-200 text-amber-900"
-                  title={entry.reservedLabel}
-                >
-                  שריון
+                <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-amber-200 text-amber-900">
+                  {entry.reservedLabel}
                 </span>
               )}
             </div>
