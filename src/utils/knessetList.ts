@@ -35,6 +35,16 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   const isKfari = (c: Candidate) => (c.group || '').includes('כפרי')
   const isMiutim = (c: Candidate) => (c.group || '').includes('מיעוטים')
 
+  // Cumulative floor: at each checkpoint position, at least N pool members must
+  // have appeared in the list so far (for any reason) — force the highest-ranked
+  // unplaced pool member into the slot only if the running count falls short.
+  const meretzPool = ranked.filter(isMeretz)
+  const meretzCheckpoints: Checkpoint[] = [
+    { position: 6, requiredCount: 1, label: 'שריון מרצ #1' },
+    { position: 8, requiredCount: 2, label: 'שריון מרצ #2' },
+    { position: 14, requiredCount: 3, label: 'שריון מרצ #3' },
+  ]
+
   // Fixed pool of 5 designees (top 4 מיעוטים + top 1 כפרי), re-ranked together;
   // cumulative floor checked at each of the 5 designated positions.
   const top4Miutim = ranked.filter(isMiutim).slice(0, 4)
@@ -48,22 +58,10 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
     requiredCount: i + 1,
     label: `שריון מגזרים #${i + 1}`,
   }))
-  const sectorPoolIds = new Set(sectorPool.map(c => c.id))
-
-  // Cumulative floor: at each checkpoint position, at least N pool members must
-  // have appeared in the list so far (for any reason) — force the highest-ranked
-  // unplaced pool member into the slot only if the running count falls short.
-  // Sector designees are excluded so each guarantee is fulfilled by a distinct person.
-  const meretzPool = ranked.filter(c => isMeretz(c) && !sectorPoolIds.has(c.id))
-  const meretzCheckpoints: Checkpoint[] = [
-    { position: 6, requiredCount: 1, label: 'שריון מרצ #1' },
-    { position: 8, requiredCount: 2, label: 'שריון מרצ #2' },
-    { position: 14, requiredCount: 3, label: 'שריון מרצ #3' },
-  ]
 
   const meretzLast = meretzCheckpoints[meretzCheckpoints.length - 1]
   const sectorLast = sectorCheckpoints[sectorCheckpoints.length - 1]
-  const meretzPoolIds = new Set(meretzPool.map(c => c.id))
+  const sectorPoolIds = new Set(sectorPool.map(c => c.id))
 
   const queueF = ranked.filter(c => c.gender === 'F')
   const queueM = ranked.filter(c => c.gender === 'M')
@@ -129,7 +127,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
 
     // A natural (non-reserved) placement of a pool member counts toward the
     // quota early — flag it only while that pool's quota isn't fully met yet.
-    const meretzNoteApplies = meretzPoolIds.has(candidate.id) && meretzPlacedCount < meretzLast.requiredCount && p < meretzLast.position
+    const meretzNoteApplies = isMeretz(candidate) && meretzPlacedCount < meretzLast.requiredCount && p < meretzLast.position
     const sectorNoteApplies = sectorPoolIds.has(candidate.id) && sectorPlacedCount < sectorLast.requiredCount && p < sectorLast.position
     const placedAboveReservedSeat = !isReserved && (meretzNoteApplies || sectorNoteApplies)
     const quotaLabel = !isReserved
@@ -137,7 +135,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
       : undefined
 
     placed.add(candidate.id)
-    if (meretzPoolIds.has(candidate.id)) meretzPlacedCount++
+    if (isMeretz(candidate)) meretzPlacedCount++
     if (sectorPoolIds.has(candidate.id)) sectorPlacedCount++
     if (actualGender === 'F') placedFemaleCount++
     else placedMaleCount++
