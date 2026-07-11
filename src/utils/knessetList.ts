@@ -7,6 +7,7 @@ export interface KnessetListEntry {
   isReserved?: boolean
   reservedLabel?: string
   placedAboveReservedSeat?: boolean
+  quotaLabel?: string
 }
 
 export const GOLAN_CHAIRMAN: Candidate = {
@@ -39,9 +40,9 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   // unplaced pool member into the slot only if the running count falls short.
   const meretzPool = ranked.filter(isMeretz)
   const meretzCheckpoints: Checkpoint[] = [
-    { position: 6, requiredCount: 1, label: 'שריון מרצ (מכסה: 1)' },
-    { position: 8, requiredCount: 2, label: 'שריון מרצ (מכסה: 2)' },
-    { position: 14, requiredCount: 3, label: 'שריון מרצ (מכסה: 3)' },
+    { position: 6, requiredCount: 1, label: 'שריון מרצ #1' },
+    { position: 8, requiredCount: 2, label: 'שריון מרצ #2' },
+    { position: 14, requiredCount: 3, label: 'שריון מרצ #3' },
   ]
 
   // Fixed pool of 5 designees (top 4 מיעוטים + top 1 כפרי), re-ranked together;
@@ -50,12 +51,12 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   const top1Kfari = ranked.filter(isKfari).slice(0, 1)
   const sectorLabels = new Map<string, string>()
   top4Miutim.forEach((c, i) => sectorLabels.set(c.id, `שריון מיעוטים #${i + 1}`))
-  top1Kfari.forEach(c => sectorLabels.set(c.id, 'שריון כפרי'))
+  top1Kfari.forEach(c => sectorLabels.set(c.id, 'שריון כפרי #1'))
   const sectorPool = [...top4Miutim, ...top1Kfari].sort((a, b) => ranked.indexOf(a) - ranked.indexOf(b))
   const sectorCheckpoints: Checkpoint[] = [12, 13, 18, 23, 27].map((position, i) => ({
     position,
     requiredCount: i + 1,
-    label: `שריון מגזרים (מכסה: ${i + 1})`,
+    label: `שריון מגזרים #${i + 1}`,
   }))
 
   const meretzLast = meretzCheckpoints[meretzCheckpoints.length - 1]
@@ -123,10 +124,12 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
 
     // A natural (non-reserved) placement of a pool member counts toward the
     // quota early — flag it only while that pool's quota isn't fully met yet.
-    const placedAboveReservedSeat = !isReserved && (
-      (isMeretz(candidate) && meretzPlacedCount < meretzLast.requiredCount && p < meretzLast.position) ||
-      (sectorPoolIds.has(candidate.id) && sectorPlacedCount < sectorLast.requiredCount && p < sectorLast.position)
-    )
+    const meretzNoteApplies = isMeretz(candidate) && meretzPlacedCount < meretzLast.requiredCount && p < meretzLast.position
+    const sectorNoteApplies = sectorPoolIds.has(candidate.id) && sectorPlacedCount < sectorLast.requiredCount && p < sectorLast.position
+    const placedAboveReservedSeat = !isReserved && (meretzNoteApplies || sectorNoteApplies)
+    const quotaLabel = !isReserved
+      ? (meretzNoteApplies ? `שריון מרצ #${meretzPlacedCount + 1}` : sectorNoteApplies ? sectorLabels.get(candidate.id) : undefined)
+      : undefined
 
     placed.add(candidate.id)
     if (isMeretz(candidate)) meretzPlacedCount++
@@ -143,7 +146,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
       stateNext = opposite(actualGender)
     }
 
-    result.push({ position: p, candidate, isReserved, reservedLabel: reserved?.label, placedAboveReservedSeat })
+    result.push({ position: p, candidate, isReserved, reservedLabel: reserved?.label, placedAboveReservedSeat, quotaLabel })
   }
 
   return result
