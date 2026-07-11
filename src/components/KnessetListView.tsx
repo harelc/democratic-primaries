@@ -35,9 +35,7 @@ export default function KnessetListView({ candidates, pickFrequency }: KnessetLi
               className={`flex items-center gap-3 p-3 rounded-xl shadow-sm border transition-shadow hover:shadow-md ${
                 entry.isChairman
                   ? 'bg-blue-50 border-blue-200'
-                  : entry.isReserved
-                    ? 'bg-amber-50 border-amber-200'
-                    : 'bg-white border-slate-100'
+                  : 'bg-white border-slate-100'
               }`}
             >
               <span className="text-slate-400 font-mono text-sm w-7 text-right flex-shrink-0">{entry.position}</span>
