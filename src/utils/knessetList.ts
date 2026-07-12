@@ -1,13 +1,16 @@
 import { Candidate } from '../types'
 
+export interface QuotaBadge {
+  label: string
+  isReserved: boolean
+  placedAboveReservedSeat: boolean
+}
+
 export interface KnessetListEntry {
   position: number
   candidate: Candidate
   isChairman?: boolean
-  isReserved?: boolean
-  reservedLabel?: string
-  placedAboveReservedSeat?: boolean
-  quotaLabel?: string
+  badges: QuotaBadge[]
 }
 
 export const GOLAN_CHAIRMAN: Candidate = {
@@ -82,7 +85,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
   const nextUnplacedInPool = (pool: Candidate[]): Candidate | undefined => pool.find(c => !placed.has(c.id))
 
   const result: KnessetListEntry[] = [
-    { position: 1, candidate: GOLAN_CHAIRMAN, isChairman: true },
+    { position: 1, candidate: GOLAN_CHAIRMAN, isChairman: true, badges: [] },
   ]
 
   let stateNext: 'F' | 'M' = 'F'
@@ -95,17 +98,17 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
 
   const totalPositions = 1 + candidates.length
   for (let p = 2; p <= totalPositions; p++) {
-    let reserved: { candidate: Candidate; label: string } | null = null
+    let reserved: { candidate: Candidate; label: string; pool: 'meretz' | 'sector' } | null = null
 
     const meretzCheckpoint = meretzCheckpoints.find(cp => cp.position === p)
     const sectorCheckpoint = sectorCheckpoints.find(cp => cp.position === p)
 
     if (meretzCheckpoint && meretzPlacedCount < meretzCheckpoint.requiredCount) {
       const candidate = nextUnplacedInPool(meretzPool)
-      if (candidate) reserved = { candidate, label: meretzCheckpoint.label }
+      if (candidate) reserved = { candidate, label: meretzCheckpoint.label, pool: 'meretz' }
     } else if (sectorCheckpoint && sectorPlacedCount < sectorCheckpoint.requiredCount) {
       const candidate = nextUnplacedInPool(sectorPool)
-      if (candidate) reserved = { candidate, label: sectorLabels.get(candidate.id) || 'שריון מגזרים' }
+      if (candidate) reserved = { candidate, label: sectorLabels.get(candidate.id) || 'שריון מגזרים', pool: 'sector' }
     }
 
     const expected: 'F' | 'M' = balanceCorrection && balanceCorrection.remaining > 0 ? balanceCorrection.gender : stateNext
@@ -125,14 +128,27 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
       consumeFromQueue(actualGender)
     }
 
-    // A natural (non-reserved) placement of a pool member counts toward the
-    // quota early — flag it only while that pool's quota isn't fully met yet.
-    const meretzNoteApplies = isMeretz(candidate) && meretzPlacedCount < meretzLast.requiredCount && p < meretzLast.position
-    const sectorNoteApplies = sectorPoolIds.has(candidate.id) && sectorPlacedCount < sectorLast.requiredCount && p < sectorLast.position
-    const placedAboveReservedSeat = !isReserved && (meretzNoteApplies || sectorNoteApplies)
-    const quotaLabel = !isReserved
-      ? (meretzNoteApplies ? `שריון מרצ #${meretzPlacedCount + 1}` : sectorNoteApplies ? sectorLabels.get(candidate.id) : undefined)
-      : undefined
+    // Each pool's guarantee is checked independently — a candidate placed for
+    // one reason (or naturally) can also fulfill the other pool's quota early,
+    // in which case both badges show, with a note on whichever wasn't the
+    // official trigger for this exact checkpoint position.
+    const badges: QuotaBadge[] = []
+
+    const meretzForcedHere = reserved?.pool === 'meretz'
+    const meretzApplies = isMeretz(candidate) && meretzPlacedCount < meretzLast.requiredCount
+    if (meretzForcedHere) {
+      badges.push({ label: reserved!.label, isReserved: true, placedAboveReservedSeat: false })
+    } else if (meretzApplies && p < meretzLast.position) {
+      badges.push({ label: `שריון מרצ #${meretzPlacedCount + 1}`, isReserved: false, placedAboveReservedSeat: true })
+    }
+
+    const sectorForcedHere = reserved?.pool === 'sector'
+    const sectorApplies = sectorPoolIds.has(candidate.id) && sectorPlacedCount < sectorLast.requiredCount
+    if (sectorForcedHere) {
+      badges.push({ label: reserved!.label, isReserved: true, placedAboveReservedSeat: false })
+    } else if (sectorApplies && p < sectorLast.position) {
+      badges.push({ label: sectorLabels.get(candidate.id) || 'שריון מגזרים', isReserved: false, placedAboveReservedSeat: true })
+    }
 
     placed.add(candidate.id)
     if (isMeretz(candidate)) meretzPlacedCount++
@@ -155,7 +171,7 @@ export function buildKnessetList(candidates: Candidate[], pickFrequency: Record<
 
     stateNext = opposite(actualGender)
 
-    result.push({ position: p, candidate, isReserved, reservedLabel: reserved?.label, placedAboveReservedSeat, quotaLabel })
+    result.push({ position: p, candidate, badges })
   }
 
   return result

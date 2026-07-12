@@ -54,23 +54,18 @@ export default function KnessetListView({ candidates, pickFrequency }: KnessetLi
                   {group}
                 </span>
               )}
-              {entry.isReserved && (
-                <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-amber-200 text-amber-900">
-                  {entry.reservedLabel}
-                </span>
-              )}
-              {entry.placedAboveReservedSeat && (
-                <>
-                  {entry.quotaLabel && (
-                    <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-amber-200 text-amber-900">
-                      {entry.quotaLabel}
+              {entry.badges.map((badge, i) => (
+                <span key={i} className="flex items-center gap-1">
+                  <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-amber-200 text-amber-900">
+                    {badge.label}
+                  </span>
+                  {badge.placedAboveReservedSeat && (
+                    <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-sky-100 text-sky-800">
+                      שיבוץ במקום גבוה מהמקום המשוריין
                     </span>
                   )}
-                  <span className="text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0 bg-sky-100 text-sky-800">
-                    שיבוץ במקום גבוה מהמקום המשוריין
-                  </span>
-                </>
-              )}
+                </span>
+              ))}
             </div>
           )
         })}
